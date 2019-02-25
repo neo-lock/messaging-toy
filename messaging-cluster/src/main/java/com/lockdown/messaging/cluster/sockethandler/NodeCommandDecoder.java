@@ -8,7 +8,6 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 
 public class NodeCommandDecoder extends ByteToMessageDecoder {
@@ -25,7 +24,7 @@ public class NodeCommandDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> list) throws Exception {
-        logger.info(" received message with port {}",nodePort);
+        logger.info(" received message with port {}", nodePort);
         try {
             int readable = byteBuf.readableBytes();
             if (readable < NodeCommand.BASE_LENGTH) {

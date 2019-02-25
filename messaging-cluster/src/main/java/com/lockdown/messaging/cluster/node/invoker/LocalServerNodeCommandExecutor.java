@@ -12,16 +12,17 @@ import java.util.Map;
 
 public class LocalServerNodeCommandExecutor implements NodeCommandExecutor<LocalServerNode> {
 
-    private Map<CommandType,NodeCommandInvoker<LocalServerNode>> invokerContext = new HashMap<>();
+    private Map<CommandType, NodeCommandInvoker<LocalServerNode>> invokerContext = new HashMap<>();
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public LocalServerNodeCommandExecutor() {}
+    public LocalServerNodeCommandExecutor() {
+    }
 
-    public void registerInvoker(NodeCommandInvoker<LocalServerNode> invoker){
-        if(invokerContext.containsKey(invoker.supportType())){
+    public void registerInvoker(NodeCommandInvoker<LocalServerNode> invoker) {
+        if (invokerContext.containsKey(invoker.supportType())) {
             throw new IllegalStateException(" invoke command type already set !");
         }
-        this.invokerContext.putIfAbsent(invoker.supportType(),invoker);
+        this.invokerContext.putIfAbsent(invoker.supportType(), invoker);
     }
 
     public void setInvokerContext(Map<CommandType, NodeCommandInvoker<LocalServerNode>> invokerContext) {
@@ -31,11 +32,11 @@ public class LocalServerNodeCommandExecutor implements NodeCommandExecutor<Local
 
     @Override
     public void executeCommand(LocalServerNode local, RemoteServerNode remote, NodeCommand command) {
-        if(!invokerContext.containsKey(command.type())){
-            logger.info(" unsupported current command {}, discard !",command.type());
+        if (!invokerContext.containsKey(command.type())) {
+            logger.info(" unsupported current command {}, discard !", command.type());
             return;
         }
-        invokerContext.get(command.type()).executeCommand(local,remote,command);
+        invokerContext.get(command.type()).executeCommand(local, remote, command);
     }
 
 }

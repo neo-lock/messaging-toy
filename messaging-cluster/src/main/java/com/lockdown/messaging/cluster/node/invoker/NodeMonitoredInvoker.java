@@ -18,7 +18,7 @@ public class NodeMonitoredInvoker implements NodeCommandInvoker<LocalServerNode>
 
     @Override
     public void executeCommand(LocalServerNode invoke, RemoteServerNode remote, NodeCommand command) {
-        if(invoke.isAttached()){
+        if (invoke.isAttached()) {
             logger.warn(" current node monitored,ignore command !");
             return;
         }

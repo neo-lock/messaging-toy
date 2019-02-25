@@ -4,6 +4,6 @@ import com.lockdown.messaging.cluster.command.NodeCommand;
 
 public interface CommandAcceptor {
 
-    void commandEvent(RemoteServerNode serverNode,NodeCommand command);
+    void commandEvent(RemoteServerNode serverNode, NodeCommand command);
 
 }

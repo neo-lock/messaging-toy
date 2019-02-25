@@ -12,32 +12,32 @@ public class ServerNodeEventHandler implements ServerNodeEventListener {
 
 
     public void setEventListener(ServerNodeEventListener eventListener) {
-        if(Objects.isNull(eventListener)){
+        if (Objects.isNull(eventListener)) {
             throw new IllegalStateException(" event listener already set !");
         }
         this.eventListener = eventListener;
     }
 
     @Override
-    public void nodeRegistered(RemoteServerNode remoteServerNode,NodeCommand command) {
-        if(Objects.nonNull(eventListener)){
-            eventListener.nodeRegistered(remoteServerNode,command);
+    public void nodeRegistered(RemoteServerNode remoteServerNode, NodeCommand command) {
+        if (Objects.nonNull(eventListener)) {
+            eventListener.nodeRegistered(remoteServerNode, command);
         }
 
     }
 
     @Override
     public void inactive(ServerDestination destination) {
-        if(Objects.nonNull(eventListener)){
+        if (Objects.nonNull(eventListener)) {
             eventListener.inactive(destination);
         }
     }
 
 
     @Override
-    public void commandEvent(RemoteServerNode serverNode, NodeCommand command)  {
-        if(Objects.nonNull(eventListener)){
-            eventListener.commandEvent(serverNode,command);
+    public void commandEvent(RemoteServerNode serverNode, NodeCommand command) {
+        if (Objects.nonNull(eventListener)) {
+            eventListener.commandEvent(serverNode, command);
         }
     }
 }

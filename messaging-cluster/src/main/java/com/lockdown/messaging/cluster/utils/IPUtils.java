@@ -1,4 +1,5 @@
 package com.lockdown.messaging.cluster.utils;
+
 import com.lockdown.messaging.cluster.exception.MessagingHostException;
 
 import java.net.InetAddress;
@@ -11,23 +12,23 @@ import java.util.Enumeration;
 public class IPUtils {
 
 
-    public static String getLocalIP(){
+    public static String getLocalIP() {
         String os = System.getProperty("os.name").toLowerCase();
 
-        if(os.startsWith("windows")){
+        if (os.startsWith("windows")) {
             try {
                 return getWindowsIp();
             } catch (UnknownHostException e) {
                 throw new MessagingHostException(e);
             }
-        }else if(os.startsWith("linux")){
+        } else if (os.startsWith("linux")) {
             try {
                 return getLinuxLocalIp();
             } catch (SocketException e) {
                 throw new MessagingHostException(e);
             }
-        }else{
-            throw new MessagingHostException("不支持当前操作系统 ["+os+"]");
+        } else {
+            throw new MessagingHostException("不支持当前操作系统 [" + os + "]");
         }
 
     }
@@ -41,11 +42,11 @@ public class IPUtils {
     private static String getLinuxLocalIp() throws SocketException {
         String ip = "";
         try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
                 NetworkInterface intf = en.nextElement();
                 String name = intf.getName();
                 if (!name.contains("docker") && !name.contains("lo")) {
-                    for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
                         InetAddress inetAddress = enumIpAddr.nextElement();
                         if (!inetAddress.isLoopbackAddress()) {
                             String ipaddress = inetAddress.getHostAddress().toString();
@@ -61,12 +62,12 @@ public class IPUtils {
             ip = "127.0.0.1";
             ex.printStackTrace();
         }
-        System.out.println("IP:"+ip);
+        System.out.println("IP:" + ip);
         return ip;
     }
 
     public static void main(String[] args) throws UnknownHostException {
-        System.out.println(" address :"+IPUtils.getLocalIP());
+        System.out.println(" address :" + IPUtils.getLocalIP());
     }
 
 }

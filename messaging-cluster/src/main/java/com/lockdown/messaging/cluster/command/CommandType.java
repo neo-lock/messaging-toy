@@ -9,10 +9,10 @@ public enum CommandType implements CommandConverter {
         @Override
         public NodeCommand bytesToCommand(byte[] content) {
             try {
-                if(null==content||content.length==0){
+                if (null == content || content.length == 0) {
                     throw new IllegalArgumentException(" content can not be empty !");
                 }
-                return ProtostuffUtils.bytesToMessage(content,NodeRegister.class);
+                return ProtostuffUtils.bytesToMessage(content, NodeRegister.class);
             } catch (IllegalAccessException | InstantiationException e) {
                 throw new MessagingSerializeException(e);
             }
@@ -23,14 +23,14 @@ public enum CommandType implements CommandConverter {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
-    REGISTER_FORWARD((short)2){
+    REGISTER_FORWARD((short) 2) {
         @Override
         public NodeCommand bytesToCommand(byte[] content) {
             try {
-                if(null==content||content.length==0){
+                if (null == content || content.length == 0) {
                     throw new IllegalArgumentException(" content can not be empty !");
                 }
-                return ProtostuffUtils.bytesToMessage(content,NodeRegisterForward.class);
+                return ProtostuffUtils.bytesToMessage(content, NodeRegisterForward.class);
             } catch (IllegalAccessException | InstantiationException e) {
                 throw new MessagingSerializeException(e);
             }
@@ -41,14 +41,14 @@ public enum CommandType implements CommandConverter {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
-    GREETING((short)3){
+    GREETING((short) 3) {
         @Override
         public NodeCommand bytesToCommand(byte[] content) {
             try {
-                if(null==content||content.length==0){
+                if (null == content || content.length == 0) {
                     throw new IllegalArgumentException(" content can not be empty !");
                 }
-                return ProtostuffUtils.bytesToMessage(content,NodeGreeting.class);
+                return ProtostuffUtils.bytesToMessage(content, NodeGreeting.class);
             } catch (IllegalAccessException | InstantiationException e) {
                 throw new MessagingSerializeException(e);
             }
@@ -59,14 +59,14 @@ public enum CommandType implements CommandConverter {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
-    MONITORED((short)4){
+    MONITORED((short) 4) {
         @Override
         public NodeCommand bytesToCommand(byte[] content) {
             try {
-                if(null==content||content.length==0){
+                if (null == content || content.length == 0) {
                     throw new IllegalArgumentException(" content can not be empty !");
                 }
-                return ProtostuffUtils.bytesToMessage(content,NodeMonitored.class);
+                return ProtostuffUtils.bytesToMessage(content, NodeMonitored.class);
             } catch (IllegalAccessException | InstantiationException e) {
                 throw new MessagingSerializeException(e);
             }
@@ -77,14 +77,14 @@ public enum CommandType implements CommandConverter {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
-    CLOSED((short)9){
+    CLOSED((short) 9) {
         @Override
         public NodeCommand bytesToCommand(byte[] content) {
             try {
-                if(null==content||content.length==0){
+                if (null == content || content.length == 0) {
                     throw new IllegalArgumentException(" content can not be empty !");
                 }
-                return ProtostuffUtils.bytesToMessage(content,NodeClosed.class);
+                return ProtostuffUtils.bytesToMessage(content, NodeClosed.class);
             } catch (IllegalAccessException | InstantiationException e) {
                 throw new MessagingSerializeException(e);
             }

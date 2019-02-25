@@ -17,7 +17,7 @@ public class NodeClosedInvoker implements NodeCommandInvoker<LocalServerNode> {
     public void executeCommand(LocalServerNode invoke, RemoteServerNode remote, NodeCommand command) {
         invoke.matchClearMonitor(remote.destination());
 
-        if(invoke.matchClearAttached(remote.destination())){
+        if (invoke.matchClearAttached(remote.destination())) {
             //随机注册
         }
     }

@@ -1,4 +1,5 @@
 package com.lockdown.messaging.cluster.node.invoker;
+
 import com.lockdown.messaging.cluster.command.CommandType;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.command.NodeMonitored;
@@ -20,13 +21,13 @@ public class NodeRegisterInvoker implements NodeCommandInvoker<LocalServerNode> 
 
     @Override
     public void executeCommand(LocalServerNode local, RemoteServerNode remote, NodeCommand command) {
-        if(local.isMonitored()){
+        if (local.isMonitored()) {
             logger.info(" 当前节点已经存在监控，开始转发 ");
-            local.notifyRemote(new NodeRegisterForward(remote.destination()),remote.destination());
-        }else{
-            logger.info(" 开始监控节点 {}",remote.destination());
+            local.notifyRemote(new NodeRegisterForward(remote.destination()), remote.destination());
+        } else {
+            logger.info(" 开始监控节点 {}", remote.destination());
             local.monitor(remote.destination());
-            local.sendCommand(remote.destination(),new NodeMonitored(local.destination()));
+            local.sendCommand(remote.destination(), new NodeMonitored(local.destination()));
         }
     }
 }

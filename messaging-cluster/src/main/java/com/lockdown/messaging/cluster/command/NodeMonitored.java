@@ -1,4 +1,5 @@
 package com.lockdown.messaging.cluster.command;
+
 import com.lockdown.messaging.cluster.ServerDestination;
 
 public class NodeMonitored extends AbstractNodeCommand implements RegisterNature {

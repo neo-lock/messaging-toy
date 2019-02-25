@@ -4,7 +4,7 @@ import com.lockdown.messaging.cluster.ServerDestination;
 
 public class NodeRegister extends AbstractNodeCommand implements RegisterNature {
 
-    public NodeRegister(){
+    public NodeRegister() {
         super();
     }
 

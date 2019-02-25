@@ -7,8 +7,6 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-
 public class NodeCommandEncoder extends MessageToByteEncoder<NodeCommand> {
 
 
@@ -22,14 +20,14 @@ public class NodeCommandEncoder extends MessageToByteEncoder<NodeCommand> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, NodeCommand command, ByteBuf byteBuf) throws Exception {
-        try{
+        try {
             byte[] content = command.type().CommandToBytes(command);
-            byteBuf.writeInt(NodeCommand.BASE_LENGTH+content.length);
+            byteBuf.writeInt(NodeCommand.BASE_LENGTH + content.length);
             byteBuf.writeShort(command.type().getType());
             if (content.length > 0) {
                 byteBuf.writeBytes(content);
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             throw ex;
         }

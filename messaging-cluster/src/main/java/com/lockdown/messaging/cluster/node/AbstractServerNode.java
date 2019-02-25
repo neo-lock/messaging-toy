@@ -1,4 +1,5 @@
 package com.lockdown.messaging.cluster.node;
+
 import com.lockdown.messaging.cluster.ServerDestination;
 
 public abstract class AbstractServerNode implements ServerNode {

@@ -18,11 +18,11 @@ public class NodeRegisterForwardInvoker implements NodeCommandInvoker<LocalServe
     @Override
     public void executeCommand(LocalServerNode local, RemoteServerNode remote, NodeCommand command) {
         NodeRegisterForward registerForward = (NodeRegisterForward) command;
-        if(local.isMonitored()){
+        if (local.isMonitored()) {
             logger.info(" 当前节点已经监控，打个招呼");
-            local.sendCommand(registerForward.getSource(),new NodeGreeting(local.destination()));
-        }else{
-            local.sendCommand(registerForward.getSource(),new NodeMonitored(local.destination()));
+            local.sendCommand(registerForward.getSource(), new NodeGreeting(local.destination()));
+        } else {
+            local.sendCommand(registerForward.getSource(), new NodeMonitored(local.destination()));
             local.monitor(registerForward.getSource());
         }
     }

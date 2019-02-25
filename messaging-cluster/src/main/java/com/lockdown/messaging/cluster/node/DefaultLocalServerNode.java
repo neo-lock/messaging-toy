@@ -2,7 +2,6 @@ package com.lockdown.messaging.cluster.node;
 
 
 import com.alibaba.fastjson.JSON;
-import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.command.NodeRegister;
@@ -15,7 +14,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 /**
  * 状态
@@ -24,7 +22,7 @@ import java.util.function.Consumer;
  * <p>
  * 有了跟班的状态
  */
-public class DefaultLocalServerNode implements LocalServerNode,CommandAcceptor {
+public class DefaultLocalServerNode implements LocalServerNode, CommandAcceptor {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -34,14 +32,14 @@ public class DefaultLocalServerNode implements LocalServerNode,CommandAcceptor {
     private ServerDestination localDestination;
     private LocalServerNodeCommandExecutor commandExecutor = new LocalServerNodeCommandExecutor();
 
-    DefaultLocalServerNode(RemoteNodeMonitor remoteNodeMonitor,ServerDestination destination) {
+    DefaultLocalServerNode(RemoteNodeMonitor remoteNodeMonitor, ServerDestination destination) {
         this.remoteNodeMonitor = remoteNodeMonitor;
+        this.remoteNodeMonitor.registerCommandHandler(this);
         this.localDestination = destination;
         this.initCommandExecutor();
     }
 
-    private void initCommandExecutor(){
-        this.remoteNodeMonitor.registerCommandHandler(this);
+    private void initCommandExecutor() {
         this.commandExecutor.registerInvoker(new NodeRegisterInvoker());
         this.commandExecutor.registerInvoker(new NodeRegisterForwardInvoker());
         this.commandExecutor.registerInvoker(new NodeMonitoredInvoker());
@@ -55,20 +53,19 @@ public class DefaultLocalServerNode implements LocalServerNode,CommandAcceptor {
     }
 
 
-
     @Override
     public boolean isMonitored() {
         return Objects.nonNull(monitor.get());
     }
 
     @Override
-    public void notifyRemote(NodeCommand command,ServerDestination...ignore) {
+    public void notifyRemote(NodeCommand command, ServerDestination... ignore) {
         Set<ServerDestination> ignoreSet = new HashSet<>();
-        if(null!=ignore && ignore.length>0){
+        if (null != ignore && ignore.length > 0) {
             ignoreSet.addAll(Arrays.asList(ignore));
         }
-        remoteNodeMonitor.remoteNodes().forEach(remoteServerNode ->{
-            if(ignoreSet.contains(remoteServerNode.destination())){
+        remoteNodeMonitor.remoteNodes().forEach(remoteServerNode -> {
+            if (ignoreSet.contains(remoteServerNode.destination())) {
                 return;
             }
             remoteServerNode.sendCommand(command);
@@ -77,35 +74,34 @@ public class DefaultLocalServerNode implements LocalServerNode,CommandAcceptor {
 
     @Override
     public void monitor(ServerDestination destination) {
-        if(Objects.nonNull(monitor.get())){
+        if (Objects.nonNull(monitor.get())) {
             throw new IllegalStateException(" monitor already set !");
         }
-        logger.info(" 开始监控节点 {}",destination);
+        logger.info(" 开始监控节点 {}", destination);
         monitor.set(destination);
     }
 
     @Override
     public void attachTo(ServerDestination destination) {
-        if(Objects.nonNull(attached.get())){
+        if (Objects.nonNull(attached.get())) {
             throw new IllegalStateException(" attached already set !");
         }
-        logger.info(" 被节点 {} 监控",destination);
+        logger.info(" 被节点 {} 监控", destination);
         attached.set(destination);
     }
 
     @Override
-    public void sendCommand(ServerDestination target,NodeCommand command) {
+    public void sendCommand(ServerDestination target, NodeCommand command) {
         RemoteServerNode remoteServerNode = remoteNodeMonitor.getRemoteNode(target);
-        logger.info(" send command : {}{} to destination {}",command.getClass(), JSON.toJSONString(command),JSON.toJSONString(target));
+        logger.info(" send command : {}{} to destination {}", command.getClass(), JSON.toJSONString(command), JSON.toJSONString(target));
         remoteServerNode.sendCommand(command);
     }
-
 
 
     @Override
     public boolean matchClearMonitor(ServerDestination destination) {
         Objects.requireNonNull(destination);
-        if(isMonitored()&&destination.identifier().endsWith(this.monitor.get().identifier())){
+        if (isMonitored() && destination.identifier().endsWith(this.monitor.get().identifier())) {
             this.monitor.set(null);
             return true;
         }
@@ -120,7 +116,7 @@ public class DefaultLocalServerNode implements LocalServerNode,CommandAcceptor {
     @Override
     public boolean matchClearAttached(ServerDestination destination) {
         Objects.requireNonNull(destination);
-        if(isAttached()&&destination.identifier().endsWith(this.attached.get().identifier())){
+        if (isAttached() && destination.identifier().endsWith(this.attached.get().identifier())) {
             this.attached.set(null);
             return true;
         }
@@ -135,7 +131,7 @@ public class DefaultLocalServerNode implements LocalServerNode,CommandAcceptor {
 
     @Override
     public void commandEvent(RemoteServerNode serverNode, NodeCommand command) {
-        this.commandExecutor.executeCommand(this,serverNode,command);
+        this.commandExecutor.executeCommand(this, serverNode, command);
     }
 
 

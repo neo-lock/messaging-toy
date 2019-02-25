@@ -7,9 +7,9 @@ import com.sun.istack.internal.NotNull;
 import java.util.Collection;
 
 /**
- *  节点的监控
+ * 节点的监控
  */
-public interface RemoteNodeMonitor extends ServerNodeEventListener{
+public interface RemoteNodeMonitor extends ServerNodeEventListener {
 
 
     RemoteServerNode getRemoteNode(@NotNull ServerDestination destination);

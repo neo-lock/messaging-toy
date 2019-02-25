@@ -6,18 +6,19 @@ public abstract class AbstractNodeCommand implements NodeCommand {
 
     protected ServerDestination source;
 
-    public AbstractNodeCommand(){}
-
-    public AbstractNodeCommand(ServerDestination source) {
-        this.source = source;
+    public AbstractNodeCommand() {
     }
 
-    public void setSource(ServerDestination source) {
+    public AbstractNodeCommand(ServerDestination source) {
         this.source = source;
     }
 
     @Override
     public ServerDestination getSource() {
         return source;
+    }
+
+    public void setSource(ServerDestination source) {
+        this.source = source;
     }
 }
