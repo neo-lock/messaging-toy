@@ -3,7 +3,6 @@ package com.lockdown.messaging.cluster.node;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.sun.istack.internal.NotNull;
-
 import java.util.Collection;
 
 /**

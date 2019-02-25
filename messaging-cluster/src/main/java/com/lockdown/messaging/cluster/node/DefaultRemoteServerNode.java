@@ -3,20 +3,21 @@ package com.lockdown.messaging.cluster.node;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 public class DefaultRemoteServerNode extends AbstractServerNode implements RemoteServerNode {
 
-    private final Channel channel;
+    private final ChannelFuture channel;
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public DefaultRemoteServerNode(Channel channel) {
+    public DefaultRemoteServerNode(ChannelFuture channel) {
         this.channel = channel;
     }
 
-    public DefaultRemoteServerNode(Channel channel, ServerDestination destination) {
+    public DefaultRemoteServerNode(ChannelFuture channel, ServerDestination destination) {
         this(channel);
         this.destination = destination;
     }
@@ -24,7 +25,7 @@ public class DefaultRemoteServerNode extends AbstractServerNode implements Remot
     @Override
     public void sendCommand(NodeCommand command) {
         logger.info(" current remote  destination {}", this.destination);
-        this.channel.writeAndFlush(command);
+        this.channel.channel().writeAndFlush(command);
     }
 
 

@@ -28,7 +28,7 @@ public class RemoteNodeCommandHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         ServerDestination destination = new ServerDestination(socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
-        serverNode = ServerNodeFactory.getRemoteNodeInstance(ctx.channel(), destination);
+        serverNode = ServerNodeFactory.getRemoteNodeInstance(ctx.channel().newSucceededFuture(), destination);
     }
 
 

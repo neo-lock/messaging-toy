@@ -23,7 +23,7 @@ public class LocalNodeCommandHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        serverNode = ServerNodeFactory.getRemoteNodeInstance(ctx.channel());
+        serverNode = ServerNodeFactory.getRemoteNodeInstance(ctx.channel().newSucceededFuture());
     }
 
 

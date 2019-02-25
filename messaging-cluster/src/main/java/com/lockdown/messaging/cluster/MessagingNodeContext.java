@@ -4,38 +4,25 @@ import com.lockdown.messaging.cluster.node.ServerNodeEventHandler;
 import com.lockdown.messaging.cluster.node.ServerNodeEventListener;
 import com.lockdown.messaging.cluster.utils.IPUtils;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.util.concurrent.EventExecutorGroup;
-
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
-public class MessagingNodeContext {
 
+public class MessagingNodeContext {
 
     private Destination localDestination;
     private MessagingProperties properties;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private ExecutorService segmentGroup;
+    private LocalClient localClient;
     private ServerNodeEventHandler eventHandler = new ServerNodeEventHandler();
-    private Set<EventLoopGroup> clientGroups = new HashSet<>();
+
 
     public MessagingNodeContext(MessagingProperties properties) {
         this.properties = properties;
         this.localDestination = new ServerDestination(IPUtils.getLocalIP(), properties.getNodePort());
     }
 
-    public EventLoopGroup createEventLoopGroup(int thread) {
-        EventLoopGroup loopGroup = new NioEventLoopGroup(thread);
-        clientGroups.add(loopGroup);
-        return loopGroup;
-    }
-
-    public LocalClient newLocalClient() {
-        return new ClusterLocalClient(this);
-    }
 
     public Destination getLocalDestination() {
         return this.localDestination;
@@ -77,7 +64,6 @@ public class MessagingNodeContext {
         if (!segmentGroup.isShutdown()) {
             segmentGroup.shutdown();
         }
-        clientGroups.forEach(EventExecutorGroup::shutdownGracefully);
     }
 
 
@@ -88,4 +74,17 @@ public class MessagingNodeContext {
     public Destination getClusterDestination() {
         return properties.masterTarget();
     }
+
+    public void initLocalClient() {
+        this.localClient = new ClusterLocalClient(this);
+    }
+
+    public LocalClient getLocalClient() {
+        return localClient;
+    }
+
+    public void executeRunnable(Runnable runnable){
+        this.segmentGroup.execute(runnable);
+    }
+
 }

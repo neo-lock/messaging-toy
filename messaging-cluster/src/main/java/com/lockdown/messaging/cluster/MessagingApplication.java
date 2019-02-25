@@ -11,7 +11,7 @@ public class MessagingApplication {
         MessagingNodeContext serverContext = new MessagingNodeContext(new MessagingProperties() {
             @Override
             public int getNodePort() {
-                return 9090;
+                return 9092;
             }
 
             @Override
@@ -24,6 +24,7 @@ public class MessagingApplication {
         EventLoopGroup worker = new NioEventLoopGroup(2);
         serverContext.setWorkerGroup(worker);
         serverContext.setSegmentGroup(worker);
+        serverContext.initLocalClient();
         ClusterLocalServer localServer = new ClusterLocalServer(serverContext);
         try {
             localServer.start();

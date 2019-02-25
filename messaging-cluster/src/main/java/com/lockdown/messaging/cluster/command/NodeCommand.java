@@ -2,7 +2,7 @@ package com.lockdown.messaging.cluster.command;
 
 import com.lockdown.messaging.cluster.ServerDestination;
 
-public interface NodeCommand {
+public interface NodeCommand extends Cloneable {
 
     int BASE_LENGTH = 6;
 

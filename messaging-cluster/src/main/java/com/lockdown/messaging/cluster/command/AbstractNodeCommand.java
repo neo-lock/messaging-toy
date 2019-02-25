@@ -21,4 +21,5 @@ public abstract class AbstractNodeCommand implements NodeCommand {
     public void setSource(ServerDestination source) {
         this.source = source;
     }
+
 }

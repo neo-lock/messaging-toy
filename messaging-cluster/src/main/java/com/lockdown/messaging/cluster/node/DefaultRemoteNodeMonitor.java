@@ -49,17 +49,17 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
             throw new UnsupportedOperationException(" 不用连接自己!");
         }
         RemoteServerNode serverNode = null;
-        synchronized (lock) {
-            if (!nodeContext.containsKey(destination)) {
-                ChannelFuture channelFuture = messagingNodeContext.newLocalClient().connect(destination);
-                serverNode = ServerNodeFactory.getRemoteNodeInstance(channelFuture.channel(), destination);
-                addRemoteNode(serverNode);
-                return serverNode;
-            } else {
-                return nodeContext.get(destination);
-            }
+        if (!nodeContext.containsKey(destination)) {
+            ChannelFuture channelFuture = messagingNodeContext.getLocalClient().connect(destination);
+            serverNode = ServerNodeFactory.getRemoteNodeInstance(channelFuture, destination);
+            addRemoteNode(serverNode);
+            return serverNode;
+        } else {
+            return nodeContext.get(destination);
         }
     }
+
+
 
     private void addRemoteNode(RemoteServerNode remoteServerNode) {
         logger.info(" 添加一个远程节点 {}", remoteServerNode.destination());
@@ -126,7 +126,7 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
         if (invokeContext.containsKey(command.type())) {
             invokeContext.get(command.type()).executeCommand(invoke, remote, command);
         }
-        commandForward(remote, command);
+        messagingNodeContext.executeRunnable(() -> commandForward(remote, command));
     }
 
 

@@ -22,7 +22,7 @@ public class LocalServerNodeInitializer implements LocalServerEventListener {
         serverContext.registerEventHandler(monitor);
         LocalServerNode localServerNode = new DefaultLocalServerNode(monitor, (ServerDestination) serverContext.getLocalDestination());
         logger.info(" 连接集群");
-        if (Objects.nonNull(serverContext.getClusterDestination()) && !serverContext.getLocalDestination().identifier().equals(serverContext.getClusterDestination().identifier())) {
+        if (Objects.nonNull(serverContext.getClusterDestination()) && !serverContext.getLocalDestination().equals(serverContext.getClusterDestination())) {
             localServerNode.registerToCluster((ServerDestination) serverContext.getClusterDestination());
         }
     }
