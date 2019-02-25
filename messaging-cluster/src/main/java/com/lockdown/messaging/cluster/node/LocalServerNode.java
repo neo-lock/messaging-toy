@@ -22,9 +22,10 @@ public interface LocalServerNode extends ServerNode {
 
     boolean isAttached();
 
-    boolean monitorCompareClear(ServerDestination destination);
+    boolean monitorCompareAndSet(ServerDestination old,ServerDestination update);
 
-    boolean attachedCompareClear(ServerDestination destination);
+
+    boolean attachedCompareAndSet(ServerDestination old,ServerDestination update);
 
 
     void registerRandomNode();

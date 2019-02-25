@@ -98,11 +98,6 @@ public class DefaultLocalServerNode implements LocalServerNode, CommandAcceptor 
     }
 
 
-    @Override
-    public boolean monitorCompareClear(ServerDestination destination) {
-        Objects.requireNonNull(destination);
-        return this.monitor.compareAndSet(destination,null);
-    }
 
     @Override
     public boolean isAttached() {
@@ -110,9 +105,13 @@ public class DefaultLocalServerNode implements LocalServerNode, CommandAcceptor 
     }
 
     @Override
-    public boolean attachedCompareClear(ServerDestination destination) {
-        Objects.requireNonNull(destination);
-        return this.attached.compareAndSet(destination,null);
+    public boolean monitorCompareAndSet(ServerDestination old, ServerDestination update) {
+        return monitor.compareAndSet(old,update);
+    }
+
+    @Override
+    public boolean attachedCompareAndSet(ServerDestination old, ServerDestination update) {
+        return attached.compareAndSet(old,update);
     }
 
     @Override
