@@ -23,7 +23,7 @@ public interface LocalServerNode extends ServerNode {
 
     boolean isAttached();
 
-    boolean matchClearMonitor(ServerDestination destination);
+    boolean monitorCompareClear(ServerDestination destination);
 
-    boolean matchClearAttached(ServerDestination destination);
+    boolean attachedCompareClear(ServerDestination destination);
 }
