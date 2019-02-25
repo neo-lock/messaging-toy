@@ -1,11 +1,9 @@
 package com.lockdown.messaging.cluster;
 
 import com.lockdown.messaging.cluster.event.LocalServerEventListener;
-import com.lockdown.messaging.cluster.node.LocalServerNodeInitializer;
 import com.lockdown.messaging.cluster.sockethandler.LocalNodeCommandHandler;
 import com.lockdown.messaging.cluster.sockethandler.NodeCommandDecoder;
 import com.lockdown.messaging.cluster.sockethandler.NodeCommandEncoder;
-import com.lockdown.messaging.cluster.utils.GlobalTimer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -14,28 +12,29 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 public class ClusterLocalServer implements LocalServer {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private CountDownLatch countDownLatch = new CountDownLatch(1);
     private final MessagingNodeContext serverContext;
-    private Set<LocalServerEventListener> eventListeners = new HashSet<>();
+    private List<LocalServerEventListener> eventListeners = new ArrayList<>();
 
 
     public ClusterLocalServer(MessagingNodeContext serverContext) {
         this.serverContext = serverContext;
-        this.registerDefaultListener();
+
     }
 
-    private void registerDefaultListener(){
-        eventListeners.add(new LocalServerNodeInitializer());
-        eventListeners.add(new GlobalTimer());
+    @Override
+    public void addEventListener(LocalServerEventListener... listeners) {
+        if(Objects.nonNull(listeners)){
+            eventListeners.addAll(Arrays.asList(listeners));
+        }
     }
+
 
     public void start() throws InterruptedException {
         try {
@@ -46,7 +45,7 @@ public class ClusterLocalServer implements LocalServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new NodeCommandDecoder(serverContext.getProperties().getNodePort()), new NodeCommandEncoder(serverContext.getProperties().getNodePort()));
-                            socketChannel.pipeline().addLast(new LocalNodeCommandHandler(serverContext.getEventHandler()));
+                            socketChannel.pipeline().addLast(new LocalNodeCommandHandler(serverContext.getEventDispatcher()));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -62,20 +61,22 @@ public class ClusterLocalServer implements LocalServer {
 
     private void triggerStopEvent() {
         final LocalServer localServer = this;
-        eventListeners.forEach(localServerEventListener -> serverContext.executeRunnable(() -> localServerEventListener.serverStop(localServer)));
+        eventListeners.forEach(localServerEventListener -> localServerEventListener.serverStop(localServer));
     }
 
     public void stop() {
         countDownLatch.countDown();
     }
 
+
+
     private void release(){
         serverContext.shutdownExecutor();
     }
 
     private void triggerStartupEvent() {
-        logger.info(" server startup ============ ");
+
         final LocalServer localServer = this;
-        eventListeners.forEach(localServerEventListener -> serverContext.executeRunnable(() -> localServerEventListener.serverStartup(localServer,serverContext)));
+        eventListeners.forEach(localServerEventListener -> localServerEventListener.serverStartup(localServer,serverContext));
     }
 }

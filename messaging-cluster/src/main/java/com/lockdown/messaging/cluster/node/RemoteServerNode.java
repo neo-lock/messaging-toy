@@ -12,4 +12,5 @@ public interface RemoteServerNode extends ServerNode {
     void applyDestination(ServerDestination destination);
 
 
+    void close();
 }

@@ -36,5 +36,10 @@ public class DefaultRemoteServerNode extends AbstractServerNode implements Remot
         this.destination = destination;
     }
 
+    @Override
+    public void close() {
+        this.channel.channel().close();
+    }
+
 
 }

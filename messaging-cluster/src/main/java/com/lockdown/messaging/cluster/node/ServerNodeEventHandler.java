@@ -12,7 +12,10 @@ public class ServerNodeEventHandler implements ServerNodeEventListener {
 
 
     public void setEventListener(ServerNodeEventListener eventListener) {
-        if (Objects.isNull(eventListener)) {
+        if(Objects.isNull(eventListener)){
+            throw new IllegalArgumentException(" event listener can't not be null!");
+        }
+        if (Objects.nonNull(this.eventListener)) {
             throw new IllegalStateException(" event listener already set !");
         }
         this.eventListener = eventListener;

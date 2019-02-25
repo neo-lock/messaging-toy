@@ -1,6 +1,7 @@
 package com.lockdown.messaging.cluster.node;
 
 import com.alibaba.fastjson.JSON;
+import com.lockdown.messaging.cluster.LocalServer;
 import com.lockdown.messaging.cluster.MessagingNodeContext;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.CommandType;
@@ -13,28 +14,27 @@ import com.lockdown.messaging.cluster.utils.GlobalTimer;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
-import jdk.nashorn.internal.objects.Global;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandExecutor<DefaultRemoteNodeMonitor> {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Map<ServerDestination, RemoteServerNode> nodeContext = new ConcurrentHashMap<>();
-    private CommandAcceptor commandAcceptor;
     private MessagingNodeContext messagingNodeContext;
-    private Object lock = new Object();
+    private Map<ServerDestination, RemoteServerNode> nodeContext = new ConcurrentHashMap<>();
     private Map<CommandType, NodeCommandInvoker<DefaultRemoteNodeMonitor>> invokeContext = new HashMap<>();
+    private CommandAcceptor commandAcceptor;
+    private Object lock = new Object();
 
 
-    public DefaultRemoteNodeMonitor(MessagingNodeContext nodeContext) {
+    DefaultRemoteNodeMonitor(MessagingNodeContext nodeContext) {
         this.messagingNodeContext = nodeContext;
         this.initInvokeContext();
-        GlobalTimer.wheelTimer.newTimeout(new NodeDebugTimer(),10,TimeUnit.SECONDS);
     }
 
     private void initInvokeContext() {
@@ -54,7 +54,7 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
         RemoteServerNode serverNode = null;
         synchronized (lock){
             if (!nodeContext.containsKey(destination)) {
-                ChannelFuture channelFuture = messagingNodeContext.getLocalClient().connect(destination);
+                ChannelFuture channelFuture = messagingNodeContext.connect(destination);
                 serverNode = ServerNodeFactory.getRemoteNodeInstance(channelFuture, destination);
                 addRemoteNode(serverNode);
             } else {
@@ -111,6 +111,11 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
         }
     }
 
+    @Override
+    public void printNodes() {
+        logger.info("当前节点信息:{}",JSON.toJSONString(nodeContext.keySet()));
+    }
+
 
     @Override
     public void nodeRegistered(RemoteServerNode remoteServerNode, NodeCommand command) {
@@ -141,6 +146,16 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
             invokeContext.get(command.type()).executeCommand(invoke, remote, command);
         }
         messagingNodeContext.executeRunnable(() -> commandForward(remote, command));
+    }
+
+    @Override
+    public void serverStartup(LocalServer localServer, MessagingNodeContext properties) {
+        //ignore
+    }
+
+    @Override
+    public void serverStop(LocalServer localServer) {
+        nodeContext.values().forEach(RemoteServerNode::close);
     }
 
 

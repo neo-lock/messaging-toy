@@ -8,7 +8,6 @@ public interface LocalServerNode extends ServerNode {
 
     void registerToCluster(ServerDestination destination);
 
-
     boolean isMonitored();
 
     void notifyRemote(NodeCommand command, ServerDestination... ignore);

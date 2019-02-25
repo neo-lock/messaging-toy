@@ -6,5 +6,4 @@ public interface LocalClient {
 
     ChannelFuture connect(ServerDestination source);
 
-
 }

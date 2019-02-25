@@ -6,7 +6,14 @@ public interface MessagingProperties {
     public int getNodePort();
 
 
-    public Destination masterTarget();
+    public ServerDestination masterTarget();
 
 
+    int getBossThreads();
+
+    int getWorkerThreads();
+
+    boolean nodeMonitorEnable();
+
+    long nodeMonitorSeconds();
 }

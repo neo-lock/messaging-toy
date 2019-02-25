@@ -34,7 +34,7 @@ public class ClusterLocalClient implements LocalClient {
             @Override
             public void initChannel(SocketChannel socketChannel) throws Exception {
                 socketChannel.pipeline().addLast(new NodeCommandDecoder(nodeContext.getProperties().getNodePort()), new NodeCommandEncoder(nodeContext.getProperties().getNodePort()));
-                socketChannel.pipeline().addLast(new RemoteNodeCommandHandler(nodeContext.getEventHandler()));
+                socketChannel.pipeline().addLast(new RemoteNodeCommandHandler(nodeContext.getEventDispatcher()));
             }
         });
     }
