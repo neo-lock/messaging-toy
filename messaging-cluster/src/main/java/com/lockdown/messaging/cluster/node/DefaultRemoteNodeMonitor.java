@@ -9,15 +9,17 @@ import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.node.invoker.NodeCommandExecutor;
 import com.lockdown.messaging.cluster.node.invoker.NodeCommandInvoker;
 import com.lockdown.messaging.cluster.sockethandler.ServerNodeFactory;
+import com.lockdown.messaging.cluster.utils.GlobalTimer;
 import io.netty.channel.ChannelFuture;
+import io.netty.util.Timeout;
+import io.netty.util.TimerTask;
+import jdk.nashorn.internal.objects.Global;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandExecutor<DefaultRemoteNodeMonitor> {
 
@@ -32,6 +34,7 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
     public DefaultRemoteNodeMonitor(MessagingNodeContext nodeContext) {
         this.messagingNodeContext = nodeContext;
         this.initInvokeContext();
+        GlobalTimer.wheelTimer.newTimeout(new NodeDebugTimer(),10,TimeUnit.SECONDS);
     }
 
     private void initInvokeContext() {
@@ -49,14 +52,16 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
             throw new UnsupportedOperationException(" 不用连接自己!");
         }
         RemoteServerNode serverNode = null;
-        if (!nodeContext.containsKey(destination)) {
-            ChannelFuture channelFuture = messagingNodeContext.getLocalClient().connect(destination);
-            serverNode = ServerNodeFactory.getRemoteNodeInstance(channelFuture, destination);
-            addRemoteNode(serverNode);
-            return serverNode;
-        } else {
-            return nodeContext.get(destination);
+        synchronized (lock){
+            if (!nodeContext.containsKey(destination)) {
+                ChannelFuture channelFuture = messagingNodeContext.getLocalClient().connect(destination);
+                serverNode = ServerNodeFactory.getRemoteNodeInstance(channelFuture, destination);
+                addRemoteNode(serverNode);
+            } else {
+                serverNode =  nodeContext.get(destination);
+            }
         }
+        return serverNode;
     }
 
 
@@ -71,7 +76,7 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
         logger.info(" 移除一个远程节点 {}", destination);
         if (Objects.nonNull(destination)) {
             RemoteServerNode node = nodeContext.remove(destination);
-            logger.info(" current nodes {}", JSON.toJSON(nodeContext));
+            logger.info(" current nodes {}", JSON.toJSONString(nodeContext));
             return node;
         } else {
             return null;
@@ -95,6 +100,15 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
             throw new IllegalStateException(" command acceptor not set !");
         }
         commandAcceptor.commandEvent(remoteServerNode, command);
+    }
+
+    @Override
+    public RemoteServerNode randomNode() {
+        if(nodeContext.size()==0){
+            return null;
+        }else {
+            return  nodeContext.values().stream().findFirst().orElse(null);
+        }
     }
 
 
@@ -140,6 +154,14 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
         @Override
         public void executeCommand(DefaultRemoteNodeMonitor invoke, RemoteServerNode remote, NodeCommand command) {
             removeRemoteNode(remote.destination());
+        }
+    }
+
+    public class NodeDebugTimer implements TimerTask{
+        @Override
+        public void run(Timeout timeout) throws Exception {
+            logger.info("nodes :  {}",JSON.toJSONString(nodeContext.keySet()));
+            timeout.timer().newTimeout(this,10,TimeUnit.SECONDS);
         }
     }
 

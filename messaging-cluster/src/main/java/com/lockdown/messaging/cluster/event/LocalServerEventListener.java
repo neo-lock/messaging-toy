@@ -9,4 +9,7 @@ public interface LocalServerEventListener {
     public void serverStartup(LocalServer localServer, MessagingNodeContext properties);
 
 
+    public void serverStop(LocalServer localServer);
+
+
 }

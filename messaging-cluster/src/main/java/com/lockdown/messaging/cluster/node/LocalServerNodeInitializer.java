@@ -27,4 +27,9 @@ public class LocalServerNodeInitializer implements LocalServerEventListener {
         }
     }
 
+    @Override
+    public void serverStop(LocalServer localServer) {
+        logger.info(" server stop ============");
+    }
+
 }

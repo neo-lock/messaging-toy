@@ -18,4 +18,6 @@ public interface RemoteNodeMonitor extends ServerNodeEventListener {
     void registerCommandHandler(CommandAcceptor acceptor);
 
     void commandForward(RemoteServerNode remoteServerNode, NodeCommand command);
+
+    RemoteServerNode randomNode();
 }

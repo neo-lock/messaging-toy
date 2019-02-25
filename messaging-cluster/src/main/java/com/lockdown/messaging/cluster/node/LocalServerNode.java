@@ -20,10 +20,12 @@ public interface LocalServerNode extends ServerNode {
 
     void attachTo(ServerDestination destination);
 
-
     boolean isAttached();
 
     boolean monitorCompareClear(ServerDestination destination);
 
     boolean attachedCompareClear(ServerDestination destination);
+
+
+    void registerRandomNode();
 }

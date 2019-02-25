@@ -116,6 +116,14 @@ public class DefaultLocalServerNode implements LocalServerNode, CommandAcceptor 
     }
 
     @Override
+    public void registerRandomNode() {
+        RemoteServerNode node = remoteNodeMonitor.randomNode();
+        if(Objects.nonNull(node)){
+            sendCommand(node.destination(),new NodeRegister(this.localDestination));
+        }
+    }
+
+    @Override
     public ServerDestination destination() {
         return this.localDestination;
     }

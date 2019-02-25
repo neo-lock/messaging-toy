@@ -5,26 +5,36 @@ import com.lockdown.messaging.cluster.node.LocalServerNodeInitializer;
 import com.lockdown.messaging.cluster.sockethandler.LocalNodeCommandHandler;
 import com.lockdown.messaging.cluster.sockethandler.NodeCommandDecoder;
 import com.lockdown.messaging.cluster.sockethandler.NodeCommandEncoder;
+import com.lockdown.messaging.cluster.utils.GlobalTimer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class ClusterLocalServer implements LocalServer {
 
-
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private CountDownLatch countDownLatch = new CountDownLatch(1);
-    private MessagingNodeContext serverContext;
-    private LocalServerEventListener eventListener;
+    private final MessagingNodeContext serverContext;
+    private Set<LocalServerEventListener> eventListeners = new HashSet<>();
 
 
     public ClusterLocalServer(MessagingNodeContext serverContext) {
         this.serverContext = serverContext;
-        this.eventListener = new LocalServerNodeInitializer();
+        this.registerDefaultListener();
+    }
+
+    private void registerDefaultListener(){
+        eventListeners.add(new LocalServerNodeInitializer());
+        eventListeners.add(new GlobalTimer());
     }
 
     public void start() throws InterruptedException {
@@ -45,18 +55,27 @@ public class ClusterLocalServer implements LocalServer {
             triggerStartupEvent();
             countDownLatch.await();
         } finally {
-            serverContext.shutdownExecutor();
+            triggerStopEvent();
+            release();
         }
+    }
+
+    private void triggerStopEvent() {
+        final LocalServer localServer = this;
+        eventListeners.forEach(localServerEventListener -> serverContext.executeRunnable(() -> localServerEventListener.serverStop(localServer)));
     }
 
     public void stop() {
         countDownLatch.countDown();
     }
 
+    private void release(){
+        serverContext.shutdownExecutor();
+    }
 
     private void triggerStartupEvent() {
-        if (Objects.nonNull(eventListener)) {
-            eventListener.serverStartup(this, this.serverContext);
-        }
+        logger.info(" server startup ============ ");
+        final LocalServer localServer = this;
+        eventListeners.forEach(localServerEventListener -> serverContext.executeRunnable(() -> localServerEventListener.serverStartup(localServer,serverContext)));
     }
 }

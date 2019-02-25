@@ -11,14 +11,14 @@ public class MessagingApplication {
         MessagingNodeContext serverContext = new MessagingNodeContext(new MessagingProperties() {
             @Override
             public int getNodePort() {
-                return 9092;
+                return 9093;
             }
-
             @Override
             public Destination masterTarget() {
                 //return null;
                 return new ServerDestination("192.168.56.1", 9090);
             }
+
         });
         serverContext.setBossGroup(new NioEventLoopGroup(1));
         EventLoopGroup worker = new NioEventLoopGroup(2);
@@ -30,8 +30,6 @@ public class MessagingApplication {
             localServer.start();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } finally {
-            serverContext.shutdownExecutor();
         }
     }
 
