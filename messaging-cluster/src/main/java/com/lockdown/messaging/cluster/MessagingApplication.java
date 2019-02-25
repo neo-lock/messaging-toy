@@ -16,7 +16,7 @@ public class MessagingApplication {
             @Override
             public Destination masterTarget() {
                 //return null;
-                return new ServerDestination("192.168.56.1", 9090);
+                return new ServerDestination("192.168.56.1", 9091);
             }
 
         });
