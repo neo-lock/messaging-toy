@@ -1,9 +1,7 @@
 package com.lockdown.messaging.cluster.command;
-
-import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.ServerDestination;
 
-public class NodeMonitored extends AbstractNodeCommand {
+public class NodeMonitored extends AbstractNodeCommand implements RegisterNature {
 
     public NodeMonitored() {
         super();

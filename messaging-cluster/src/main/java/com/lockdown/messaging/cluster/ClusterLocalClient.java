@@ -6,6 +6,8 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.nio.NioEventLoop;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
@@ -22,7 +24,7 @@ public class ClusterLocalClient implements LocalClient {
 
     private void init(){
         bootstrap = new Bootstrap();
-        bootstrap.group(nodeContext.getBossGroup());
+        bootstrap.group(nodeContext.createEventLoopGroup(1));
         bootstrap.channel(NioSocketChannel.class);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
@@ -39,12 +41,11 @@ public class ClusterLocalClient implements LocalClient {
 
     @Override
     public ChannelFuture connect(ServerDestination source){
-        return bootstrap.connect(source.getIpAddress(),source.getPort());
-    }
-
-    @Override
-    public ServerDestination localDestination() {
-        return (ServerDestination) nodeContext.getLocalDestination();
+        try{
+            return bootstrap.connect(source.getIpAddress(),source.getPort()).sync();
+        }catch (InterruptedException ex){
+            throw new MessagingInterruptedException(ex);
+        }
     }
 
 }

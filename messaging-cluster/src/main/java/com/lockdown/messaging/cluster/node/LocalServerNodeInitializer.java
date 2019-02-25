@@ -15,11 +15,9 @@ public class LocalServerNodeInitializer implements LocalServerEventListener {
     @Override
     public void serverStartup(LocalServer localServer, MessagingNodeContext serverContext) {
         logger.info(" 本地端口启动成功 ");
-        LocalClient localClient = new ClusterLocalClient(serverContext);
-        RemoteNodeMonitor monitor = new DefaultRemoteNodeMonitor(localClient);
+        RemoteNodeMonitor monitor = new DefaultRemoteNodeMonitor(serverContext);
         serverContext.registerEventHandler(monitor);
         LocalServerNode localServerNode = new DefaultLocalServerNode(monitor, (ServerDestination) serverContext.getLocalDestination());
-
         logger.info(" 连接集群");
         if(Objects.nonNull(serverContext.getClusterDestination())&& !serverContext.getLocalDestination().identifier().equals(serverContext.getClusterDestination().identifier())){
             localServerNode.registerToCluster((ServerDestination) serverContext.getClusterDestination());

@@ -2,7 +2,7 @@ package com.lockdown.messaging.cluster.command;
 
 import com.lockdown.messaging.cluster.ServerDestination;
 
-public class NodeGreeting extends AbstractNodeCommand {
+public class NodeGreeting extends AbstractNodeCommand implements RegisterNature {
 
 
     public NodeGreeting(){}

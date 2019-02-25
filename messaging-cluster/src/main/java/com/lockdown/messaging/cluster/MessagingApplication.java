@@ -31,6 +31,8 @@ public class MessagingApplication {
             localServer.start();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            serverContext.shutdownExecutor();
         }
     }
 

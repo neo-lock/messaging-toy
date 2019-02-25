@@ -2,6 +2,7 @@ package com.lockdown.messaging.cluster.node;
 
 import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.LocalClient;
+import com.lockdown.messaging.cluster.MessagingNodeContext;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.CommandType;
 import com.lockdown.messaging.cluster.command.NodeClosed;
@@ -22,14 +23,14 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor,NodeCommandEx
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Map<ServerDestination,RemoteServerNode> nodeContext = new ConcurrentHashMap<>();
-    private LocalClient localClient;
     private CommandAcceptor commandAcceptor;
+    private MessagingNodeContext messagingNodeContext;
     private Object lock = new Object();
     private Map<CommandType,NodeCommandInvoker<DefaultRemoteNodeMonitor>> invokeContext = new HashMap<>();
 
 
-    public DefaultRemoteNodeMonitor(LocalClient client) {
-        this.localClient = client;
+    public DefaultRemoteNodeMonitor(MessagingNodeContext nodeContext) {
+        this.messagingNodeContext = nodeContext;
         this.initInvokeContext();
     }
 
@@ -44,13 +45,13 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor,NodeCommandEx
 
     @Override
     public RemoteServerNode getRemoteNode(ServerDestination destination){
-        if(destination.equals(localClient.localDestination())){
+        if(destination.equals(messagingNodeContext.getLocalDestination())){
             throw new UnsupportedOperationException(" 不用连接自己!");
         }
         RemoteServerNode serverNode = null;
         synchronized (lock){
             if(!nodeContext.containsKey(destination)){
-                ChannelFuture channelFuture = localClient.connect(destination);
+                ChannelFuture channelFuture =  messagingNodeContext.newLocalClient().connect(destination);
                 serverNode = ServerNodeFactory.getRemoteNodeInstance(channelFuture.channel(),destination);
                 addRemoteNode(serverNode);
                 return serverNode;
@@ -99,12 +100,11 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor,NodeCommandEx
 
 
     @Override
-    public void nodeRegistered(RemoteServerNode remoteServerNode) {
+    public void nodeRegistered(RemoteServerNode remoteServerNode,NodeCommand command) {
         if(Objects.isNull(remoteServerNode.destination())){
             throw new IllegalStateException(" remote server node destination cannot be empty !");
         }
         addRemoteNode(remoteServerNode);
-        commandAcceptor.commandEvent(remoteServerNode,new NodeRegister(remoteServerNode.destination()));
     }
 
 
@@ -112,7 +112,7 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor,NodeCommandEx
     public void inactive(ServerDestination destination) {
         RemoteServerNode node = removeRemoteNode(destination);
         if(Objects.nonNull(node)){
-            commandAcceptor.commandEvent(node,new NodeClosed());
+            commandForward(node,new NodeClosed(node.destination()));
         }
     }
 

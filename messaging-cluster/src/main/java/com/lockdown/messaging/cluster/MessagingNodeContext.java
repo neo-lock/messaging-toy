@@ -1,13 +1,20 @@
 package com.lockdown.messaging.cluster;
 
-import com.lockdown.messaging.cluster.node.*;
+import com.lockdown.messaging.cluster.node.LocalServerNode;
+import com.lockdown.messaging.cluster.node.ServerNodeEventHandler;
+import com.lockdown.messaging.cluster.node.ServerNodeEventListener;
 import com.lockdown.messaging.cluster.utils.IPUtils;
 import com.sun.istack.internal.NotNull;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 
 public class MessagingNodeContext{
@@ -29,12 +36,27 @@ public class MessagingNodeContext{
 
     private LocalServer localServer;
 
+
     private ServerNodeEventHandler eventHandler = new ServerNodeEventHandler();
+
+    private Set<EventLoopGroup> clientGroups = new HashSet<>();
+
+    public EventLoopGroup createEventLoopGroup(int thread){
+        EventLoopGroup loopGroup = new NioEventLoopGroup(thread);
+        clientGroups.add(loopGroup);
+        return loopGroup;
+    }
+
+    public LocalClient newLocalClient(){
+        return new ClusterLocalClient(this);
+    }
+
 
     public MessagingNodeContext(MessagingProperties properties) throws UnknownHostException {
         this.properties = properties;
         this.localDestination = new ServerDestination(IPUtils.getLocalIP(),properties.getNodePort());
     }
+
 
     public Destination getLocalDestination() {
         return this.localDestination;
@@ -47,7 +69,6 @@ public class MessagingNodeContext{
     public void registerEventHandler(ServerNodeEventListener eventListener){
         this.eventHandler.setEventListener(eventListener);
     }
-
 
 
     public LocalServer getLocalServer() {
@@ -104,6 +125,7 @@ public class MessagingNodeContext{
         if (!segmentGroup.isShutdown()) {
             segmentGroup.shutdown();
         }
+        clientGroups.forEach(EventExecutorGroup::shutdownGracefully);
     }
 
 

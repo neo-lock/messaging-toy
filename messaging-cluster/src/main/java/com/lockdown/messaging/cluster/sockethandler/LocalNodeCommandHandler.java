@@ -2,6 +2,7 @@ package com.lockdown.messaging.cluster.sockethandler;
 import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.command.NodeRegister;
+import com.lockdown.messaging.cluster.command.RegisterNature;
 import com.lockdown.messaging.cluster.node.RemoteServerNode;
 import com.lockdown.messaging.cluster.node.ServerNodeEventListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -32,13 +33,14 @@ public class LocalNodeCommandHandler extends ChannelInboundHandlerAdapter {
         if(!(msg instanceof NodeCommand)){
             throw new UnsupportedOperationException(" unsupported message "+msg.getClass());
         }
-        if(msg instanceof NodeRegister){
-            NodeRegister registerCommand = (NodeRegister) msg;
-            serverNode.applyDestination(registerCommand.getSource());
-            eventListener.nodeRegistered(serverNode);
-        }else{
-            eventListener.commandEvent(serverNode, (NodeCommand) msg);
+
+        NodeCommand command = (NodeCommand) msg;
+
+        if(RegisterNature.class.isAssignableFrom(command.getClass())){
+            serverNode.applyDestination(command.getSource());
+            eventListener.nodeRegistered(serverNode,command);
         }
+        eventListener.commandEvent(serverNode, (NodeCommand) msg);
     }
 
     @Override
@@ -50,6 +52,7 @@ public class LocalNodeCommandHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         logger.warn(" channel exception {}",cause.getMessage());
+        cause.printStackTrace();
         ctx.close();
     }
 }

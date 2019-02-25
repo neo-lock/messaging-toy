@@ -19,9 +19,9 @@ public class ServerNodeEventHandler implements ServerNodeEventListener {
     }
 
     @Override
-    public void nodeRegistered(RemoteServerNode remoteServerNode) {
+    public void nodeRegistered(RemoteServerNode remoteServerNode,NodeCommand command) {
         if(Objects.nonNull(eventListener)){
-            eventListener.nodeRegistered(remoteServerNode);
+            eventListener.nodeRegistered(remoteServerNode,command);
         }
 
     }

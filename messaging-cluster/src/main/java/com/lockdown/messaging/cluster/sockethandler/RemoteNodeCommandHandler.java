@@ -48,6 +48,7 @@ public class RemoteNodeCommandHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         logger.warn(" channel exception {}",cause.getMessage());
+        cause.printStackTrace();
         ctx.close();
     }
 }

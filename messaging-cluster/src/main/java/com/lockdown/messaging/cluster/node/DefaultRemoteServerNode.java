@@ -28,6 +28,9 @@ public class DefaultRemoteServerNode extends AbstractServerNode implements Remot
 
 
     public void applyDestination(ServerDestination destination){
+        if(null!=this.destination){
+            return;
+        }
         this.destination = destination;
     }
 

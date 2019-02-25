@@ -16,6 +16,7 @@ public abstract class AbstractNodeCommand implements NodeCommand {
         this.source = source;
     }
 
+    @Override
     public ServerDestination getSource() {
         return source;
     }
