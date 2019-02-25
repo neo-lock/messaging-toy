@@ -13,7 +13,7 @@ public class MessagingApplication {
         MessagingNodeContext serverContext = new MessagingNodeContext(new MessagingProperties() {
             @Override
             public int getNodePort() {
-                return 9092;
+                return 9090;
             }
 
             @Override
