@@ -3,7 +3,7 @@ package com.lockdown.messaging.cluster.node.invoker;
 import com.lockdown.messaging.cluster.command.CommandType;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.node.LocalServerNode;
-import com.lockdown.messaging.cluster.node.RemoteServerNode;
+import com.lockdown.messaging.cluster.node.RemoteNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,9 +30,8 @@ public class LocalServerNodeCommandExecutor implements NodeCommandExecutor<Local
     }
 
 
-
     @Override
-    public void executeCommand(LocalServerNode local, RemoteServerNode remote, NodeCommand command) {
+    public void executeCommand(LocalServerNode local, RemoteNode remote, NodeCommand command) {
         if (!invokerContext.containsKey(command.type())) {
             logger.info(" unsupported current command {}, discard !", command.type());
             return;

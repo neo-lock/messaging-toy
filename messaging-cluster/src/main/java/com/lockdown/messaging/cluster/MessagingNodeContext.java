@@ -1,5 +1,6 @@
 package com.lockdown.messaging.cluster;
 
+import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.event.LocalServerEventListener;
 import com.lockdown.messaging.cluster.node.*;
 import com.lockdown.messaging.cluster.utils.GlobalTimer;
@@ -16,25 +17,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class MessagingNodeContext implements LocalClient,LocalServerEventListener {
+public class MessagingNodeContext implements LocalServerEventListener {
 
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
     private final ServerDestination localDestination;
     private final MessagingProperties properties;
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private ExecutorService segmentGroup;
-    private Class<? extends RemoteNodeMonitorFactory> remoteNodeMonitorFactoryClass;
-    private Class<? extends LocalClientFactory> localClientFactoryClass;
-    private Class<? extends LocalServerFactory> localServerFactoryClass;
-    private Class<? extends LocalServerNodeFactory> localServerNodeFactoryClass;
-    private LocalClient localClient;
-    private LocalServer localServer;
-    private RemoteNodeMonitor remoteNodeMonitor;
     private GlobalTimer globalTimer;
     private LocalServerNode localServerNode;
-    private ServerNodeEventHandler eventDispatcher = new ServerNodeEventHandler();
+    private LocalClientRemoteNodeMonitor nodeMonitor;
+    private GlobalCommandRouter commandRouter;
+    private LocalServer localServer;
+
 
 
     public MessagingNodeContext(MessagingProperties properties) {
@@ -43,16 +40,18 @@ public class MessagingNodeContext implements LocalClient,LocalServerEventListene
     }
 
     public void shutdownExecutor() {
-        bossGroup.shutdownGracefully();
-        workerGroup.shutdownGracefully();
-        if (!segmentGroup.isShutdown()) {
+        if(Objects.nonNull(bossGroup)&&!bossGroup.isShutdown()){
+            bossGroup.shutdownGracefully();
+        }
+        if(Objects.nonNull(workerGroup)&&!workerGroup.isShutdown()){
+            workerGroup.shutdownGracefully();
+        }
+        if(Objects.nonNull(segmentGroup)&&!segmentGroup.isShutdown()){
             segmentGroup.shutdown();
         }
     }
 
-    public RemoteNodeMonitor getRemoteNodeMonitor() {
-        return remoteNodeMonitor;
-    }
+
 
     public ServerDestination getLocalDestination() {
         return localDestination;
@@ -84,12 +83,12 @@ public class MessagingNodeContext implements LocalClient,LocalServerEventListene
 
 
     public MessagingNodeContext setSegmentGroup(ExecutorService segmentGroup) {
-        if(null==segmentGroup){
-            if(null==workerGroup){
+        if (null == segmentGroup) {
+            if (null == workerGroup) {
                 throw new IllegalArgumentException(" segment group can't not be empty !");
             }
             this.segmentGroup = workerGroup;
-        }else{
+        } else {
             this.segmentGroup = segmentGroup;
         }
         return this;
@@ -97,129 +96,82 @@ public class MessagingNodeContext implements LocalClient,LocalServerEventListene
 
 
 
-    public ServerNodeEventHandler getEventDispatcher() {
-        return eventDispatcher;
-    }
-
-    public void executeRunnable(Runnable runnable){
+    public void executeRunnable(Runnable runnable) {
         this.segmentGroup.execute(runnable);
     }
 
 
-    public MessagingNodeContext checkState(){
-        if(properties.getNodePort() == 0){
+    private void checkState() {
+        if (properties.getNodePort() == 0) {
             throw new IllegalStateException(" local node port not set ！");
         }
-        if(Objects.isNull(localDestination)){
+        if (Objects.isNull(localDestination)) {
             throw new IllegalStateException(" local destination not set !");
         }
-        if(Objects.isNull(bossGroup)){
+        if (Objects.isNull(bossGroup)) {
             throw new IllegalStateException(" boss group not set !");
         }
-        if(Objects.isNull(workerGroup)){
+        if (Objects.isNull(workerGroup)) {
             throw new IllegalStateException(" worker group not set! ");
         }
-        if(Objects.isNull(segmentGroup)){
+        if (Objects.isNull(segmentGroup)) {
             throw new IllegalStateException(" segment group not set !");
         }
-        if(Objects.isNull(remoteNodeMonitorFactoryClass)){
-            throw new IllegalStateException(RemoteNodeMonitorFactory.class+" not set !");
-        }
-        if(Objects.isNull(localClientFactoryClass)){
-            throw new IllegalStateException(LocalClientFactory.class+" not set !");
-        }
-        if(Objects.isNull(localServerFactoryClass)){
-            throw new IllegalStateException(LocalServerFactory.class+" not set !");
-        }
-        if(Objects.isNull(localServerNodeFactoryClass)){
-            throw new IllegalStateException(LocalServerNodeFactory.class+" not set !");
-        }
-        return this;
     }
 
-    @Override
-    public ChannelFuture connect(ServerDestination source) {
-        if(null == localClient){
-            throw new IllegalStateException(" local client not set !");
-        }
-        return localClient.connect(source);
-    }
-
-    public MessagingNodeContext setRemoteNodeMonitorFactoryClass(Class<? extends RemoteNodeMonitorFactory> remoteNodeMonitorFactoryClass) {
-        this.remoteNodeMonitorFactoryClass = remoteNodeMonitorFactoryClass;
-        return this;
-    }
-
-    public MessagingNodeContext setLocalClientFactoryClass(Class<? extends LocalClientFactory> clazz) {
-        this.localClientFactoryClass = clazz;
-        return this;
-    }
-
-    public MessagingNodeContext setLocalServerFactoryClass(Class<? extends LocalServerFactory> clazz) {
-        this.localServerFactoryClass = clazz;
-        return this;
-    }
-
-    public MessagingNodeContext setLocalServerNodeFactoryClass(Class<? extends LocalServerNodeFactory> localServerNodeFactoryClass) {
-        this.localServerNodeFactoryClass = localServerNodeFactoryClass;
-        return this;
-    }
-
-    public GlobalTimer getGlobalTimer() {
-        return globalTimer;
+    public LocalClientRemoteNodeMonitor getNodeMonitor() {
+        return nodeMonitor;
     }
 
     public void start() throws Exception {
         checkState();
         globalTimer = new GlobalTimer();
-        Class.forName(remoteNodeMonitorFactoryClass.getName());
-        Class.forName(localClientFactoryClass.getName());
-        Class.forName(localServerFactoryClass.getName());
-        Class.forName(localServerNodeFactoryClass.getName());
-        remoteNodeMonitor = remoteNodeMonitorFactoryClass.newInstance().getInstance(this);
-        localClient = localClientFactoryClass.newInstance().getInstance(this);
-        localServer = localServerFactoryClass.newInstance().getInstance(this);
-        eventDispatcher.setEventListener(remoteNodeMonitor);
-        localServerNode = localServerNodeFactoryClass.newInstance().getInstance(this);
-        localServer.addEventListener(this,remoteNodeMonitor);
+        commandRouter = new DefaultGlobalCommandRouter(this);
+        localServerNode = new DefaultLocalServerNode(commandRouter,this.getLocalDestination());
+        nodeMonitor = new DefaultRemoteNodeMonitor(this);
+        nodeMonitor.initLocalClient(bean -> {
+            bean.registerForwardSlot(commandRouter);
+            commandRouter.registerCommandAcceptor(localServerNode);
+        });
+        localServer = new ClusterLocalServer(this);
+        localServer.addEventListener(this);
         localServer.start();
     }
 
     @Override
     public void serverStartup(LocalServer localServer, MessagingNodeContext context) {
-        logger.info(" 当前地址:{} , 集群地址:{} ",this.localDestination,properties.masterTarget());
-        if(!this.localDestination.equals(this.properties.masterTarget())){
-            logger.info(" 连接集群节点 {}",this.properties.masterTarget());
-            localServerNode.registerToCluster(this.properties.masterTarget());
+        if (!this.localDestination.equals(this.properties.masterTarget())) {
+            logger.info(" 当前地址:{} , 集群地址:{} ", this.localDestination, properties.masterTarget());
+            localServerNode.registerToCluster(properties.masterTarget());
         }
-        globalTimer.serverStartup(localServer,context);
-        if(properties.nodeMonitorEnable()){
-            long delay = properties.nodeMonitorSeconds()<10?10:properties.nodeMonitorSeconds();
-            globalTimer.newTimeout(new NodeMonitorDebug(delay,TimeUnit.SECONDS),delay,TimeUnit.SECONDS);
+        globalTimer.serverStartup(localServer, context);
+        if (properties.nodeMonitorEnable()) {
+            long delay = properties.nodeMonitorSeconds() < 10 ? 10 : properties.nodeMonitorSeconds();
+            globalTimer.newTimeout(new NodeMonitorDebug(delay, TimeUnit.SECONDS), delay, TimeUnit.SECONDS);
         }
-
     }
 
     @Override
     public void serverStop(LocalServer localServer) {
-        //shutdownExecutor();
         globalTimer.serverStop(localServer);
     }
 
-    public  class NodeMonitorDebug implements TimerTask{
+    private class NodeMonitorDebug implements TimerTask{
 
         private final long delay;
-        private final TimeUnit unit;
+        private final TimeUnit timeUnit;
 
-        public NodeMonitorDebug(long delay, TimeUnit unit) {
+        NodeMonitorDebug(long delay, TimeUnit timeUnit) {
             this.delay = delay;
-            this.unit = unit;
+            this.timeUnit = timeUnit;
         }
 
         @Override
         public void run(Timeout timeout) throws Exception {
-            remoteNodeMonitor.printNodes();
-            timeout.timer().newTimeout(this,delay,unit);
+            nodeMonitor.printNodes();
+            timeout.timer().newTimeout(this,delay,timeUnit);
         }
     }
+
+
 }

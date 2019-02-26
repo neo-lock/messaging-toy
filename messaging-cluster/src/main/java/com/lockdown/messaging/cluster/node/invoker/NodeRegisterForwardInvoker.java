@@ -2,7 +2,7 @@ package com.lockdown.messaging.cluster.node.invoker;
 
 import com.lockdown.messaging.cluster.command.*;
 import com.lockdown.messaging.cluster.node.LocalServerNode;
-import com.lockdown.messaging.cluster.node.RemoteServerNode;
+import com.lockdown.messaging.cluster.node.RemoteNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ public class NodeRegisterForwardInvoker implements NodeCommandInvoker<LocalServe
     }
 
     @Override
-    public void executeCommand(LocalServerNode local, RemoteServerNode remote, NodeCommand command) {
+    public void executeCommand(LocalServerNode local, RemoteNode remote, NodeCommand command) {
         NodeRegisterForward registerForward = (NodeRegisterForward) command;
         if (local.isMonitored()) {
             logger.info(" 当前节点已经监控，打个招呼");

@@ -12,14 +12,16 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
 public class ClusterLocalServer implements LocalServer {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private CountDownLatch countDownLatch = new CountDownLatch(1);
     private final MessagingNodeContext serverContext;
+    private CountDownLatch countDownLatch = new CountDownLatch(1);
     private List<LocalServerEventListener> eventListeners = new ArrayList<>();
 
 
@@ -30,7 +32,7 @@ public class ClusterLocalServer implements LocalServer {
 
     @Override
     public void addEventListener(LocalServerEventListener... listeners) {
-        if(Objects.nonNull(listeners)){
+        if (Objects.nonNull(listeners)) {
             eventListeners.addAll(Arrays.asList(listeners));
         }
     }
@@ -45,7 +47,7 @@ public class ClusterLocalServer implements LocalServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new NodeCommandDecoder(serverContext.getProperties().getNodePort()), new NodeCommandEncoder(serverContext.getProperties().getNodePort()));
-                            socketChannel.pipeline().addLast(new LocalNodeCommandHandler(serverContext.getEventDispatcher()));
+                            socketChannel.pipeline().addLast(new LocalNodeCommandHandler(serverContext));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -69,14 +71,13 @@ public class ClusterLocalServer implements LocalServer {
     }
 
 
-
-    private void release(){
+    private void release() {
         serverContext.shutdownExecutor();
     }
 
     private void triggerStartupEvent() {
 
         final LocalServer localServer = this;
-        eventListeners.forEach(localServerEventListener -> localServerEventListener.serverStartup(localServer,serverContext));
+        eventListeners.forEach(localServerEventListener -> localServerEventListener.serverStartup(localServer, serverContext));
     }
 }

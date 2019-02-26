@@ -1,27 +1,28 @@
 package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.command.NodeCommand;
-import com.lockdown.messaging.cluster.event.LocalServerEventListener;
-import com.sun.istack.internal.NotNull;
+import io.netty.channel.ChannelFuture;
+
 import java.util.Collection;
 
 /**
  * 节点的监控
  */
-public interface RemoteNodeMonitor extends ServerNodeEventListener,LocalServerEventListener {
+public interface RemoteNodeMonitor extends RemoteNodeForwardSlot {
 
 
-    RemoteServerNode getRemoteNode(ServerDestination destination);
+    RemoteNode getRemoteNode(ServerDestination destination);
 
-    Collection<RemoteServerNode> remoteNodes();
+    Collection<RemoteNode> AllRemoteNodes();
 
-    void registerCommandHandler(CommandAcceptor acceptor);
+    RemoteNode randomNode();
 
-    void commandForward(RemoteServerNode remoteServerNode, NodeCommand command);
+    void closeNode(RemoteNode remoteNode);
 
-    RemoteServerNode randomNode();
 
+    RemoteNode newRemoteNodeInstance(ChannelFuture channelFuture);
+
+    RemoteNode newRemoteNodeInstance(ChannelFuture channelFuture, ServerDestination destination);
 
     void printNodes();
 }

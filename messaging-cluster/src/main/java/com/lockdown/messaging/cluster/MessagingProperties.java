@@ -3,10 +3,10 @@ package com.lockdown.messaging.cluster;
 public interface MessagingProperties {
 
 
-    public int getNodePort();
+    int getNodePort();
 
 
-    public ServerDestination masterTarget();
+    ServerDestination masterTarget();
 
 
     int getBossThreads();
