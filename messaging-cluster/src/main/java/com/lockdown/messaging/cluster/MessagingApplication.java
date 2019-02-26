@@ -18,7 +18,7 @@ public class MessagingApplication {
                     .setBossGroup(new NioEventLoopGroup(properties.getBossThreads()))
                     .setWorkerGroup(new NioEventLoopGroup(properties.getWorkerThreads()))
                     .setSegmentGroup(null)
-                    .setNodeEventListenerFactoryClass(DefaultRemoteNodeMonitorFactory.class)
+                    .setRemoteNodeMonitorFactoryClass(DefaultRemoteNodeMonitorFactory.class)
                     .setLocalClientFactoryClass(DefaultLocalClientFactory.class)
                     .setLocalServerFactoryClass(DefaultLocalServerFactory.class)
                     .setLocalServerNodeFactoryClass(DefaultLocalServerNodeFactory.class)
@@ -34,7 +34,7 @@ public class MessagingApplication {
         MessagingApplication.run(new MessagingProperties() {
             @Override
             public int getNodePort() {
-                return 9093;
+                return 9092;
             }
 
             @Override

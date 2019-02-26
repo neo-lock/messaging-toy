@@ -172,13 +172,6 @@ public class DefaultRemoteNodeMonitor implements RemoteNodeMonitor, NodeCommandE
         }
     }
 
-    public class NodeDebugTimer implements TimerTask{
-        @Override
-        public void run(Timeout timeout) throws Exception {
-            logger.info("nodes :  {}",JSON.toJSONString(nodeContext.keySet()));
-            timeout.timer().newTimeout(this,10,TimeUnit.SECONDS);
-        }
-    }
 
 
 }

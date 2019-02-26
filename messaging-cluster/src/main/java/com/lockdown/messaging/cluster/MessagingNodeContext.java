@@ -1,6 +1,5 @@
 package com.lockdown.messaging.cluster;
 
-import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.event.LocalServerEventListener;
 import com.lockdown.messaging.cluster.node.*;
 import com.lockdown.messaging.cluster.utils.GlobalTimer;
@@ -12,8 +11,6 @@ import io.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +25,7 @@ public class MessagingNodeContext implements LocalClient,LocalServerEventListene
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private ExecutorService segmentGroup;
-    private Class<? extends RemoteNodeMonitorClassFactory> remoteNodeMonitorClassFactory;
+    private Class<? extends RemoteNodeMonitorFactory> remoteNodeMonitorFactoryClass;
     private Class<? extends LocalClientFactory> localClientFactoryClass;
     private Class<? extends LocalServerFactory> localServerFactoryClass;
     private Class<? extends LocalServerNodeFactory> localServerNodeFactoryClass;
@@ -125,8 +122,8 @@ public class MessagingNodeContext implements LocalClient,LocalServerEventListene
         if(Objects.isNull(segmentGroup)){
             throw new IllegalStateException(" segment group not set !");
         }
-        if(Objects.isNull(remoteNodeMonitorClassFactory)){
-            throw new IllegalStateException(RemoteNodeMonitorClassFactory.class+" not set !");
+        if(Objects.isNull(remoteNodeMonitorFactoryClass)){
+            throw new IllegalStateException(RemoteNodeMonitorFactory.class+" not set !");
         }
         if(Objects.isNull(localClientFactoryClass)){
             throw new IllegalStateException(LocalClientFactory.class+" not set !");
@@ -148,8 +145,8 @@ public class MessagingNodeContext implements LocalClient,LocalServerEventListene
         return localClient.connect(source);
     }
 
-    public MessagingNodeContext setNodeEventListenerFactoryClass(Class<? extends RemoteNodeMonitorClassFactory> clazz) {
-        this.remoteNodeMonitorClassFactory = clazz;
+    public MessagingNodeContext setRemoteNodeMonitorFactoryClass(Class<? extends RemoteNodeMonitorFactory> remoteNodeMonitorFactoryClass) {
+        this.remoteNodeMonitorFactoryClass = remoteNodeMonitorFactoryClass;
         return this;
     }
 
@@ -175,11 +172,11 @@ public class MessagingNodeContext implements LocalClient,LocalServerEventListene
     public void start() throws Exception {
         checkState();
         globalTimer = new GlobalTimer();
-        Class.forName(remoteNodeMonitorClassFactory.getName());
+        Class.forName(remoteNodeMonitorFactoryClass.getName());
         Class.forName(localClientFactoryClass.getName());
         Class.forName(localServerFactoryClass.getName());
         Class.forName(localServerNodeFactoryClass.getName());
-        remoteNodeMonitor = remoteNodeMonitorClassFactory.newInstance().getInstance(this);
+        remoteNodeMonitor = remoteNodeMonitorFactoryClass.newInstance().getInstance(this);
         localClient = localClientFactoryClass.newInstance().getInstance(this);
         localServer = localServerFactoryClass.newInstance().getInstance(this);
         eventDispatcher.setEventListener(remoteNodeMonitor);
