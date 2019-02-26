@@ -3,7 +3,7 @@ package com.lockdown.messaging.cluster.node;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 
-public interface LocalServerNode extends ServerNode,CommandAcceptor{
+public interface LocalServerNode extends ServerNode, CommandAcceptor {
 
 
     void registerToCluster(ServerDestination destination);

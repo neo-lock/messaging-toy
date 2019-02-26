@@ -19,7 +19,6 @@ public interface RemoteNodeMonitor extends RemoteNodeForwardSlot {
 
     void closeNode(RemoteNode remoteNode);
 
-
     RemoteNode newRemoteNodeInstance(ChannelFuture channelFuture);
 
     RemoteNode newRemoteNodeInstance(ChannelFuture channelFuture, ServerDestination destination);

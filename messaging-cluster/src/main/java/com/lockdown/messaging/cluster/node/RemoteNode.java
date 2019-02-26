@@ -4,8 +4,6 @@ import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import io.netty.channel.ChannelId;
 
-import java.io.IOException;
-
 public interface RemoteNode extends ServerNode {
 
 
@@ -15,7 +13,7 @@ public interface RemoteNode extends ServerNode {
 
     void close();
 
-    void receivedCommandEvent(NodeCommand msg) ;
+    void receivedCommandEvent(NodeCommand msg);
 
     void inactiveEvent();
 

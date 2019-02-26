@@ -6,6 +6,7 @@ import com.lockdown.messaging.cluster.command.NodeRegister;
 import com.lockdown.messaging.cluster.node.invoker.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -28,23 +29,36 @@ public class DefaultLocalServerNode implements LocalServerNode {
     //调度算法，可以更换
     private LocalServerNodeCommandExecutor commandExecutor = new LocalServerNodeCommandExecutor();
 
+    public DefaultLocalServerNode() {
+
+    }
+
     public DefaultLocalServerNode(LocalNodeCommandRouter commandRouter, ServerDestination destination) {
         this.commandRouter = commandRouter;
-        this.commandRouter.registerCommandAcceptor(this);
         this.localDestination = destination;
+        this.commandRouter.registerCommandAcceptor(this);
         this.initCommandExecutor();
     }
 
-    private void initCommandExecutor() {
+    public void initCommandExecutor() {
         this.commandExecutor.registerInvoker(new NodeRegisterInvoker());
         this.commandExecutor.registerInvoker(new NodeRegisterForwardInvoker());
         this.commandExecutor.registerInvoker(new NodeMonitoredInvoker());
         this.commandExecutor.registerInvoker(new NodeClosedInvoker());
     }
 
+    public void setCommandRouter(LocalNodeCommandRouter commandRouter) {
+        this.commandRouter = commandRouter;
+    }
+
+    public void setLocalDestination(ServerDestination localDestination) {
+        this.localDestination = localDestination;
+    }
+
+    @Recoverable
     @Override
     public void registerToCluster(ServerDestination destination) {
-        commandRouter.sendCommand(destination,new NodeRegister(this.localDestination));
+        commandRouter.sendCommand(destination, new NodeRegister(this.localDestination));
     }
 
 
@@ -55,7 +69,7 @@ public class DefaultLocalServerNode implements LocalServerNode {
 
     @Override
     public void notifyRemote(NodeCommand command, ServerDestination... ignore) {
-        commandRouter.notifyCommand(command,ignore);
+        commandRouter.notifyCommand(command, ignore);
     }
 
     @Override
@@ -76,7 +90,7 @@ public class DefaultLocalServerNode implements LocalServerNode {
 
     @Override
     public void sendCommand(ServerDestination target, NodeCommand command) {
-        commandRouter.sendCommand(target,command);
+        commandRouter.sendCommand(target, command);
     }
 
 

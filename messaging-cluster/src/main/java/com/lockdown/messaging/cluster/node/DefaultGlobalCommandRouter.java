@@ -8,7 +8,10 @@ import com.lockdown.messaging.cluster.command.NodeCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class DefaultGlobalCommandRouter implements GlobalCommandRouter {
@@ -17,7 +20,7 @@ public class DefaultGlobalCommandRouter implements GlobalCommandRouter {
     private MessagingNodeContext nodeContext;
     private CommandAcceptor commandAcceptor;
 
-    public DefaultGlobalCommandRouter(MessagingNodeContext nodeContext){
+    public DefaultGlobalCommandRouter(MessagingNodeContext nodeContext) {
         this.nodeContext = nodeContext;
     }
 
@@ -36,7 +39,7 @@ public class DefaultGlobalCommandRouter implements GlobalCommandRouter {
         Set<ServerDestination> whiteList = new HashSet<>(Arrays.asList(ignores));
         Collection<RemoteNode> nodes = remoteNodeMonitor().AllRemoteNodes();
         nodes.forEach(remoteServerNode -> {
-            if(whiteList.contains(remoteServerNode.destination())){
+            if (whiteList.contains(remoteServerNode.destination())) {
                 return;
             }
             remoteServerNode.sendCommand(command);
@@ -56,14 +59,14 @@ public class DefaultGlobalCommandRouter implements GlobalCommandRouter {
 
     @Override
     public void receivedCommand(RemoteNode remoteNode, NodeCommand command) {
-        logger.info(" 收到消息 {},{}",command.getClass(), JSON.toJSONString(command));
-        nodeContext.executeRunnable(() -> commandAcceptor.commandEvent(remoteNode,command));
+        logger.info(" 收到消息 {},{}", command.getClass(), JSON.toJSONString(command));
+        nodeContext.executeRunnable(() -> commandAcceptor.commandEvent(remoteNode, command));
     }
 
 
     @Override
     public void inactive(RemoteNode remoteNode) {
-        receivedCommand(remoteNode,new NodeClosed(remoteNode.destination()));
+        receivedCommand(remoteNode, new NodeClosed(remoteNode.destination()));
     }
 
     @Override

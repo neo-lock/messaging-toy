@@ -30,12 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
 
+    private final MessagingNodeContext messagingNodeContext;
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Bootstrap bootstrap;
     private RemoteNodeSlot forwardSlot;
-    private final MessagingNodeContext messagingNodeContext;
     private Map<ServerDestination, RemoteNode> nodeContext = new ConcurrentHashMap<>();
-    private Map<ChannelId,RemoteNode> invalidNodeContext = new ConcurrentHashMap<>();
+    private Map<ChannelId, RemoteNode> invalidNodeContext = new ConcurrentHashMap<>();
     private Object lock = new Object();
 
     public DefaultRemoteNodeMonitor(MessagingNodeContext messagingNodeContext) {
@@ -44,7 +44,7 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
 
 
     @Override
-    public final void initLocalClient(InitializedCallback<LocalClientRemoteNodeMonitor> callback){
+    public final void initLocalClient(InitializedCallback<LocalClientRemoteNodeMonitor> callback) {
         bootstrap = new Bootstrap();
         bootstrap.group(new NioEventLoopGroup(1));
         bootstrap.channel(NioSocketChannel.class);
@@ -56,17 +56,16 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
                 socketChannel.pipeline().addLast(new RemoteNodeCommandHandler(messagingNodeContext));
             }
         });
-        if(Objects.nonNull(callback)){
+        if (Objects.nonNull(callback)) {
             callback.initialized(this);
         }
     }
 
 
-
     @Override
     public ChannelFuture connect(ServerDestination destination) {
         try {
-            return bootstrap.connect(new InetSocketAddress(destination.getIpAddress(),destination.getPort())).sync();
+            return bootstrap.connect(new InetSocketAddress(destination.getIpAddress(), destination.getPort())).sync();
         } catch (InterruptedException e) {
             throw new MessagingInterruptedException(e);
         }
@@ -75,13 +74,13 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
     @Override
     public RemoteNode getRemoteNode(ServerDestination destination) {
         RemoteNode remoteNode;
-        synchronized (lock){
-            if(nodeContext.containsKey(destination)){
+        synchronized (lock) {
+            if (nodeContext.containsKey(destination)) {
                 remoteNode = nodeContext.get(destination);
-            }else{
+            } else {
                 ChannelFuture channelFuture = connect(destination);
-                remoteNode = newRemoteNodeInstance(channelFuture,destination);
-                nodeContext.putIfAbsent(remoteNode.destination(),remoteNode);
+                remoteNode = newRemoteNodeInstance(channelFuture, destination);
+                nodeContext.putIfAbsent(remoteNode.destination(), remoteNode);
             }
         }
         return remoteNode;
@@ -94,15 +93,15 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
 
     @Override
     public RemoteNode randomNode() {
-        if(nodeContext.size()==0){
+        if (nodeContext.size() == 0) {
             throw new MessagingNoNodeException("没有更多节点!");
         }
         return getFirstNode();
     }
 
-    private RemoteNode getFirstNode(){
-        Optional<RemoteNode> optional =  nodeContext.values().stream().findFirst();
-        if(!optional.isPresent()){
+    private RemoteNode getFirstNode() {
+        Optional<RemoteNode> optional = nodeContext.values().stream().findFirst();
+        if (!optional.isPresent()) {
             throw new MessagingNoNodeException("没有更多节点!");
         }
         return optional.get();
@@ -113,7 +112,7 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
     public void closeNode(RemoteNode remoteNode) {
         Objects.requireNonNull(remoteNode);
         RemoteNode serverNode = nodeContext.remove(remoteNode.destination());
-        if(Objects.nonNull(serverNode)){
+        if (Objects.nonNull(serverNode)) {
             serverNode.close();
         }
     }
@@ -121,13 +120,13 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
 
     @Override
     public RemoteNode newRemoteNodeInstance(ChannelFuture channelFuture) {
-        return this.newRemoteNodeInstance(channelFuture,null);
+        return this.newRemoteNodeInstance(channelFuture, null);
     }
 
     @Override
     public RemoteNode newRemoteNodeInstance(ChannelFuture channelFuture, ServerDestination destination) {
-        RemoteNode remoteNode =   new DefaultRemoteNode(this,channelFuture,destination);
-        invalidNodeContext.putIfAbsent(channelFuture.channel().id(),remoteNode);
+        RemoteNode remoteNode = new DefaultRemoteNode(this, channelFuture, destination);
+        invalidNodeContext.putIfAbsent(channelFuture.channel().id(), remoteNode);
         return remoteNode;
     }
 
@@ -139,16 +138,16 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
 
     @Override
     public void receivedCommand(RemoteNode remoteNode, NodeCommand msg) {
-        if(RegisterNature.class.isAssignableFrom(msg.getClass())){
-            applyDestination(remoteNode,msg.getSource());
+        if (RegisterNature.class.isAssignableFrom(msg.getClass())) {
+            applyDestination(remoteNode, msg.getSource());
         }
-        forwardSlot.receivedCommand(remoteNode,msg);
+        forwardSlot.receivedCommand(remoteNode, msg);
     }
 
     @Override
     public void inactive(RemoteNode remoteNode) {
         RemoteNode origin = nodeContext.remove(remoteNode.destination());
-        if(Objects.nonNull(origin)){
+        if (Objects.nonNull(origin)) {
             origin.close();
             forwardSlot.inactive(remoteNode);
         }
@@ -162,21 +161,21 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
     @Override
     public void applyDestination(RemoteNode remoteNode, ServerDestination destination) {
         ChannelId channelId = remoteNode.channelId();
-        if(!invalidNodeContext.containsKey(channelId)){
+        if (!invalidNodeContext.containsKey(channelId)) {
             return;
         }
         RemoteNode node = invalidNodeContext.remove(channelId);
         node.applyDestination(destination);
-        nodeContext.putIfAbsent(destination,remoteNode);
+        nodeContext.putIfAbsent(destination, remoteNode);
     }
 
 
     @Override
     public void registerForwardSlot(RemoteNodeSlot slot) {
-        if(Objects.isNull(slot)){
+        if (Objects.isNull(slot)) {
             throw new IllegalArgumentException(" slot can't be null !");
         }
-        if(Objects.nonNull(this.forwardSlot)){
+        if (Objects.nonNull(this.forwardSlot)) {
             throw new IllegalStateException((" slot already set !"));
         }
         this.forwardSlot = slot;

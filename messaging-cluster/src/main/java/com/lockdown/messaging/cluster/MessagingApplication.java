@@ -15,7 +15,6 @@ public class MessagingApplication {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
 
     public static void run(MessagingProperties properties, String[] args) {
@@ -26,7 +25,7 @@ public class MessagingApplication {
         MessagingApplication.run(new MessagingProperties() {
             @Override
             public int getNodePort() {
-                return 9093;
+                return 9090;
             }
 
             @Override

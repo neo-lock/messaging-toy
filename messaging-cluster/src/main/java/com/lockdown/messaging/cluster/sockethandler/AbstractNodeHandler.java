@@ -1,4 +1,5 @@
 package com.lockdown.messaging.cluster.sockethandler;
+
 import com.lockdown.messaging.cluster.MessagingNodeContext;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.node.RemoteNode;
@@ -10,9 +11,9 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractNodeHandler extends ChannelInboundHandlerAdapter {
 
 
+    protected final MessagingNodeContext serverContext;
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected RemoteNode serverNode;
-    protected final MessagingNodeContext serverContext;
 
 
     public AbstractNodeHandler(MessagingNodeContext serverContext) {
@@ -35,7 +36,7 @@ public abstract class AbstractNodeHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.warn(" channel exception ==================  {}",cause.getMessage());
+        logger.warn(" channel exception ==================  {}", cause.getMessage());
         serverNode.exceptionCaughtEvent(cause);
     }
 

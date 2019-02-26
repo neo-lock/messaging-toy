@@ -6,7 +6,7 @@ public class MessagingNoNodeException extends MessagingException {
         super(throwable);
     }
 
-    public MessagingNoNodeException(String message){
+    public MessagingNoNodeException(String message) {
         super(message);
     }
 }

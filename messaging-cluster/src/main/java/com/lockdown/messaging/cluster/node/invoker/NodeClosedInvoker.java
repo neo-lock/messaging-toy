@@ -22,9 +22,9 @@ public class NodeClosedInvoker implements NodeCommandInvoker<LocalServerNode> {
         invoke.monitorCompareAndSet(remote.destination(), null);
         if (invoke.attachedCompareAndSet(remote.destination(), null)) {
             logger.info(" 重新注册 ");
-            try{
+            try {
                 invoke.registerRandomNode();
-            }catch (MessagingNoNodeException ex){
+            } catch (MessagingNoNodeException ex) {
                 //ignore
             }
         }

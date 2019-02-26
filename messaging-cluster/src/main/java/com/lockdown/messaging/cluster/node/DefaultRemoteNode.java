@@ -15,14 +15,13 @@ public class DefaultRemoteNode implements RemoteNode {
     private ServerDestination destination;
 
 
-
     public DefaultRemoteNode(RemoteNodeSlot remoteNodeSlot, ChannelFuture channelFuture) {
         this.remoteNodeSlot = remoteNodeSlot;
         this.channelFuture = channelFuture;
     }
 
     public DefaultRemoteNode(RemoteNodeSlot remoteNodeSlot, ChannelFuture channelFuture, ServerDestination destination) {
-        this(remoteNodeSlot,channelFuture);
+        this(remoteNodeSlot, channelFuture);
         this.destination = destination;
     }
 
@@ -38,7 +37,7 @@ public class DefaultRemoteNode implements RemoteNode {
 
     @Override
     public void applyDestination(ServerDestination destination) {
-        if(Objects.isNull(destination)){
+        if (Objects.isNull(destination)) {
             throw new IllegalStateException(" destination can't be null !");
         }
         if (Objects.nonNull(this.destination)) {
@@ -55,7 +54,7 @@ public class DefaultRemoteNode implements RemoteNode {
 
     @Override
     public void receivedCommandEvent(NodeCommand msg) {
-        remoteNodeSlot.receivedCommand(this,msg);
+        remoteNodeSlot.receivedCommand(this, msg);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class DefaultRemoteNode implements RemoteNode {
 
     @Override
     public void exceptionCaughtEvent(Throwable cause) {
-        remoteNodeSlot.exceptionCaught(this,cause);
+        remoteNodeSlot.exceptionCaught(this, cause);
     }
 
     @Override
