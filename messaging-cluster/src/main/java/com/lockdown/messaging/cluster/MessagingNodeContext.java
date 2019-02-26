@@ -12,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -125,7 +124,8 @@ public class MessagingNodeContext implements LocalServerEventListener {
 
     public void start() throws Exception {
         checkState();
-        globalTimer = new GlobalTimer();
+        //时间要求并不严格,1秒1次 64格
+        globalTimer = new GlobalTimer(1,TimeUnit.SECONDS,64);
         commandRouter = new DefaultGlobalCommandRouter(this);
         localServerNode = LocalServerNodeFactory.getNodeProxyInstance(this);
         nodeMonitor = new DefaultRemoteNodeMonitor(this);
