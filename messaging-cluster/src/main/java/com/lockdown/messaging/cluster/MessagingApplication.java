@@ -25,7 +25,7 @@ public class MessagingApplication {
         MessagingApplication.run(new MessagingProperties() {
             @Override
             public int getNodePort() {
-                return 9090;
+                return 9092;
             }
 
             @Override

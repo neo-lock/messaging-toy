@@ -144,6 +144,8 @@ public class MessagingNodeContext implements LocalServerEventListener {
         if (!this.localDestination.equals(this.properties.masterTarget())) {
             logger.info(" 当前地址:{} , 集群地址:{} ", this.localDestination, properties.masterTarget());
             localServerNode.registerToCluster(properties.masterTarget());
+        }else {
+            localServerNode.registerRandomNode();
         }
         if (properties.nodeMonitorEnable()) {
             long delay = properties.nodeMonitorSeconds() < 10 ? 10 : properties.nodeMonitorSeconds();
@@ -236,7 +238,8 @@ public class MessagingNodeContext implements LocalServerEventListener {
 
         @Override
         public void run(Timeout timeout) throws Exception {
-            nodeMonitor.printNodes();
+            localServerNode.printNodes();
+            //nodeMonitor.printNodes();
             timeout.timer().newTimeout(this, delay, timeUnit);
         }
     }

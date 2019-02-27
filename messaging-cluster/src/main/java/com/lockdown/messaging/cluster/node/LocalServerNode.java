@@ -25,4 +25,8 @@ public interface LocalServerNode extends ServerNode, CommandAcceptor {
     boolean attachedCompareAndSet(ServerDestination old, ServerDestination update);
 
     void registerRandomNode();
+
+    void printNodes();
+
+    ServerDestination forceMonitor(ServerDestination destination);
 }

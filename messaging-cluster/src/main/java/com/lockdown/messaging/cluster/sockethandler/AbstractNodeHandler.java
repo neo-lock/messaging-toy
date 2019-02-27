@@ -36,7 +36,7 @@ public abstract class AbstractNodeHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.warn(" channel exception ==================  {}", cause.getMessage());
+        logger.warn("异常: {}", cause.getMessage());
         serverNode.exceptionCaughtEvent(cause);
     }
 

@@ -6,9 +6,7 @@ import com.lockdown.messaging.cluster.command.NodeRegister;
 import com.lockdown.messaging.cluster.node.invoker.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 状态
@@ -23,8 +21,9 @@ public class DefaultLocalServerNode implements LocalServerNode {
 
     private LocalNodeCommandRouter commandRouter;
     private ServerDestination localDestination;
-    private AtomicReference<ServerDestination> monitor = new AtomicReference<>();
-    private AtomicReference<ServerDestination> attached = new AtomicReference<>();
+    private volatile ServerDestination monitor = null;
+    private volatile ServerDestination attached = null;
+    private final Object lock = new Object();
 
     //调度算法，可以更换
     private LocalServerNodeCommandExecutor commandExecutor = new LocalServerNodeCommandExecutor();
@@ -55,7 +54,7 @@ public class DefaultLocalServerNode implements LocalServerNode {
         this.localDestination = localDestination;
     }
 
-    @Recoverable
+    @Recoverable(repeat = -1)
     @Override
     public void registerToCluster(ServerDestination destination) {
         commandRouter.sendCommand(destination, new NodeRegister(this.localDestination));
@@ -64,7 +63,7 @@ public class DefaultLocalServerNode implements LocalServerNode {
 
     @Override
     public boolean isMonitored() {
-        return Objects.nonNull(monitor.get());
+        return Objects.nonNull(monitor);
     }
 
     @Override
@@ -74,18 +73,22 @@ public class DefaultLocalServerNode implements LocalServerNode {
 
     @Override
     public void monitor(ServerDestination destination) {
-        if (Objects.nonNull(monitor.get())) {
-            throw new IllegalStateException(" monitor already set !");
+        synchronized (lock){
+            if (Objects.nonNull(monitor)) {
+                throw new IllegalStateException(" monitor already set !");
+            }
+            monitor = destination;
         }
-        monitor.set(destination);
     }
 
     @Override
     public void attachTo(ServerDestination destination) {
-        if (Objects.nonNull(attached.get())) {
-            throw new IllegalStateException(" attached already set !");
+        synchronized (lock){
+            if (Objects.nonNull(attached)) {
+                throw new IllegalStateException(" attached already set !");
+            }
+            attached = destination;
         }
-        attached.set(destination);
     }
 
     @Override
@@ -96,22 +99,66 @@ public class DefaultLocalServerNode implements LocalServerNode {
 
     @Override
     public boolean isAttached() {
-        return Objects.nonNull(this.attached.get());
+        return Objects.nonNull(attached);
     }
 
     @Override
-    public boolean monitorCompareAndSet(ServerDestination old, ServerDestination update) {
-        return monitor.compareAndSet(old, update);
+    public  boolean monitorCompareAndSet(ServerDestination old, ServerDestination update) {
+        boolean result = false;
+        synchronized (lock){
+            if(Objects.isNull(old)){
+                if(monitor == null){
+                    monitor = update;
+                    result = true;
+                }
+            }else{
+                if(old.equals(monitor)){
+                    monitor = update;
+                    result = true;
+                }
+            }
+        }
+        return result;
     }
 
     @Override
     public boolean attachedCompareAndSet(ServerDestination old, ServerDestination update) {
-        return attached.compareAndSet(old, update);
+        boolean result = false;
+        synchronized (lock){
+            if(Objects.isNull(old)){
+                if(attached == null){
+                    attached = update;
+                    result = true;
+                }
+            }else{
+                if(old.equals(attached)){
+                    attached = update;
+                    result = true;
+                }
+            }
+        }
+        return result;
     }
 
+    @Recoverable(repeat = -1)
     @Override
     public void registerRandomNode() {
         commandRouter.sendRandomTarget(new NodeRegister(this.localDestination));
+    }
+
+    @Override
+    public void printNodes() {
+        logger.info("Local[{}],Monitor[{}],Attached[{}]",localDestination,monitor,attached);
+    }
+
+    @Override
+    public ServerDestination forceMonitor(ServerDestination destination) {
+        ServerDestination result = null;
+        synchronized(lock){
+            result = monitor;
+            monitor = destination;
+        }
+        return result;
     }
 
     @Override

@@ -4,11 +4,23 @@ import com.lockdown.messaging.cluster.ServerDestination;
 
 public class NodeRegisterForward extends AbstractNodeCommand {
 
-    public NodeRegisterForward() {
+
+    private ServerDestination target;
+
+    public NodeRegisterForward(){}
+
+
+    public NodeRegisterForward(ServerDestination source,ServerDestination target) {
+        super(source);
+        this.target = target;
     }
 
-    public NodeRegisterForward(ServerDestination source) {
-        super(source);
+    public ServerDestination getTarget() {
+        return target;
+    }
+
+    public void setTarget(ServerDestination target) {
+        this.target = target;
     }
 
     @Override
