@@ -2,6 +2,7 @@ package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeCommand;
+import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import io.netty.channel.ChannelId;
 
 public interface RemoteNode extends ServerNode {
@@ -13,7 +14,7 @@ public interface RemoteNode extends ServerNode {
 
     void close();
 
-    void receivedCommandEvent(NodeCommand msg);
+    void receivedCommandEvent(SourceNodeCommand msg);
 
     void inactiveEvent();
 

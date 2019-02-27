@@ -2,6 +2,9 @@ package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeCommand;
+import com.lockdown.messaging.cluster.command.NodeRegister;
+import com.lockdown.messaging.cluster.command.SourceNodeCommand;
+import com.lockdown.messaging.cluster.command.SyncNodeRegister;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelId;
 
@@ -16,12 +19,13 @@ public class DefaultRemoteNode implements RemoteNode {
 
 
     public DefaultRemoteNode(RemoteNodeSlot remoteNodeSlot, ChannelFuture channelFuture) {
-        this.remoteNodeSlot = remoteNodeSlot;
-        this.channelFuture = channelFuture;
+        this(remoteNodeSlot,channelFuture,null);
     }
 
+
     public DefaultRemoteNode(RemoteNodeSlot remoteNodeSlot, ChannelFuture channelFuture, ServerDestination destination) {
-        this(remoteNodeSlot, channelFuture);
+        this.remoteNodeSlot = remoteNodeSlot;
+        this.channelFuture = channelFuture;
         this.destination = destination;
     }
 
@@ -30,6 +34,7 @@ public class DefaultRemoteNode implements RemoteNode {
         return destination;
     }
 
+    @MessageSync(originParam = NodeRegister.class,convertTo = SyncNodeRegister.class)
     @Override
     public void sendCommand(NodeCommand command) {
         this.channelFuture.channel().writeAndFlush(command);
@@ -53,7 +58,7 @@ public class DefaultRemoteNode implements RemoteNode {
     }
 
     @Override
-    public void receivedCommandEvent(NodeCommand msg) {
+    public void receivedCommandEvent(SourceNodeCommand msg) {
         remoteNodeSlot.receivedCommand(this, msg);
     }
 

@@ -2,7 +2,7 @@ package com.lockdown.messaging.cluster.command;
 
 import com.lockdown.messaging.cluster.ServerDestination;
 
-public abstract class AbstractNodeCommand implements NodeCommand {
+public abstract class AbstractNodeCommand implements SourceNodeCommand {
 
     protected ServerDestination source;
 
@@ -13,7 +13,7 @@ public abstract class AbstractNodeCommand implements NodeCommand {
         this.source = source;
     }
 
-    @Override
+
     public ServerDestination getSource() {
         return source;
     }

@@ -1,6 +1,7 @@
 package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.MessagingNodeContext;
+import com.lockdown.messaging.cluster.exception.MessagingException;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import org.slf4j.Logger;
@@ -25,8 +26,11 @@ public class LocalServerNodeProxy implements MethodInterceptor {
         try {
             result = methodProxy.invokeSuper(o, args);
         } catch (Throwable ex) {
-            logger.info(" 方法 {} 执行失败，将重新尝试", method.toGenericString());
+            logger.info(" 方法 {} 执行失败 {}，将重新尝试", method.toGenericString(),ex.getMessage());
             serverContext.registerRecoverable(method.toGenericString(), recoverable, o, methodProxy, args);
+            if(recoverable.doThrow()){
+                throw new MessagingException(ex);
+            }
         }
         return result;
     }

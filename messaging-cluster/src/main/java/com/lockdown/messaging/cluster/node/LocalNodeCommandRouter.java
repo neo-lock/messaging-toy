@@ -2,17 +2,18 @@ package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeCommand;
+import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 
 
 public interface LocalNodeCommandRouter {
 
-    void sendCommand(ServerDestination destination, NodeCommand nodeCommand);
+    void sendCommand(ServerDestination destination, SourceNodeCommand nodeCommand);
 
 
-    void notifyCommand(NodeCommand command, ServerDestination... ignores);
+    void notifyCommand(SourceNodeCommand command, ServerDestination... ignores);
 
 
-    void sendRandomTarget(NodeCommand command);
+    void sendRandomTarget(SourceNodeCommand command);
 
 
     void registerCommandAcceptor(CommandAcceptor acceptor);

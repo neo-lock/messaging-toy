@@ -16,4 +16,6 @@ public interface MessagingProperties {
     boolean nodeMonitorEnable();
 
     long nodeMonitorSeconds();
+
+    boolean isEnableSync();
 }

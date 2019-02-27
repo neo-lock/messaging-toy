@@ -5,6 +5,7 @@ import com.lockdown.messaging.cluster.MessagingNodeContext;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeClosed;
 import com.lockdown.messaging.cluster.command.NodeCommand;
+import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +30,13 @@ public class DefaultGlobalCommandRouter implements GlobalCommandRouter {
     }
 
     @Override
-    public void sendCommand(ServerDestination destination, NodeCommand nodeCommand) {
+    public void sendCommand(ServerDestination destination, SourceNodeCommand nodeCommand) {
         RemoteNode serverNode = remoteNodeMonitor().getRemoteNode(destination);
         serverNode.sendCommand(nodeCommand);
     }
 
     @Override
-    public void notifyCommand(NodeCommand command, ServerDestination... ignores) {
+    public void notifyCommand(SourceNodeCommand command, ServerDestination... ignores) {
         Set<ServerDestination> whiteList = new HashSet<>(Arrays.asList(ignores));
         Collection<RemoteNode> nodes = remoteNodeMonitor().AllRemoteNodes();
         nodes.forEach(remoteServerNode -> {
@@ -47,7 +48,7 @@ public class DefaultGlobalCommandRouter implements GlobalCommandRouter {
     }
 
     @Override
-    public void sendRandomTarget(NodeCommand command) {
+    public void sendRandomTarget(SourceNodeCommand command) {
         RemoteNode random = remoteNodeMonitor().randomNode();
         random.sendCommand(command);
     }
@@ -58,7 +59,7 @@ public class DefaultGlobalCommandRouter implements GlobalCommandRouter {
     }
 
     @Override
-    public void receivedCommand(RemoteNode remoteNode, NodeCommand command) {
+    public void receivedCommand(RemoteNode remoteNode, SourceNodeCommand command) {
         logger.info(" 收到消息 {},{}", command.getClass(), JSON.toJSONString(command));
         nodeContext.executeRunnable(() -> commandAcceptor.commandEvent(remoteNode, command));
     }

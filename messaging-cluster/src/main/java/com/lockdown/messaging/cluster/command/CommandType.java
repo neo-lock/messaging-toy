@@ -77,6 +77,24 @@ public enum CommandType implements CommandConverter {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
+    SYNC_REGISTER_ASK((short)5){
+        @Override
+        public NodeCommand bytesToCommand(byte[] content) {
+            try {
+                if (null == content || content.length == 0) {
+                    throw new IllegalArgumentException(" content can not be empty !");
+                }
+                return ProtostuffUtils.bytesToMessage(content, SyncNodeRegister.class);
+            } catch (IllegalAccessException | InstantiationException e) {
+                throw new MessagingSerializeException(e);
+            }
+        }
+
+        @Override
+        public byte[] CommandToBytes(NodeCommand command) {
+            return ProtostuffUtils.messageToBytes(command);
+        }
+    },
     CLOSED((short) 9) {
         @Override
         public NodeCommand bytesToCommand(byte[] content) {
@@ -85,6 +103,24 @@ public enum CommandType implements CommandConverter {
                     throw new IllegalArgumentException(" content can not be empty !");
                 }
                 return ProtostuffUtils.bytesToMessage(content, NodeClosed.class);
+            } catch (IllegalAccessException | InstantiationException e) {
+                throw new MessagingSerializeException(e);
+            }
+        }
+
+        @Override
+        public byte[] CommandToBytes(NodeCommand command) {
+            return ProtostuffUtils.messageToBytes(command);
+        }
+    },
+    SYNC_RECEIPT((short)10){
+        @Override
+        public NodeCommand bytesToCommand(byte[] content) {
+            try {
+                if (null == content || content.length == 0) {
+                    throw new IllegalArgumentException(" content can not be empty !");
+                }
+                return ProtostuffUtils.bytesToMessage(content, SyncCommandReceipt.class);
             } catch (IllegalAccessException | InstantiationException e) {
                 throw new MessagingSerializeException(e);
             }

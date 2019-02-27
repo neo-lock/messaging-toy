@@ -1,5 +1,6 @@
 package com.lockdown.messaging.cluster;
 
+import com.lockdown.messaging.cluster.command.SyncCommand;
 import com.lockdown.messaging.cluster.event.LocalServerEventListener;
 import com.lockdown.messaging.cluster.node.*;
 import com.lockdown.messaging.cluster.utils.GlobalTimer;
@@ -26,10 +27,11 @@ public class MessagingNodeContext implements LocalServerEventListener {
     private EventLoopGroup workerGroup;
     private ExecutorService segmentGroup;
     private GlobalTimer globalTimer;
-    private LocalServerNode localServerNode;
+    private LocalNode localNode;
     private LocalClientRemoteNodeMonitor nodeMonitor;
     private GlobalCommandRouter commandRouter;
     private LocalServer localServer;
+    private SyncCommandMonitor commandMonitor;
 
 
     public MessagingNodeContext(MessagingProperties properties) {
@@ -48,6 +50,7 @@ public class MessagingNodeContext implements LocalServerEventListener {
             segmentGroup.shutdown();
         }
     }
+
 
 
     public ServerDestination getLocalDestination() {
@@ -125,32 +128,64 @@ public class MessagingNodeContext implements LocalServerEventListener {
     public void start() throws Exception {
         checkState();
         //时间要求并不严格,1秒1次 64格
+        if(properties.isEnableSync()){
+            this.initCommandMonitor();
+        }
+        this.initTimer();
+        this.initCommandRouter();
+        this.initLocalServerNode();
+        this.initNodeMonitor();
+        this.initLocalServer();
+
+    }
+
+    private void initCommandMonitor(){
+        commandMonitor = new DefaultSyncCommandMonitor();
+    }
+
+    private void initTimer(){
         globalTimer = new GlobalTimer(1,TimeUnit.SECONDS,64);
+    }
+
+    private void initCommandRouter(){
         commandRouter = new DefaultGlobalCommandRouter(this);
-        localServerNode = LocalServerNodeFactory.getNodeProxyInstance(this);
-        nodeMonitor = new DefaultRemoteNodeMonitor(this);
+    }
+
+    private void initLocalServerNode(){
+        localNode = LocalNodeFactory.getNodeProxyInstance(this);
+    }
+    private void initNodeMonitor(){
+        nodeMonitor = new DefaultLocalClientRemoteNodeMonitor(this);
         nodeMonitor.initLocalClient(bean -> {
             bean.registerForwardSlot(commandRouter);
-            commandRouter.registerCommandAcceptor(localServerNode);
+            commandRouter.registerCommandAcceptor(localNode);
         });
+    }
+    private void initLocalServer() throws Exception {
         localServer = new ClusterLocalServer(this);
         localServer.addEventListener(this);
         localServer.start();
     }
+
+
 
     @Override
     public void serverStartup(LocalServer localServer, MessagingNodeContext context) {
 
         if (!this.localDestination.equals(this.properties.masterTarget())) {
             logger.info(" 当前地址:{} , 集群地址:{} ", this.localDestination, properties.masterTarget());
-            localServerNode.registerToCluster(properties.masterTarget());
+            localNode.registerToCluster(properties.masterTarget());
         }else {
-            localServerNode.registerRandomNode();
+            localNode.registerRandomNode();
         }
         if (properties.nodeMonitorEnable()) {
             long delay = properties.nodeMonitorSeconds() < 10 ? 10 : properties.nodeMonitorSeconds();
             globalTimer.newTimeout(new NodeMonitorDebug(delay, TimeUnit.SECONDS), delay, TimeUnit.SECONDS);
         }
+    }
+
+    public boolean isEnableSync(){
+        return properties.isEnableSync();
     }
 
     @Override
@@ -166,6 +201,23 @@ public class MessagingNodeContext implements LocalServerEventListener {
         });
     }
 
+    public CountDownLatch registerSyncMessage(SyncCommand command) {
+        Objects.requireNonNull(commandMonitor);
+        return commandMonitor.monitorCommand(command);
+    }
+
+    public void releaseSyncMessage(String commandId) {
+        commandMonitor.releaseMonitor(commandId);
+    }
+
+    public RemoteNodeSlot getRemoteNodeSlot() {
+        return nodeMonitor;
+    }
+
+    public Future<Object> executeCallable(Callable<Object> callable) {
+        return segmentGroup.submit(callable);
+    }
+
     private class RecoverableDefinition {
         private final String methodName;
         private final int interval;
@@ -176,6 +228,7 @@ public class MessagingNodeContext implements LocalServerEventListener {
             this.interval = interval;
             this.repeat = repeat;
         }
+
 
         String getMethodName() {
             return methodName;
@@ -238,7 +291,7 @@ public class MessagingNodeContext implements LocalServerEventListener {
 
         @Override
         public void run(Timeout timeout) throws Exception {
-            localServerNode.printNodes();
+            localNode.printNodes();
             //nodeMonitor.printNodes();
             timeout.timer().newTimeout(this, delay, timeUnit);
         }

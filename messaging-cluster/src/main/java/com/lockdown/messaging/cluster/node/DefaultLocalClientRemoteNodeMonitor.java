@@ -3,8 +3,8 @@ package com.lockdown.messaging.cluster.node;
 import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.MessagingNodeContext;
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.command.RegisterNature;
+import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import com.lockdown.messaging.cluster.exception.MessagingInterruptedException;
 import com.lockdown.messaging.cluster.exception.MessagingNoNodeException;
 import com.lockdown.messaging.cluster.sockethandler.NodeCommandDecoder;
@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
+public class DefaultLocalClientRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
 
     private final MessagingNodeContext messagingNodeContext;
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -38,7 +38,7 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
     private Map<ChannelId, RemoteNode> invalidNodeContext = new ConcurrentHashMap<>();
     private Object lock = new Object();
 
-    public DefaultRemoteNodeMonitor(MessagingNodeContext messagingNodeContext) {
+    public DefaultLocalClientRemoteNodeMonitor(MessagingNodeContext messagingNodeContext) {
         this.messagingNodeContext = messagingNodeContext;
     }
 
@@ -125,7 +125,7 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
 
     @Override
     public RemoteNode newRemoteNodeInstance(ChannelFuture channelFuture, ServerDestination destination) {
-        RemoteNode remoteNode = new DefaultRemoteNode(this, channelFuture, destination);
+        RemoteNode remoteNode = RemoteNodeFactory.getNodeProxyInstance(messagingNodeContext,channelFuture,destination);
         invalidNodeContext.putIfAbsent(channelFuture.channel().id(), remoteNode);
         return remoteNode;
     }
@@ -137,7 +137,7 @@ public class DefaultRemoteNodeMonitor implements LocalClientRemoteNodeMonitor {
 
 
     @Override
-    public void receivedCommand(RemoteNode remoteNode, NodeCommand msg) {
+    public void receivedCommand(RemoteNode remoteNode, SourceNodeCommand msg) {
         if (RegisterNature.class.isAssignableFrom(msg.getClass())) {
             applyDestination(remoteNode, msg.getSource());
         }

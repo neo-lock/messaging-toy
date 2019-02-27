@@ -15,5 +15,7 @@ public @interface Recoverable {
 
     int repeat() default 5;
 
+    boolean doThrow() default false;
+
 
 }

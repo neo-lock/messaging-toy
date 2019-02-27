@@ -52,6 +52,11 @@ public class MessagingApplication {
             public long nodeMonitorSeconds() {
                 return 10;
             }
+
+            @Override
+            public boolean isEnableSync() {
+                return true;
+            }
         }, args);
     }
 

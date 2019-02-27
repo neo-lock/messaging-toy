@@ -2,12 +2,12 @@ package com.lockdown.messaging.cluster.node.invoker;
 
 import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.command.*;
-import com.lockdown.messaging.cluster.node.LocalServerNode;
+import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.node.RemoteNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeRegisterForwardInvoker implements NodeCommandInvoker<LocalServerNode> {
+public class NodeRegisterForwardInvoker implements NodeCommandInvoker<LocalNode> {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -17,7 +17,7 @@ public class NodeRegisterForwardInvoker implements NodeCommandInvoker<LocalServe
     }
 
     @Override
-    public void executeCommand(LocalServerNode local, RemoteNode remote, NodeCommand command) {
+    public void executeCommand(LocalNode local, RemoteNode remote, NodeCommand command) {
         NodeRegisterForward registerForward = (NodeRegisterForward) command;
         logger.info("收到监控转发{}", JSON.toJSONString(registerForward));
         if(local.isAttached()){
