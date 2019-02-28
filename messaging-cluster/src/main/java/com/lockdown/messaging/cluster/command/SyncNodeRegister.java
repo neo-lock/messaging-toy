@@ -6,7 +6,8 @@ public class SyncNodeRegister implements SyncCommand {
     private String commandId;
     private NodeRegister registerCommand;
 
-    public SyncNodeRegister(){}
+    public SyncNodeRegister() {
+    }
 
     public SyncNodeRegister(String commandId, NodeRegister registerCommand) {
         this.commandId = commandId;
@@ -19,21 +20,21 @@ public class SyncNodeRegister implements SyncCommand {
     }
 
     @Override
+    public void setCommandId(String commandId) {
+        this.commandId = commandId;
+    }
+
+    @Override
     public SourceNodeCommand getOriginCommand() {
         return registerCommand;
     }
 
     @Override
     public void setOriginCommand(SourceNodeCommand command) {
-        if(!(command instanceof NodeRegister)){
-            throw new IllegalArgumentException(" accept "+NodeRegister.class+" param !");
+        if (!(command instanceof NodeRegister)) {
+            throw new IllegalArgumentException(" accept " + NodeRegister.class + " param !");
         }
         this.registerCommand = (NodeRegister) command;
-    }
-
-    @Override
-    public void setCommandId(String commandId) {
-        this.commandId = commandId;
     }
 
     public NodeRegister getRegisterCommand() {

@@ -1,9 +1,9 @@
 package com.lockdown.messaging.cluster.node;
 
-import com.lockdown.messaging.cluster.command.NodeCommand;
+import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 
 public interface CommandAcceptor {
 
-    void commandEvent(RemoteNode serverNode, NodeCommand command);
+    void acceptedCommand(RemoteNode serverNode, SourceNodeCommand command);
 
 }

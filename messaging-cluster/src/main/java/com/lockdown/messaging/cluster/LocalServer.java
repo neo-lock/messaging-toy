@@ -1,13 +1,14 @@
 package com.lockdown.messaging.cluster;
 
-import com.lockdown.messaging.cluster.event.LocalServerEventListener;
+import com.lockdown.messaging.cluster.event.ServerEventListener;
 
-public interface LocalServer {
+public interface LocalServer<T extends ServerContext> {
 
+    public LocalServer<T> initializer(T serverContext);
 
-    public void start() throws Exception;
+    public void start() throws InterruptedException;
 
     public void stop();
 
-    void addEventListener(LocalServerEventListener... listeners);
+    void addEventListener(ServerEventListener... listeners);
 }

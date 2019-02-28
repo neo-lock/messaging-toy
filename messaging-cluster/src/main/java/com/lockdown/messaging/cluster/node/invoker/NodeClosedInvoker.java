@@ -2,7 +2,7 @@ package com.lockdown.messaging.cluster.node.invoker;
 
 import com.lockdown.messaging.cluster.command.CommandType;
 import com.lockdown.messaging.cluster.command.NodeCommand;
-import com.lockdown.messaging.cluster.exception.MessagingNoNodeException;
+import com.lockdown.messaging.cluster.exception.MessagingNodeNotFoundException;
 import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.node.RemoteNode;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class NodeClosedInvoker implements NodeCommandInvoker<LocalNode> {
             logger.info(" 重新注册 ");
             try {
                 invoke.registerRandomNode();
-            } catch (MessagingNoNodeException ex) {
+            } catch (MessagingNodeNotFoundException ex) {
                 //ignore
             }
         }

@@ -1,4 +1,6 @@
 package com.lockdown.messaging.cluster.node.invoker;
+
+import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.command.CommandType;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.command.NodeMonitored;
@@ -22,7 +24,7 @@ public class NodeRegisterInvoker implements NodeCommandInvoker<LocalNode> {
     public void executeCommand(LocalNode local, RemoteNode remote, NodeCommand command) {
         local.forceMonitor(remote.destination());
         local.sendCommand(remote.destination(), new NodeMonitored(local.destination()));
-        local.notifyRemote(new NodeRegisterForward(local.destination(),remote.destination()), remote.destination());
+        local.notifyRemote(new NodeRegisterForward(local.destination(), remote.destination()), remote.destination());
 
     }
 }

@@ -1,12 +1,14 @@
 package com.lockdown.messaging.cluster.node;
 
+import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.command.NodeRegister;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import com.lockdown.messaging.cluster.node.invoker.*;
+import com.lockdown.messaging.cluster.support.Recoverable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 /**
@@ -18,22 +20,20 @@ import java.util.Objects;
  */
 public class DefaultLocalNode implements LocalNode {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-
-    private final LocalNodeCommandRouter commandRouter;
+    private final CommandRouter commandRouter;
     private final ServerDestination localDestination;
+    private final Object lock = new Object();
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private volatile ServerDestination monitor = null;
     private volatile ServerDestination attached = null;
-    private final Object lock = new Object();
-
     //调度算法，可以更换
     private LocalServerNodeCommandExecutor commandExecutor = new LocalServerNodeCommandExecutor();
 
 
-    public DefaultLocalNode(LocalNodeCommandRouter commandRouter, ServerDestination destination) {
+    public DefaultLocalNode(CommandRouter commandRouter, ServerDestination destination) {
         this.commandRouter = commandRouter;
         this.localDestination = destination;
-        this.commandRouter.registerCommandAcceptor(this);
+        this.commandRouter.registerAcceptor(this);
         this.initCommandExecutor();
     }
 
@@ -64,7 +64,7 @@ public class DefaultLocalNode implements LocalNode {
 
     @Override
     public void monitor(ServerDestination destination) {
-        synchronized (lock){
+        synchronized (lock) {
             if (Objects.nonNull(monitor)) {
                 throw new IllegalStateException(" monitor already set !");
             }
@@ -74,7 +74,7 @@ public class DefaultLocalNode implements LocalNode {
 
     @Override
     public void attachTo(ServerDestination destination) {
-        synchronized (lock){
+        synchronized (lock) {
             if (Objects.nonNull(attached)) {
                 throw new IllegalStateException(" attached already set !");
             }
@@ -94,16 +94,16 @@ public class DefaultLocalNode implements LocalNode {
     }
 
     @Override
-    public  boolean monitorCompareAndSet(ServerDestination old, ServerDestination update) {
+    public boolean monitorCompareAndSet(ServerDestination old, ServerDestination update) {
         boolean result = false;
-        synchronized (lock){
-            if(Objects.isNull(old)){
-                if(monitor == null){
+        synchronized (lock) {
+            if (Objects.isNull(old)) {
+                if (monitor == null) {
                     monitor = update;
                     result = true;
                 }
-            }else{
-                if(old.equals(monitor)){
+            } else {
+                if (old.equals(monitor)) {
                     monitor = update;
                     result = true;
                 }
@@ -115,14 +115,14 @@ public class DefaultLocalNode implements LocalNode {
     @Override
     public boolean attachedCompareAndSet(ServerDestination old, ServerDestination update) {
         boolean result = false;
-        synchronized (lock){
-            if(Objects.isNull(old)){
-                if(attached == null){
+        synchronized (lock) {
+            if (Objects.isNull(old)) {
+                if (attached == null) {
                     attached = update;
                     result = true;
                 }
-            }else{
-                if(old.equals(attached)){
+            } else {
+                if (old.equals(attached)) {
                     attached = update;
                     result = true;
                 }
@@ -139,13 +139,13 @@ public class DefaultLocalNode implements LocalNode {
 
     @Override
     public void printNodes() {
-        logger.info("Local[{}],Monitor[{}],Attached[{}]",localDestination,monitor,attached);
+        logger.debug("Local[{}],Monitor[{}],Attached[{}]", localDestination, monitor, attached);
     }
 
     @Override
     public ServerDestination forceMonitor(ServerDestination destination) {
         ServerDestination result = null;
-        synchronized(lock){
+        synchronized (lock) {
             result = monitor;
             monitor = destination;
         }
@@ -159,9 +159,7 @@ public class DefaultLocalNode implements LocalNode {
 
 
     @Override
-    public void commandEvent(RemoteNode serverNode, NodeCommand command) {
+    public void acceptedCommand(RemoteNode serverNode, SourceNodeCommand command) {
         this.commandExecutor.executeCommand(this, serverNode, command);
     }
-
-
 }

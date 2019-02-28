@@ -14,7 +14,7 @@ public interface RemoteNode extends ServerNode {
 
     void close();
 
-    void receivedCommandEvent(SourceNodeCommand msg);
+    void receivedCommandEvent(SourceNodeCommand command);
 
     void inactiveEvent();
 

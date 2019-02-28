@@ -77,7 +77,7 @@ public enum CommandType implements CommandConverter {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
-    SYNC_REGISTER_ASK((short)5){
+    SYNC_REGISTER_ASK((short) 5) {
         @Override
         public NodeCommand bytesToCommand(byte[] content) {
             try {
@@ -113,7 +113,7 @@ public enum CommandType implements CommandConverter {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
-    SYNC_RECEIPT((short)10){
+    SYNC_RECEIPT((short) 10) {
         @Override
         public NodeCommand bytesToCommand(byte[] content) {
             try {

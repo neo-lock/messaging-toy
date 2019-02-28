@@ -7,10 +7,11 @@ public class NodeRegisterForward extends AbstractNodeCommand {
 
     private ServerDestination target;
 
-    public NodeRegisterForward(){}
+    public NodeRegisterForward() {
+    }
 
 
-    public NodeRegisterForward(ServerDestination source,ServerDestination target) {
+    public NodeRegisterForward(ServerDestination source, ServerDestination target) {
         super(source);
         this.target = target;
     }
