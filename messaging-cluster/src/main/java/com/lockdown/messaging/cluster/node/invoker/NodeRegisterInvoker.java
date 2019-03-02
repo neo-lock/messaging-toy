@@ -22,6 +22,7 @@ public class NodeRegisterInvoker implements NodeCommandInvoker<LocalNode> {
 
     @Override
     public void executeCommand(LocalNode local, RemoteNode remote, NodeCommand command) {
+        logger.debug("收到注册请求 {}", JSON.toJSONString(command));
         local.forceMonitor(remote.destination());
         local.sendCommand(remote.destination(), new NodeMonitored(local.destination()));
         local.notifyRemote(new NodeRegisterForward(local.destination(), remote.destination()), remote.destination());

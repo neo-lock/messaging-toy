@@ -1,4 +1,4 @@
-package com.lockdown.messaging.cluster;
+package com.lockdown.messaging.cluster.framwork;
 
 import java.io.Serializable;
 

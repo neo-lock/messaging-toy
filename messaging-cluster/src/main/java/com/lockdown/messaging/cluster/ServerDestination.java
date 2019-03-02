@@ -1,5 +1,7 @@
 package com.lockdown.messaging.cluster;
 
+import com.lockdown.messaging.cluster.framwork.Destination;
+
 import java.util.Objects;
 
 public class ServerDestination implements Destination {

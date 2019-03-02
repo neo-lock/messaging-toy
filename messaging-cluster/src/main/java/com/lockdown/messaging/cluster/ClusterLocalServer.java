@@ -7,6 +7,7 @@ import com.lockdown.messaging.cluster.sockethandler.SyncCommandHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,11 +16,12 @@ public class ClusterLocalServer extends AbstractServer<ClusterServerContext> {
 
     @Override
     protected List<ChannelHandler> providerHandler(ClusterServerContext serverContext) {
-        return Arrays.asList(new NodeCommandDecoder(serverContext.getProperties().getNodePort()),
-                new NodeCommandEncoder(serverContext.getProperties().getNodePort()),
+        return Arrays.asList(new NodeCommandDecoder(serverContext),
+                new NodeCommandEncoder(serverContext),
                 new SyncCommandHandler(serverContext),
-                new LocalNodeCommandHandler(serverContext.nodeBeanFactory()));
+                new LocalNodeCommandHandler(serverContext));
     }
+
 
     @Override
     protected void optionSetup(ServerBootstrap bootstrap) {

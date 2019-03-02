@@ -12,16 +12,16 @@ public class SimpleRuntimeEnvironment implements RuntimeEnvironment {
     private SyncCommandMonitor commandMonitor;
     private HashedWheelTimer hashedWheelTimer;
 
-    public SimpleRuntimeEnvironment(){
+    public SimpleRuntimeEnvironment() {
         this.methodRecoverable = new TimerMethodRecoverable(this);
         this.commandMonitor = new DefaultSyncCommandMonitor();
-        this.hashedWheelTimer = new HashedWheelTimer(1,TimeUnit.SECONDS,64);
+        this.hashedWheelTimer = new HashedWheelTimer(1, TimeUnit.SECONDS, 64);
     }
 
 
     @Override
     public Timeout newTimeout(TimerTask task, long delay, TimeUnit unit) {
-        return hashedWheelTimer.newTimeout(task,delay,unit);
+        return hashedWheelTimer.newTimeout(task, delay, unit);
     }
 
     @Override

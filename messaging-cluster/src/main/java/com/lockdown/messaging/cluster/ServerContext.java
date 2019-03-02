@@ -1,15 +1,13 @@
 package com.lockdown.messaging.cluster;
 
-
-import com.lockdown.messaging.cluster.command.SyncCommand;
 import com.lockdown.messaging.cluster.event.ServerEventListener;
-import com.lockdown.messaging.cluster.node.CommandRouter;
-import com.lockdown.messaging.cluster.support.Recoverable;
-import com.lockdown.messaging.cluster.node.RemoteNodeBeanFactory;
+import com.lockdown.messaging.cluster.framwork.ClusterNodeMonitor;
+import com.lockdown.messaging.cluster.framwork.MessageRouter;
+import com.lockdown.messaging.cluster.node.ClusterNodeBeanFactory;
 import com.lockdown.messaging.cluster.support.RuntimeEnvironment;
-import net.sf.cglib.proxy.MethodProxy;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.regex.Pattern;
+
 
 public interface ServerContext extends ServerEventListener {
 
@@ -20,7 +18,7 @@ public interface ServerContext extends ServerEventListener {
 
     void shutdownContext();
 
-    RemoteNodeBeanFactory nodeBeanFactory();
+    ClusterNodeMonitor nodeMonitor();
 
     ContextExecutor contextExecutor();
 
@@ -28,6 +26,8 @@ public interface ServerContext extends ServerEventListener {
 
     ServerDestination localDestination();
 
-    CommandRouter commandRouter();
+    MessageRouter commandRouter();
+
+    Pattern nodeWhiteList();
 
 }

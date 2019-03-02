@@ -1,28 +1,41 @@
 package com.lockdown.messaging.actor.handler;
 
-import io.netty.buffer.ByteBuf;
+import com.lockdown.messaging.actor.ActorSlot;
+import com.lockdown.messaging.actor.core.ActorBeanFactory;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageCodec;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-public class ActorTestHandler extends ByteToMessageCodec<String> {
+public class ActorTestHandler extends ChannelInboundHandlerAdapter {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+    private ActorBeanFactory factory;
+    private ActorSlot actorSlot;
+
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, String s, ByteBuf byteBuf) throws Exception {
-        logger.info(" 发送消息 {}",s);
-        byteBuf.writeBytes(s.getBytes(StandardCharsets.UTF_8));
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        logger.info(" actorSlot handler active !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        actorSlot = factory.newInstance(ctx);
+    }
+
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        logger.info(" 收到消息==========================      {} ", msg);
+        actorSlot.receivedMessage(msg);
+    }
+
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+
+        cause.printStackTrace();
     }
 
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
-        String s = byteBuf.toString(StandardCharsets.UTF_8);
-        logger.info(" 接收消息 {}",s);
-        list.add(s);
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
     }
 }

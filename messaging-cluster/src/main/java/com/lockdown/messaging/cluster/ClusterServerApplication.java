@@ -9,12 +9,15 @@ public class ClusterServerApplication {
         properties.setBossThreads(1);
         properties.setWorkerThreads(4);
         properties.setEnableSync(true);
-        properties.setMaster(new ServerDestination(IPUtils.getLocalIP(),9090));
+        properties.setMaster(new ServerDestination(IPUtils.getLocalIP(), 9090));
         properties.setMonitorEnable(true);
         properties.setMonitorSeconds(10);
+        properties.setNodeWhiteList("909.*");
         properties.setNodePort(9092);
 
-        ClusterServerContext serverContext = new ClusterServerContext(properties);
+
+
+        ClusterServerContext<ClusterProperties> serverContext = new ClusterServerContext<>(properties);
         serverContext.initContext();
         ClusterLocalServer localServer = new ClusterLocalServer();
         try {

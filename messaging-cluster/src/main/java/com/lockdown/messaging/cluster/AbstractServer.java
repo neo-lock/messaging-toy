@@ -30,7 +30,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
     }
 
     @Override
-    public LocalServer<T> initializer(T serverContext) {
+    public final LocalServer<T> initializer(T serverContext) {
         this.serverContext = serverContext;
         this.addEventListener(this.serverContext);
         this.bootstrap = initServerBootstrap(this.serverContext);
@@ -38,7 +38,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
     }
 
     @Override
-    public void start() throws InterruptedException {
+    public final void start() throws InterruptedException {
         try {
             bootstrap.bind(serverContext.getProperties().getNodePort()).sync();
             fireStartEvent();
@@ -95,6 +95,8 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
         final LocalServer localServer = this;
         eventListeners.forEach(serverEventListener -> serverEventListener.serverStartup(localServer, serverContext));
     }
+
+
 
 
 }

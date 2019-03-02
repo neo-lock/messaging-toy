@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TimerMethodRecoverable implements MethodRecoverable {
 
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
     private final RuntimeEnvironment runtimeEnvironment;
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public TimerMethodRecoverable(RuntimeEnvironment runtimeEnvironment) {
         this.runtimeEnvironment = runtimeEnvironment;

@@ -1,5 +1,8 @@
 package com.lockdown.messaging.cluster;
 
+import com.alibaba.fastjson.JSON;
+import com.lockdown.messaging.cluster.framwork.ClusterNodeMonitor;
+import com.lockdown.messaging.cluster.framwork.MessageRouter;
 import com.lockdown.messaging.cluster.node.*;
 import com.lockdown.messaging.cluster.support.RuntimeEnvironment;
 import com.lockdown.messaging.cluster.support.SimpleRuntimeEnvironment;
@@ -9,26 +12,27 @@ import io.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class ClusterServerContext implements ServerContext {
+public class ClusterServerContext<T extends ClusterProperties> extends AbstractServerContext<T> {
 
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private final ClusterProperties properties;
     private ContextExecutor contextExecutor;
     private ServerDestination localDestination;
-    private CommandRouter commandRouter;
-    private NodeMonitor nodeMonitor;
+    private MessageRouter commandRouter;
+    private ClusterNodeMonitor nodeMonitor;
     private LocalNode localNode;
     private RuntimeEnvironment runtimeEnvironment;
 
-    public ClusterServerContext(ServerProperties properties) {
-        logger.info("当前使用的配置:{}",properties);
-        this.properties = (ClusterProperties) properties;
+    public ClusterServerContext(T properties) {
+        super(properties);
+        logger.info(" 使用的properties :{}", JSON.toJSONString(properties));
         this.localDestination = new ServerDestination(IPUtils.getLocalIP(), properties.getNodePort());
         this.contextExecutor = new ContextExecutor(properties);
         this.runtimeEnvironment = new SimpleRuntimeEnvironment();
+        this.initContext();
     }
 
 
@@ -38,10 +42,12 @@ public class ClusterServerContext implements ServerContext {
         this.initLocalNode();
     }
 
+    @SuppressWarnings("unchecked")
     private void initCommandRouter() {
         this.nodeMonitor = new SimpleNodeMonitorFactory(this).getInstance();
-        this.commandRouter = new CommandSegmentRouter(nodeMonitor, this.contextExecutor);
+        this.commandRouter = new MessageSegmentRouter(nodeMonitor, this.contextExecutor);
         nodeMonitor.registerAcceptor(this.commandRouter);
+
     }
 
 
@@ -57,13 +63,13 @@ public class ClusterServerContext implements ServerContext {
     }
 
 
-
     @Override
     public void serverStartup(LocalServer localServer, ServerContext serverContext) {
-        logger.info(" 需要连接的master {}",this.properties.getMaster());
-        if(null!=this.properties.getMaster()&&!this.localDestination.equals(this.properties.getMaster())){
+
+        if (null != this.properties.getMaster() && !this.localDestination.equals(this.properties.getMaster())) {
+            logger.info(" 需要连接的master {}", this.properties.getMaster());
             this.localNode.registerToCluster(this.properties.getMaster());
-        }else{
+        } else {
             this.localNode.registerRandomNode();
         }
 
@@ -72,13 +78,17 @@ public class ClusterServerContext implements ServerContext {
 
     @Override
     public void serverStop(LocalServer localServer) {
-        this.nodeMonitor.shutdown();
-        this.contextExecutor.shutdown();
+        if (Objects.nonNull(this.nodeMonitor)) {
+            this.nodeMonitor.shutdown();
+        }
+        if (Objects.nonNull(this.contextExecutor)) {
+            this.contextExecutor.shutdown();
+        }
     }
 
 
-    private void startPrintNode(boolean enable){
-        if(enable){
+    private void startPrintNode(boolean enable) {
+        if (enable) {
             long delay = properties.getMonitorSeconds() < 10 ? 10 : properties.getMonitorSeconds();
             runtimeEnvironment.newTimeout(new NodeMonitorDebug(delay, TimeUnit.SECONDS), delay, TimeUnit.SECONDS);
         }
@@ -101,17 +111,25 @@ public class ClusterServerContext implements ServerContext {
     }
 
     @Override
-    public ContextExecutor contextExecutor() {
-        return contextExecutor;
-    }
-
-    @Override
-    public RemoteNodeBeanFactory nodeBeanFactory() {
+    public ClusterNodeMonitor nodeMonitor() {
         return nodeMonitor;
     }
 
     @Override
-    public CommandRouter commandRouter(){return commandRouter;}
+    public ContextExecutor contextExecutor() {
+        return contextExecutor;
+    }
+
+
+
+    @Override
+    public MessageRouter commandRouter() {
+        return commandRouter;
+    }
+
+
+
+
 
 
     private class NodeMonitorDebug implements TimerTask {

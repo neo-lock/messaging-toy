@@ -1,7 +1,6 @@
 package com.lockdown.messaging.cluster.support;
 
 import com.lockdown.messaging.cluster.command.SyncCommand;
-import com.lockdown.messaging.cluster.support.SyncCommandMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

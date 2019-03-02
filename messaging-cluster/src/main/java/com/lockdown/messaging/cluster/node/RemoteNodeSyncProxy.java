@@ -32,31 +32,31 @@ public class RemoteNodeSyncProxy implements MethodInterceptor {
     public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         Object result = null;
         MessageSync sync = method.getAnnotation(MessageSync.class);
-        int paramIndex = getOriginArgIndex(sync,args,method);
-        if(paramIndex == -1 || !serverContext.getProperties().isEnableSync() || !sync.sync()){
-            return methodProxy.invokeSuper(o,args);
+        int paramIndex = getOriginArgIndex(sync, args, method);
+        if (paramIndex == -1 || !serverContext.getProperties().isEnableSync() || !sync.sync()) {
+            return methodProxy.invokeSuper(o, args);
         }
-        SyncCommand syncCommand = generateCommand(sync,args,paramIndex);
+        SyncCommand syncCommand = generateCommand(sync, args, paramIndex);
         CountDownLatch countDownLatch = serverContext.runtimeEnvironment().syncCommandMonitor().monitorCommand(syncCommand);
         args[paramIndex] = syncCommand;
-        Future<Object> future = getCommandFuture(countDownLatch,o,methodProxy,args,sync);
+        Future<Object> future = getCommandFuture(countDownLatch, o, methodProxy, args, sync);
         try {
             result = future.get(sync.syncSeconds(), TimeUnit.SECONDS);
-        }catch (TimeoutException ex){
-            throw new MessagingTimeoutException("消息"+syncCommand.toString()+"执行超时");
-        }finally {
-            logger.debug("释放监控消息{}",syncCommand);
+        } catch (TimeoutException ex) {
+            throw new MessagingTimeoutException("消息" + syncCommand.toString() + "执行超时");
+        } finally {
+            logger.debug("释放监控消息{}", syncCommand);
             serverContext.runtimeEnvironment().syncCommandMonitor().releaseMonitor(syncCommand.getCommandId());
         }
         return result;
     }
 
-    private Future<Object> getCommandFuture(CountDownLatch countDownLatch,Object invoker, MethodProxy methodProxy, Object[] args,MessageSync sync){
-        return  serverContext.contextExecutor().getSegment().submit(() -> {
+    private Future<Object> getCommandFuture(CountDownLatch countDownLatch, Object invoker, MethodProxy methodProxy, Object[] args, MessageSync sync) {
+        return serverContext.contextExecutor().getSegment().submit(() -> {
             try {
-                Object result1 =null;
-                result1 = methodProxy.invokeSuper(invoker,args);
-                countDownLatch.await(sync.syncSeconds(),TimeUnit.SECONDS);
+                Object result1 = null;
+                result1 = methodProxy.invokeSuper(invoker, args);
+                countDownLatch.await(sync.syncSeconds(), TimeUnit.SECONDS);
                 return result1;
             } catch (Throwable throwable) {
                 throwable.printStackTrace();

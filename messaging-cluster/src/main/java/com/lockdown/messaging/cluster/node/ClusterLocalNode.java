@@ -1,6 +1,5 @@
 package com.lockdown.messaging.cluster.node;
 
-import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeRegister;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
@@ -18,9 +17,9 @@ import java.util.Objects;
  * <p>
  * 有了跟班的状态
  */
-public class DefaultLocalNode implements LocalNode {
+public class ClusterLocalNode implements LocalNode {
 
-    private final CommandRouter commandRouter;
+    private final NodeMessageRouter messageRouter;
     private final ServerDestination localDestination;
     private final Object lock = new Object();
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -30,10 +29,10 @@ public class DefaultLocalNode implements LocalNode {
     private LocalServerNodeCommandExecutor commandExecutor = new LocalServerNodeCommandExecutor();
 
 
-    public DefaultLocalNode(CommandRouter commandRouter, ServerDestination destination) {
-        this.commandRouter = commandRouter;
+    public ClusterLocalNode(NodeMessageRouter messageRouter, ServerDestination destination) {
+        this.messageRouter = messageRouter;
         this.localDestination = destination;
-        this.commandRouter.registerAcceptor(this);
+        this.messageRouter.registerAcceptor(this);
         this.initCommandExecutor();
     }
 
@@ -48,7 +47,7 @@ public class DefaultLocalNode implements LocalNode {
     @Recoverable(repeat = -1)
     @Override
     public void registerToCluster(ServerDestination destination) {
-        commandRouter.sendCommand(destination, new NodeRegister(this.localDestination));
+        messageRouter.sendMessage(destination, new NodeRegister(this.localDestination));
     }
 
 
@@ -59,7 +58,7 @@ public class DefaultLocalNode implements LocalNode {
 
     @Override
     public void notifyRemote(SourceNodeCommand command, ServerDestination... ignore) {
-        commandRouter.notifyCommand(command, ignore);
+        messageRouter.notifyMessage(command, ignore);
     }
 
     @Override
@@ -84,7 +83,7 @@ public class DefaultLocalNode implements LocalNode {
 
     @Override
     public void sendCommand(ServerDestination target, SourceNodeCommand command) {
-        commandRouter.sendCommand(target, command);
+        messageRouter.sendMessage(target, command);
     }
 
 
@@ -134,7 +133,7 @@ public class DefaultLocalNode implements LocalNode {
     @Recoverable(repeat = -1)
     @Override
     public void registerRandomNode() {
-        commandRouter.sendRandomTarget(new NodeRegister(this.localDestination));
+        messageRouter.sendRandomTarget(new NodeRegister(this.localDestination));
     }
 
     @Override
@@ -159,7 +158,7 @@ public class DefaultLocalNode implements LocalNode {
 
 
     @Override
-    public void acceptedCommand(RemoteNode serverNode, SourceNodeCommand command) {
+    public void acceptedMessage(RemoteNode serverNode, SourceNodeCommand command) {
         this.commandExecutor.executeCommand(this, serverNode, command);
     }
 }

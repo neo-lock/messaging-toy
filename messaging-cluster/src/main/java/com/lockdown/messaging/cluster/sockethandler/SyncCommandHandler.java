@@ -4,32 +4,32 @@ import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.command.SyncCommand;
 import com.lockdown.messaging.cluster.command.SyncCommandReceipt;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class SyncCommandHandler extends ChannelInboundHandlerAdapter {
+public class SyncCommandHandler extends AbstractNodeHandler {
 
-    private final ServerContext serverContext;
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public SyncCommandHandler(ServerContext serverContext) {
-        this.serverContext = serverContext;
+        super(serverContext);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if(SyncCommandReceipt.class.isAssignableFrom(msg.getClass())){
-            SyncCommandReceipt receipt = (SyncCommandReceipt) msg;
-            serverContext.runtimeEnvironment().syncCommandMonitor().releaseMonitor(receipt.getCommandId());
-            return;
-        }
-        if(SyncCommand.class.isAssignableFrom(msg.getClass())) {
-            SyncCommand command = (SyncCommand) msg;
-            ctx.writeAndFlush(new SyncCommandReceipt(command.getCommandId()));
-            ctx.fireChannelRead(command.getOriginCommand());
-        }else{
+        if (isLocalPort(ctx)) {
+            if (SyncCommandReceipt.class.isAssignableFrom(msg.getClass())) {
+                SyncCommandReceipt receipt = (SyncCommandReceipt) msg;
+                serverContext.runtimeEnvironment().syncCommandMonitor().releaseMonitor(receipt.getCommandId());
+                return;
+            }
+            if (SyncCommand.class.isAssignableFrom(msg.getClass())) {
+                SyncCommand command = (SyncCommand) msg;
+                ctx.writeAndFlush(new SyncCommandReceipt(command.getCommandId()));
+                ctx.fireChannelRead(command.getOriginCommand());
+            } else {
+                ctx.fireChannelRead(msg);
+            }
+        } else {
             ctx.fireChannelRead(msg);
         }
+
     }
 }

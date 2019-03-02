@@ -13,8 +13,8 @@ import java.lang.reflect.Method;
 public class RecoverableLocalNodeFactory implements LocalNodeFactory {
 
 
-    private ProxyCallbackFilter proxyCallbackFilter = new ProxyCallbackFilter();
     private final ServerContext serverContext;
+    private ProxyCallbackFilter proxyCallbackFilter = new ProxyCallbackFilter();
 
     public RecoverableLocalNodeFactory(ServerContext serverContext) {
         this.serverContext = serverContext;
@@ -23,15 +23,15 @@ public class RecoverableLocalNodeFactory implements LocalNodeFactory {
     @Override
     public LocalNode getNodeInstance() {
         Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(DefaultLocalNode.class);
+        enhancer.setSuperclass(ClusterLocalNode.class);
         enhancer.setCallbacks(new Callback[]{NoOp.INSTANCE, new LocalServerNodeProxy(serverContext.runtimeEnvironment())});
         enhancer.setCallbackFilter(proxyCallbackFilter);
         enhancer.setInterceptDuringConstruction(false);
-        return (LocalNode) enhancer.create(new Class[]{CommandRouter.class, ServerDestination.class},new Object[]{serverContext.commandRouter(),serverContext.localDestination()});
+        return (LocalNode) enhancer.create(new Class[]{NodeMessageRouter.class, ServerDestination.class}, new Object[]{serverContext.commandRouter(), serverContext.localDestination()});
     }
 
 
-    private  class ProxyCallbackFilter implements CallbackFilter {
+    private class ProxyCallbackFilter implements CallbackFilter {
         @Override
         public int accept(Method method) {
             Recoverable recoverable = method.getAnnotation(Recoverable.class);

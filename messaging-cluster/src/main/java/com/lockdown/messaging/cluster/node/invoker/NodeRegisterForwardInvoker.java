@@ -1,6 +1,5 @@
 package com.lockdown.messaging.cluster.node.invoker;
 
-import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.command.CommandType;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.command.NodeGreeting;
@@ -28,6 +27,7 @@ public class NodeRegisterForwardInvoker implements NodeCommandInvoker<LocalNode>
                 logger.debug("当前节点成功替换依赖对象,开始进行重新注册 {}", registerForward.getTarget());
                 local.registerToCluster(registerForward.getTarget());
             } else {
+                logger.debug("发送GREETING {}",local.destination());
                 local.sendCommand(registerForward.getTarget(), new NodeGreeting(local.destination()));
             }
         } else {

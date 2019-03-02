@@ -17,4 +17,6 @@ public interface ServerProperties {
 
     boolean isEnableSync();
 
+
+    String getNodeWhiteList();
 }

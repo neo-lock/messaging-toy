@@ -1,10 +1,10 @@
 package com.lockdown.messaging.cluster.node;
 
-import com.lockdown.messaging.cluster.ServerContext;
+import com.lockdown.messaging.cluster.framwork.ClusterNodeMonitor;
 
 public interface NodeMonitorFactory {
 
 
-    public NodeMonitor getInstance();
+    public ClusterNodeMonitor getInstance();
 
 }
