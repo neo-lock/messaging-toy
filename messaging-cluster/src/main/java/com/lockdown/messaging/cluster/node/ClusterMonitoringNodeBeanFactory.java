@@ -2,8 +2,7 @@ package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.command.SourceNodeCommand;
-import com.lockdown.messaging.cluster.framwork.MessageForwardSlot;
+import com.lockdown.messaging.cluster.framwork.*;
 import com.lockdown.messaging.cluster.support.MessageSync;
 import io.netty.channel.ChannelFuture;
 import net.sf.cglib.proxy.Callback;
@@ -14,10 +13,10 @@ import net.sf.cglib.proxy.NoOp;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-public class ClusterMonitoringNodeBeanFactory extends AbstractClusterNodeBeanFactory implements ClusterNodeMonitoringBeanFactory {
+public class ClusterMonitoringNodeBeanFactory extends AbstractClusterNodeBeanFactory implements NodeMonitoringBeanFactory {
 
     private ProxyCallbackFilter callbackFilter = new ProxyCallbackFilter();
-    private MessageForwardSlot<RemoteNode, SourceNodeCommand> monitorSlot;
+    private NodeForwardSlot monitorSlot;
 
     ClusterMonitoringNodeBeanFactory(ServerContext serverContext) {
         super(serverContext);
@@ -33,12 +32,13 @@ public class ClusterMonitoringNodeBeanFactory extends AbstractClusterNodeBeanFac
         enhancer.setCallbacks(new Callback[]{NoOp.INSTANCE, proxy});
         enhancer.setCallbackFilter(callbackFilter);
         enhancer.setInterceptDuringConstruction(false);
-        return (RemoteNode) enhancer.create(new Class[]{ChannelFuture.class, MessageForwardSlot.class, ServerDestination.class}, new Object[]{channelFuture, this.monitorSlot, destination});
+        return (RemoteNode) enhancer.create(new Class[]{ChannelFuture.class, NodeForwardSlot.class, ServerDestination.class}, new Object[]{channelFuture, this.monitorSlot, destination});
     }
 
+
     @Override
-    public void setMonitorSlot(MessageForwardSlot<RemoteNode, SourceNodeCommand> monitorSlot) {
-        this.monitorSlot = monitorSlot;
+    public void setMonitorSlot(NodeForwardSlot forwardSlot) {
+        this.monitorSlot = forwardSlot;
     }
 
 

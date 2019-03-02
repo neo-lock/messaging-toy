@@ -3,8 +3,7 @@ package com.lockdown.messaging.cluster.framwork;
 import java.util.Collection;
 
 
-public interface ChannelSlotMonitor<T extends ChannelSlot<D,M>,D extends Destination,M> extends MessageForwardSlot<T,M>{
-
+public interface ChannelSlotMonitor<T extends ChannelSlot ,D extends Destination>  {
 
     T findByDestination(D destination);
 
@@ -14,10 +13,8 @@ public interface ChannelSlotMonitor<T extends ChannelSlot<D,M>,D extends Destina
 
     void shutdown();
 
-
     void inactive(T slot);
 
     void exceptionCaught(T slot, Throwable cause);
-
 
 }

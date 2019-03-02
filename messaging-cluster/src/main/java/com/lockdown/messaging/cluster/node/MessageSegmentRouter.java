@@ -5,21 +5,23 @@ import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import com.lockdown.messaging.cluster.framwork.ClusterNodeMonitor;
 import com.lockdown.messaging.cluster.framwork.MessageAcceptor;
+import com.lockdown.messaging.cluster.framwork.NodeMessageAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class MessageSegmentRouter implements NodeMessageRouter{
+public class MessageSegmentRouter implements NodeMessageRouter,NodeMessageAcceptor{
     private Logger logger = LoggerFactory.getLogger(getClass());
     private final ClusterNodeMonitor nodeMonitor;
     private final ContextExecutor executor;
-    private MessageAcceptor<RemoteNode, SourceNodeCommand> acceptor;
+    private NodeMessageAcceptor acceptor;
 
 
     public MessageSegmentRouter(ClusterNodeMonitor nodeMonitor, ContextExecutor executor) {
         this.executor = executor;
         this.nodeMonitor = nodeMonitor;
+
         this.nodeMonitor.registerAcceptor(this);
     }
 
@@ -63,7 +65,7 @@ public class MessageSegmentRouter implements NodeMessageRouter{
     }
 
     @Override
-    public void registerAcceptor(MessageAcceptor<RemoteNode, SourceNodeCommand> acceptor) {
+    public void registerAcceptor(NodeMessageAcceptor acceptor) {
         this.acceptor = acceptor;
     }
 

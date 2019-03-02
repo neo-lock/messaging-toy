@@ -5,8 +5,8 @@ import com.lockdown.messaging.cluster.command.NodeClosed;
 import com.lockdown.messaging.cluster.command.RegisterNature;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import com.lockdown.messaging.cluster.exception.MessagingDestinationNotFoundException;
+import com.lockdown.messaging.cluster.node.ClusterMonitoringNodeBeanFactory;
 import com.lockdown.messaging.cluster.node.ClusterNodeBeanFactory;
-import com.lockdown.messaging.cluster.node.ClusterNodeMonitoringBeanFactory;
 import com.lockdown.messaging.cluster.node.RemoteNode;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelId;
@@ -18,23 +18,21 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode,ServerDestination,ClusterNodeMonitoringBeanFactory,SourceNodeCommand>
-        implements ClusterNodeBeanFactory {
+public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode,ServerDestination,SourceNodeCommand>
+        implements ClusterNodeBeanFactory,NodeSlotMonitor {
 
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Map<ChannelId, RemoteNode> invalidNodes = new ConcurrentHashMap<>();
+    private NodeMonitoringBeanFactory beanFactory;
+    private NodeMessageAcceptor messageAcceptor;
     private Object lock = new Object();
 
-    public ClusterNodeMonitor(ClusterNodeMonitoringBeanFactory beanFactory) {
-        super(beanFactory);
+    public ClusterNodeMonitor(NodeMonitoringBeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
         beanFactory.setMonitorSlot(this);
     }
 
-    @Override
-    public void messageTriggered(RemoteNode remoteNode, SourceNodeCommand message) {
-        messageAcceptor.acceptedMessage(remoteNode,message);
-    }
 
     @Override
     public RemoteNode findByDestination(ServerDestination destination) {
@@ -92,6 +90,7 @@ public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode,Se
 
     @Override
     public RemoteNode getInstance(ServerDestination destination) {
+
         RemoteNode remoteNode = beanFactory.getInstance(destination);
         destinationContext.putIfAbsent(destination, remoteNode);
         return remoteNode;
@@ -116,5 +115,15 @@ public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode,Se
             effectiveNode(remoteNode, message.getSource());
         }
         messageTriggered(remoteNode,message);
+    }
+
+    @Override
+    public void messageTriggered(RemoteNode remoteNode, SourceNodeCommand message) {
+        messageAcceptor.acceptedMessage(remoteNode,message);
+    }
+
+    @Override
+    public void registerAcceptor(NodeMessageAcceptor acceptor) {
+        this.messageAcceptor = acceptor;
     }
 }

@@ -13,7 +13,7 @@ public class ClusterServerApplication {
         properties.setMonitorEnable(true);
         properties.setMonitorSeconds(10);
         properties.setNodeWhiteList("909.*");
-        properties.setNodePort(9092);
+        properties.setNodePort(9091);
 
 
 

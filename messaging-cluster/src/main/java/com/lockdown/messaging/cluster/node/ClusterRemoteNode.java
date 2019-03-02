@@ -1,9 +1,9 @@
 package com.lockdown.messaging.cluster.node;
 
-import com.alibaba.fastjson.JSON;
+
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
-import com.lockdown.messaging.cluster.framwork.MessageForwardSlot;
+import com.lockdown.messaging.cluster.framwork.NodeForwardSlot;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelId;
 import org.slf4j.Logger;
@@ -15,14 +15,14 @@ public class ClusterRemoteNode  implements RemoteNode {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ServerDestination destination;
-    private final MessageForwardSlot<RemoteNode,SourceNodeCommand> forwardSlot;
+    private final NodeForwardSlot forwardSlot;
     private final ChannelFuture channelFuture;
 
-    public ClusterRemoteNode(ChannelFuture channelFuture,MessageForwardSlot<RemoteNode,SourceNodeCommand> forwardSlot) {
+    public ClusterRemoteNode(ChannelFuture channelFuture,NodeForwardSlot forwardSlot) {
         this(channelFuture,forwardSlot,null);
     }
 
-    public ClusterRemoteNode(ChannelFuture channelFuture,MessageForwardSlot<RemoteNode,SourceNodeCommand> forwardSlot,ServerDestination destination) {
+    public ClusterRemoteNode(ChannelFuture channelFuture, NodeForwardSlot forwardSlot, ServerDestination destination) {
         this.destination = destination;
         this.forwardSlot = forwardSlot;
         this.channelFuture = channelFuture;

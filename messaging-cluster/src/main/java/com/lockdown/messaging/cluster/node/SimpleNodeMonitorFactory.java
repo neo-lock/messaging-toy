@@ -2,6 +2,7 @@ package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.framwork.ClusterNodeMonitor;
+import com.lockdown.messaging.cluster.framwork.NodeMonitoringBeanFactory;
 
 public class SimpleNodeMonitorFactory implements NodeMonitorFactory {
 
@@ -14,7 +15,7 @@ public class SimpleNodeMonitorFactory implements NodeMonitorFactory {
 
     @Override
     public ClusterNodeMonitor getInstance() {
-        ClusterNodeMonitoringBeanFactory nodeBeanFactory = new ClusterMonitoringNodeBeanFactory(serverContext);
+        ClusterMonitoringNodeBeanFactory nodeBeanFactory = new ClusterMonitoringNodeBeanFactory(serverContext);
         return new ClusterNodeMonitor(nodeBeanFactory);
     }
 }

@@ -4,8 +4,9 @@ import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import com.lockdown.messaging.cluster.framwork.Findable;
 import com.lockdown.messaging.cluster.framwork.MessageAcceptor;
+import com.lockdown.messaging.cluster.framwork.NodeMessageAcceptor;
 
-public interface LocalNode extends Findable<ServerDestination>, MessageAcceptor<RemoteNode, SourceNodeCommand> {
+public interface LocalNode extends Findable<ServerDestination>, NodeMessageAcceptor {
 
 
     void registerToCluster(ServerDestination destination);
