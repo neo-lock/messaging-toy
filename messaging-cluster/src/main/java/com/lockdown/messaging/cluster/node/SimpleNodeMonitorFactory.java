@@ -1,8 +1,6 @@
 package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerContext;
-import com.lockdown.messaging.cluster.framwork.ClusterNodeMonitor;
-import com.lockdown.messaging.cluster.framwork.NodeMonitoringBeanFactory;
 
 public class SimpleNodeMonitorFactory implements NodeMonitorFactory {
 

@@ -4,6 +4,6 @@ import java.io.Serializable;
 
 public interface Destination extends Serializable {
 
-    public String identifier();
+    String identifier();
 
 }

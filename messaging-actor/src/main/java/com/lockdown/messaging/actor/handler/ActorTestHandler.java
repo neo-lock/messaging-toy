@@ -1,7 +1,6 @@
 package com.lockdown.messaging.actor.handler;
 
 import com.lockdown.messaging.actor.ActorSlot;
-import com.lockdown.messaging.actor.core.ActorBeanFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;

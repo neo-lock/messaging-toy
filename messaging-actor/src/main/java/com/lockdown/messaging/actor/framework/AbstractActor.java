@@ -1,10 +1,6 @@
 package com.lockdown.messaging.actor.framework;
 
 import com.lockdown.messaging.actor.ActorDestination;
-import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.command.SourceNodeCommand;
-import com.lockdown.messaging.cluster.framwork.MessageForwardSlot;
-import com.lockdown.messaging.cluster.node.RemoteNode;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelId;
 import org.slf4j.Logger;
@@ -26,22 +22,22 @@ public class AbstractActor implements Actor {
 
     @Override
     public void close() {
-
+        channelFuture.channel().close();
     }
 
     @Override
     public void receivedMessageEvent(Object message) {
-
+        forwardSlot.receivedMessage(this,message);
     }
 
     @Override
     public void inactiveEvent() {
-
+        forwardSlot.inactive(this);
     }
 
     @Override
     public void exceptionCaughtEvent(Throwable cause) {
-
+        forwardSlot.exceptionCaught(this,cause);
     }
 
     @Override

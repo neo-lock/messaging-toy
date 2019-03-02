@@ -95,6 +95,17 @@ public enum CommandType implements CommandConverter {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
+    ACTOR_MSG((short)6){
+        @Override
+        public NodeCommand bytesToCommand(byte[] content) {
+            return null;
+        }
+
+        @Override
+        public byte[] CommandToBytes(NodeCommand command) {
+            return new byte[0];
+        }
+    },
     CLOSED((short) 9) {
         @Override
         public NodeCommand bytesToCommand(byte[] content) {

@@ -3,8 +3,6 @@ package com.lockdown.messaging.cluster.node;
 import com.lockdown.messaging.cluster.ContextExecutor;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
-import com.lockdown.messaging.cluster.framwork.ClusterNodeMonitor;
-import com.lockdown.messaging.cluster.framwork.MessageAcceptor;
 import com.lockdown.messaging.cluster.framwork.NodeMessageAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +19,6 @@ public class MessageSegmentRouter implements NodeMessageRouter,NodeMessageAccept
     public MessageSegmentRouter(ClusterNodeMonitor nodeMonitor, ContextExecutor executor) {
         this.executor = executor;
         this.nodeMonitor = nodeMonitor;
-
         this.nodeMonitor.registerAcceptor(this);
     }
 
@@ -42,10 +39,6 @@ public class MessageSegmentRouter implements NodeMessageRouter,NodeMessageAccept
         RemoteNode random = nodeMonitor.randomNode();
         random.writeMessage(command);
     }
-
-
-
-
 
 
     @Override

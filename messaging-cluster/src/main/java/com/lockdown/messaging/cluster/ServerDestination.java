@@ -7,11 +7,9 @@ import java.util.Objects;
 public class ServerDestination implements Destination {
 
 
-    private String ipAddress;
-    private int port;
+    protected String ipAddress;
+    protected int port;
 
-    public ServerDestination() {
-    }
 
     public ServerDestination(String ipAddress, int port) {
         this.ipAddress = ipAddress;
@@ -38,6 +36,7 @@ public class ServerDestination implements Destination {
     public void setPort(int port) {
         this.port = port;
     }
+
 
     @Override
     public String toString() {

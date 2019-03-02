@@ -1,13 +1,11 @@
-package com.lockdown.messaging.cluster.framwork;
+package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.NodeClosed;
 import com.lockdown.messaging.cluster.command.RegisterNature;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import com.lockdown.messaging.cluster.exception.MessagingDestinationNotFoundException;
-import com.lockdown.messaging.cluster.node.ClusterMonitoringNodeBeanFactory;
-import com.lockdown.messaging.cluster.node.ClusterNodeBeanFactory;
-import com.lockdown.messaging.cluster.node.RemoteNode;
+import com.lockdown.messaging.cluster.framwork.*;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelId;
 import org.slf4j.Logger;
@@ -90,7 +88,6 @@ public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode,Se
 
     @Override
     public RemoteNode getInstance(ServerDestination destination) {
-
         RemoteNode remoteNode = beanFactory.getInstance(destination);
         destinationContext.putIfAbsent(destination, remoteNode);
         return remoteNode;
