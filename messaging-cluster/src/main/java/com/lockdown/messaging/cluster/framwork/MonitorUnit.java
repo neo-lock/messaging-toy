@@ -1,6 +1,6 @@
 package com.lockdown.messaging.cluster.framwork;
 
-public interface MessageForwardSlot<T,M> {
+public interface Slot<T,M> {
 
 
     void receivedMessage(T slot, M message);
@@ -10,5 +10,6 @@ public interface MessageForwardSlot<T,M> {
 
 
     void exceptionCaught(T slot, Throwable cause);
+
 
 }
