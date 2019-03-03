@@ -1,9 +1,8 @@
 package com.lockdown.messaging.cluster.node;
+import com.lockdown.messaging.cluster.node.invoker.NodeCommandExecutor;
 
-import com.lockdown.messaging.cluster.node.invoker.LocalServerNodeCommandExecutor;
+public interface NodeCommandExecutorFactory<T> {
 
-public interface LocalNodeCommandExecutorFactory {
-
-    LocalServerNodeCommandExecutor getInstance();
+    NodeCommandExecutor<T> getInstance();
 
 }

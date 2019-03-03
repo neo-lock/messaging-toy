@@ -1,7 +1,5 @@
 package com.lockdown.messaging.cluster;
 
-import java.util.regex.Pattern;
-
 public class ClusterProperties implements ServerProperties {
 
 
@@ -13,7 +11,6 @@ public class ClusterProperties implements ServerProperties {
     private int monitorSeconds;
     private boolean enableSync;
     private String nodeWhiteList;
-
 
 
     @Override

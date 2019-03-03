@@ -1,19 +1,14 @@
 package com.lockdown.messaging.cluster.sockethandler;
 
 import com.lockdown.messaging.cluster.ServerContext;
-import com.lockdown.messaging.cluster.command.SourceNodeCommand;
-import com.lockdown.messaging.cluster.node.RemoteNode;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.AttributeKey;
 
 public class LocalNodeCommandHandler extends AbstractNodeHandler {
-
 
 
     public LocalNodeCommandHandler(ServerContext serverContext) {
         super(serverContext);
     }
-
 
 
     @Override

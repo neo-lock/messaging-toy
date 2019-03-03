@@ -1,6 +1,5 @@
 package com.lockdown.messaging.cluster.sockethandler;
 
-import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import io.netty.buffer.ByteBuf;

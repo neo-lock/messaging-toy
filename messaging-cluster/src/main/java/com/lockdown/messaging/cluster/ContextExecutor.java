@@ -31,6 +31,10 @@ public class ContextExecutor {
         return segment;
     }
 
+    public void executeRunnable(Runnable runnable) {
+        this.segment.execute(runnable);
+    }
+
     public void shutdown() {
         boss.shutdownGracefully();
         worker.shutdownGracefully();

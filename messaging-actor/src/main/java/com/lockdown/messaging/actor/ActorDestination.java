@@ -10,7 +10,7 @@ public class ActorDestination implements Destination {
     private final String channelId;
     private ServerDestination serverDestination;
 
-    public ActorDestination(ServerDestination destination,String channelId) {
+    public ActorDestination(ServerDestination destination, String channelId) {
         this.serverDestination = destination;
         this.channelId = channelId;
     }

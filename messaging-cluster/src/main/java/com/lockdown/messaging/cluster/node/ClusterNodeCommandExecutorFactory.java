@@ -1,14 +1,18 @@
 package com.lockdown.messaging.cluster.node;
 
-import com.lockdown.messaging.cluster.node.invoker.LocalServerNodeCommandExecutor;
+import com.lockdown.messaging.cluster.node.invoker.*;
 
-public class ClusterLocalNodeCommandExecutorFactory implements LocalNodeCommandExecutorFactory {
-
-
+public class ClusterNodeCommandExecutorFactory implements NodeCommandExecutorFactory<LocalNode> {
 
 
     @Override
-    public LocalServerNodeCommandExecutor getInstance() {
-        return null;
+    public NodeCommandExecutor<LocalNode> getInstance() {
+        LocalServerNodeCommandExecutor commandExecutor = new LocalServerNodeCommandExecutor();
+        commandExecutor.registerInvoker(new NodeRegisterInvoker());
+        commandExecutor.registerInvoker(new NodeRegisterForwardInvoker());
+        commandExecutor.registerInvoker(new NodeMonitoredInvoker());
+        commandExecutor.registerInvoker(new NodeClosedInvoker());
+        return commandExecutor;
     }
+
 }

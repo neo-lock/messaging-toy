@@ -27,7 +27,7 @@ public class NodeRegisterForwardInvoker implements NodeCommandInvoker<LocalNode>
                 logger.debug("当前节点成功替换依赖对象,开始进行重新注册 {}", registerForward.getTarget());
                 local.registerToCluster(registerForward.getTarget());
             } else {
-                logger.debug("发送GREETING {}",local.destination());
+                logger.debug("发送GREETING {}", local.destination());
                 local.sendCommand(registerForward.getTarget(), new NodeGreeting(local.destination()));
             }
         } else {

@@ -16,8 +16,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode,ServerDestination,SourceNodeCommand>
-        implements ClusterNodeBeanFactory,NodeSlotMonitor {
+public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode, ServerDestination, SourceNodeCommand>
+        implements ClusterNodeBeanFactory, NodeSlotMonitor {
 
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -28,7 +28,7 @@ public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode,Se
 
     public ClusterNodeMonitor(NodeMonitoringBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
-        beanFactory.setMonitorSlot(this);
+        beanFactory.setMonitorUnit(this);
     }
 
 
@@ -49,9 +49,8 @@ public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode,Se
     @Override
     public void inactive(RemoteNode slot) {
         super.inactive(slot);
-        messageTriggered(slot,new NodeClosed(slot.destination()));
+        messageTriggered(slot, new NodeClosed(slot.destination()));
     }
-
 
 
     @Override
@@ -106,21 +105,22 @@ public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode,Se
         destinationContext.putIfAbsent(destination, remoteNode);
     }
 
-    @Override
-    public void receivedMessage(RemoteNode remoteNode, SourceNodeCommand message) {
-        if (RegisterNature.class.isAssignableFrom(message.getClass())) {
-            effectiveNode(remoteNode, message.getSource());
-        }
-        messageTriggered(remoteNode,message);
-    }
 
     @Override
     public void messageTriggered(RemoteNode remoteNode, SourceNodeCommand message) {
-        messageAcceptor.acceptedMessage(remoteNode,message);
+        messageAcceptor.acceptedMessage(remoteNode, message);
     }
 
     @Override
     public void registerAcceptor(NodeMessageAcceptor acceptor) {
         this.messageAcceptor = acceptor;
+    }
+
+    @Override
+    public void acceptedMessage(RemoteNode remoteNode, SourceNodeCommand message) {
+        if (RegisterNature.class.isAssignableFrom(message.getClass())) {
+            effectiveNode(remoteNode, message.getSource());
+        }
+        messageTriggered(remoteNode, message);
     }
 }

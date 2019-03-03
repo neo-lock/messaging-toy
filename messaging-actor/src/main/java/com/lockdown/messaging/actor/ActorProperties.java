@@ -6,6 +6,24 @@ public class ActorProperties extends ClusterProperties {
 
 
     private int actorPort;
+    private String actorClassName;
+    private String actorCodecClassName;
+
+    public String getActorClassName() {
+        return actorClassName;
+    }
+
+    public void setActorClassName(String actorClassName) {
+        this.actorClassName = actorClassName;
+    }
+
+    public String getActorCodecClassName() {
+        return actorCodecClassName;
+    }
+
+    public void setActorCodecClassName(String actorCodecClassName) {
+        this.actorCodecClassName = actorCodecClassName;
+    }
 
     public int getActorPort() {
         return actorPort;

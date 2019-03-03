@@ -1,62 +1,106 @@
 package com.lockdown.messaging.actor.framework;
 
 import com.lockdown.messaging.actor.ActorDestination;
+import com.lockdown.messaging.actor.ActorNodeType;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractActor implements Actor {
+import java.util.Objects;
+
+public abstract class AbstractActor implements Actor {
 
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ActorDestination destination;
-    private final ActorForwardSlot forwardSlot;
-    private final ChannelFuture channelFuture;
+    private ActorMonitor actorMonitor;
+    private ChannelFuture channelFuture;
+    private ActorMessageEmitter messageEmitter;
 
-    public AbstractActor(ActorDestination destination, ActorForwardSlot forwardSlot, ChannelFuture channelFuture) {
+    public AbstractActor() {
+    }
+
+    public void setDestination(ActorDestination destination) {
+        if (Objects.isNull(destination)) {
+            throw new IllegalArgumentException(" destination can't be null !");
+        }
+        if (Objects.nonNull(this.destination)) {
+            throw new IllegalStateException(" destination already set !");
+        }
         this.destination = destination;
-        this.forwardSlot = forwardSlot;
+    }
+
+    public void setActorMonitor(ActorMonitor actorMonitor) {
+        if (Objects.isNull(actorMonitor)) {
+            throw new IllegalArgumentException(" actor monitor can't be null !");
+        }
+        if (Objects.nonNull(this.actorMonitor)) {
+            throw new IllegalStateException(" actor monitor already set !");
+        }
+        this.actorMonitor = actorMonitor;
+    }
+
+    public void setChannelFuture(ChannelFuture channelFuture) {
+        if (Objects.isNull(channelFuture)) {
+            throw new IllegalArgumentException(" channel future can't be null !");
+        }
+        if (Objects.nonNull(this.channelFuture)) {
+            throw new IllegalStateException(" channel future already set !");
+        }
         this.channelFuture = channelFuture;
     }
 
+    public void setMessageEmitter(ActorMessageEmitter messageEmitter) {
+        if (Objects.isNull(messageEmitter)) {
+            throw new IllegalArgumentException(" message emitter can't be null !");
+        }
+        if (Objects.nonNull(this.messageEmitter)) {
+            throw new IllegalStateException(" message emitter already set !");
+        }
+        this.messageEmitter = messageEmitter;
+    }
+
     @Override
-    public void close() {
+    public final void close() {
         channelFuture.channel().close();
     }
 
     @Override
-    public void receivedMessageEvent(Object message) {
-        forwardSlot.receivedMessage(this,message);
+    public final void receivedMessageEvent(Object message) {
+        actorMonitor.acceptedMessage(this, message);
+    }
+
+
+    @Override
+    public final void inactiveEvent() {
+        actorMonitor.inactive(this);
     }
 
     @Override
-    public void inactiveEvent() {
-        forwardSlot.inactive(this);
+    public final void exceptionCaughtEvent(Throwable cause) {
+        actorMonitor.exceptionCaught(this, cause);
     }
 
-    @Override
-    public void exceptionCaughtEvent(Throwable cause) {
-        forwardSlot.exceptionCaught(this,cause);
-    }
 
     @Override
-    public ChannelId channelId() {
+    public final ChannelId channelId() {
         return channelFuture.channel().id();
     }
 
     @Override
-    public ActorDestination destination() {
+    public final ActorDestination destination() {
         return destination;
     }
 
-    @Override
-    public void sendMessage(ActorDestination destination, Object message) {
 
+    @Override
+    public final void sendMessage(ActorDestination destination, Object message) {
+        messageEmitter.sendMessage(destination, message);
     }
 
     @Override
-    public void writeMessage(Object message) {
-        channelFuture.channel().writeAndFlush(message);
+    public Enum<?> slotType() {
+        return ActorNodeType.ACTOR_NODE;
     }
 }

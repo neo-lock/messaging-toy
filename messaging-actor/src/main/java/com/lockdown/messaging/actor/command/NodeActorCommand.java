@@ -1,6 +1,8 @@
-package com.lockdown.messaging.cluster.command;
+package com.lockdown.messaging.actor.command;
 
 import com.lockdown.messaging.cluster.ServerDestination;
+import com.lockdown.messaging.cluster.command.AbstractNodeCommand;
+import com.lockdown.messaging.cluster.command.CommandType;
 
 public class NodeActorCommand extends AbstractNodeCommand {
 

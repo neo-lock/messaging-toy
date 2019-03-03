@@ -1,7 +1,7 @@
 package com.lockdown.messaging.actor;
 
 import com.lockdown.messaging.actor.handler.ActorCodecHandler;
-import com.lockdown.messaging.actor.handler.ActorTestHandler;
+import com.lockdown.messaging.actor.handler.ActorFinallyHandler;
 import com.lockdown.messaging.cluster.AbstractServer;
 import com.lockdown.messaging.cluster.exception.MessagingInterruptedException;
 import com.lockdown.messaging.cluster.sockethandler.LocalNodeCommandHandler;
@@ -39,7 +39,7 @@ public class ActorLocalServer extends AbstractServer<ActorServerContext> {
                 new SyncCommandHandler(serverContext),
                 new LocalNodeCommandHandler(serverContext),
                 new ActorCodecHandler(),
-                new ActorTestHandler()
+                new ActorFinallyHandler(serverContext)
         );
     }
 

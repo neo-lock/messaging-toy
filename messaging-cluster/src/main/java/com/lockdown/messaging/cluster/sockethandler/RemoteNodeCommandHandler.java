@@ -2,10 +2,7 @@ package com.lockdown.messaging.cluster.sockethandler;
 
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.command.SourceNodeCommand;
-import com.lockdown.messaging.cluster.node.RemoteNode;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.AttributeKey;
 
 import java.net.InetSocketAddress;
 

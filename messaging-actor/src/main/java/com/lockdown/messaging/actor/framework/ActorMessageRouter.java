@@ -1,6 +1,6 @@
 package com.lockdown.messaging.actor.framework;
 
 
-public interface ActorMessageRouter extends ActorMessageTrigger {
+public interface ActorMessageRouter extends ActorMessageAcceptor,ActorMessageEmitter {
 
 }

@@ -1,4 +1,8 @@
 package com.lockdown.messaging.actor.framework;
 
-public class ActorEmitter {
+import com.lockdown.messaging.actor.ActorDestination;
+import com.lockdown.messaging.cluster.framwork.MessageEmitter;
+
+public interface ActorMessageEmitter extends MessageEmitter<ActorDestination, Object> {
+
 }

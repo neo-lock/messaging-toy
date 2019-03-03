@@ -7,12 +7,15 @@ import com.lockdown.messaging.cluster.framwork.NodeMessageAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-public class MessageSegmentRouter implements NodeMessageRouter,NodeMessageAcceptor{
-    private Logger logger = LoggerFactory.getLogger(getClass());
+public class MessageSegmentRouter implements NodeMessageRouter, NodeMessageAcceptor {
     private final ClusterNodeMonitor nodeMonitor;
     private final ContextExecutor executor;
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private NodeMessageAcceptor acceptor;
 
 

@@ -13,12 +13,10 @@ public class ClusterServerApplication {
         properties.setMonitorEnable(true);
         properties.setMonitorSeconds(10);
         properties.setNodeWhiteList("909.*");
-        properties.setNodePort(9092);
-
+        properties.setNodePort(9093);
 
 
         ClusterServerContext<ClusterProperties> serverContext = new ClusterServerContext<>(properties);
-        serverContext.initContext();
         ClusterLocalServer localServer = new ClusterLocalServer();
         try {
             localServer.initializer(serverContext).start();

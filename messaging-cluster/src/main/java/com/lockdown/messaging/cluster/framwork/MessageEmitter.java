@@ -4,5 +4,4 @@ public interface MessageEmitter<D extends Destination, M> {
 
     void sendMessage(D destination, M message);
 
-
 }

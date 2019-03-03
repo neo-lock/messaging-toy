@@ -1,7 +1,7 @@
 package com.lockdown.messaging.actor;
 
 import com.lockdown.messaging.actor.handler.ActorCodecHandler;
-import com.lockdown.messaging.actor.handler.ActorTestHandler;
+import com.lockdown.messaging.actor.handler.ActorFinallyHandler;
 import com.lockdown.messaging.cluster.utils.IPUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -25,7 +25,7 @@ public class ActorTestClient {
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
-                socketChannel.pipeline().addLast(new ActorCodecHandler(), new ActorTestHandler());
+                socketChannel.pipeline().addLast(new ActorCodecHandler());
             }
         });
 

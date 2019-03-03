@@ -2,7 +2,8 @@ package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.framwork.*;
+import com.lockdown.messaging.cluster.framwork.NodeMonitorUnit;
+import com.lockdown.messaging.cluster.framwork.NodeMonitoringBeanFactory;
 import com.lockdown.messaging.cluster.support.MessageSync;
 import io.netty.channel.ChannelFuture;
 import net.sf.cglib.proxy.Callback;
@@ -16,7 +17,7 @@ import java.util.Objects;
 public class ClusterMonitoringNodeBeanFactory extends AbstractClusterNodeBeanFactory implements NodeMonitoringBeanFactory {
 
     private ProxyCallbackFilter callbackFilter = new ProxyCallbackFilter();
-    private NodeForwardSlot monitorSlot;
+    private NodeMonitorUnit monitorSlot;
 
     ClusterMonitoringNodeBeanFactory(ServerContext serverContext) {
         super(serverContext);
@@ -32,12 +33,12 @@ public class ClusterMonitoringNodeBeanFactory extends AbstractClusterNodeBeanFac
         enhancer.setCallbacks(new Callback[]{NoOp.INSTANCE, proxy});
         enhancer.setCallbackFilter(callbackFilter);
         enhancer.setInterceptDuringConstruction(false);
-        return (RemoteNode) enhancer.create(new Class[]{ChannelFuture.class, NodeForwardSlot.class, ServerDestination.class}, new Object[]{channelFuture, this.monitorSlot, destination});
+        return (RemoteNode) enhancer.create(new Class[]{ChannelFuture.class, NodeMonitorUnit.class, ServerDestination.class}, new Object[]{channelFuture, this.monitorSlot, destination});
     }
 
 
     @Override
-    public void setMonitorSlot(NodeForwardSlot forwardSlot) {
+    public void setMonitorUnit(NodeMonitorUnit forwardSlot) {
         this.monitorSlot = forwardSlot;
     }
 

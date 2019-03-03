@@ -26,23 +26,19 @@ public class ClusterLocalNode implements LocalNode {
     private volatile ServerDestination monitor = null;
     private volatile ServerDestination attached = null;
     //调度算法，可以更换
-    private LocalServerNodeCommandExecutor commandExecutor = new LocalServerNodeCommandExecutor();
+    private NodeCommandExecutor<LocalNode> commandExecutor;
 
 
     public ClusterLocalNode(NodeMessageRouter messageRouter, ServerDestination destination) {
         this.messageRouter = messageRouter;
         this.localDestination = destination;
         this.messageRouter.registerAcceptor(this);
-        this.initCommandExecutor();
     }
 
-    public void initCommandExecutor() {
-        this.commandExecutor.registerInvoker(new NodeRegisterInvoker());
-        this.commandExecutor.registerInvoker(new NodeRegisterForwardInvoker());
-        this.commandExecutor.registerInvoker(new NodeMonitoredInvoker());
-        this.commandExecutor.registerInvoker(new NodeClosedInvoker());
-    }
 
+    public void setCommandExecutor(NodeCommandExecutor<LocalNode> commandExecutor) {
+        this.commandExecutor = commandExecutor;
+    }
 
     @Recoverable(repeat = -1)
     @Override

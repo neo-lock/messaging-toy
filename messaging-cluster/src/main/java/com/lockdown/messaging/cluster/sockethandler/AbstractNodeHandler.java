@@ -5,12 +5,10 @@ import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import com.lockdown.messaging.cluster.node.RemoteNode;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public abstract class AbstractNodeHandler extends ChannelInboundHandlerAdapter {
@@ -48,7 +46,6 @@ public abstract class AbstractNodeHandler extends ChannelInboundHandlerAdapter {
             ctx.fireChannelRead(msg);
         }
     }
-
 
 
 }

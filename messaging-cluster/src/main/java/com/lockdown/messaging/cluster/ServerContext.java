@@ -2,29 +2,28 @@ package com.lockdown.messaging.cluster;
 
 import com.lockdown.messaging.cluster.event.ServerEventListener;
 import com.lockdown.messaging.cluster.node.ClusterNodeMonitor;
+import com.lockdown.messaging.cluster.node.NodeMessageRouter;
 import com.lockdown.messaging.cluster.support.RuntimeEnvironment;
 
 import java.util.regex.Pattern;
 
 
-public interface ServerContext extends ServerEventListener {
+public interface ServerContext<T extends ServerProperties> extends ServerEventListener {
 
 
-    ServerProperties getProperties();
+    T getProperties();
 
     RuntimeEnvironment runtimeEnvironment();
-
-    void shutdownContext();
 
     ClusterNodeMonitor nodeMonitor();
 
     ContextExecutor contextExecutor();
 
-    void initContext();
+    void shutdownContext();
 
     ServerDestination localDestination();
 
-    MessageRouter commandRouter();
+    NodeMessageRouter commandRouter();
 
     Pattern nodeWhiteList();
 

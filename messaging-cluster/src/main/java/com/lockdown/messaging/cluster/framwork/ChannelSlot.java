@@ -2,7 +2,7 @@ package com.lockdown.messaging.cluster.framwork;
 
 import io.netty.channel.ChannelId;
 
-public interface ChannelSlot<D,M> extends Findable<D>,MessageWritable<M> {
+public interface ChannelSlot<D, M> extends Findable<D>, MessageWritable<M> {
 
     void close();
 
@@ -13,5 +13,7 @@ public interface ChannelSlot<D,M> extends Findable<D>,MessageWritable<M> {
     void exceptionCaughtEvent(Throwable cause);
 
     ChannelId channelId();
+
+    Enum<?> slotType();
 
 }

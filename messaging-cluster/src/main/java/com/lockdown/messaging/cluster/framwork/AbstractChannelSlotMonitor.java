@@ -4,14 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.exception.MessagingDestinationNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class AbstractChannelSlotMonitor <T extends ChannelSlot<D,M>,D extends Destination,M>
-        implements ChannelSlotMonitor<T,D>{
-
+public abstract class AbstractChannelSlotMonitor<T extends ChannelSlot<D, M>, D extends Destination, M>
+        implements ChannelSlotMonitor<T, D> {
 
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -46,15 +46,15 @@ public abstract class AbstractChannelSlotMonitor <T extends ChannelSlot<D,M>,D e
     public void inactive(T slot) {
         Objects.requireNonNull(slot);
         T old = destinationContext.remove(slot.destination());
-        if(Objects.nonNull(old)){
-            logger.info(" ========{} inactive  关闭===============",slot.destination());
+        if (Objects.nonNull(old)) {
+            logger.info(" ========{} inactive  关闭===============", slot.destination());
             old.close();
         }
     }
 
     @Override
     public void exceptionCaught(T slot, Throwable cause) {
-        logger.warn(" {} 出现异常 {}",slot.destination(),cause.getMessage());
+        logger.warn(" {} 出现异常 {}", slot.destination(), cause.getMessage());
     }
 
 
