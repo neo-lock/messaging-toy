@@ -7,6 +7,8 @@ import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerProperties;
 import io.netty.channel.Channel;
 
+import java.util.Collection;
+
 
 public interface ActorServerContext<T extends ServerProperties> extends ServerContext<T> {
 
@@ -18,4 +20,6 @@ public interface ActorServerContext<T extends ServerProperties> extends ServerCo
     ActorBeanFactory actorBeanFactory();
 
     ActorDestination createActorDestination(Channel channel);
+
+
 }

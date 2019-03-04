@@ -16,12 +16,12 @@ import java.util.regex.Pattern;
 public abstract class AbstractServerContext<T extends ServerProperties> implements ServerContext<T> {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected final T properties;
-    protected Pattern nodeWhiteList;
-    protected ContextExecutor contextExecutor;
-    protected ServerDestination localDestination;
-    protected RuntimeEnvironment runtimeEnvironment;
-    protected LocalNode localNode;
+    private final T properties;
+    private Pattern nodeWhiteList;
+    private ContextExecutor contextExecutor;
+    private ServerDestination localDestination;
+    private RuntimeEnvironment runtimeEnvironment;
+    private LocalNode localNode;
 
 
     public AbstractServerContext(T properties) {
@@ -30,10 +30,11 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         this.localDestination = new ServerDestination(IPUtils.getLocalIP(), properties.getNodePort());
         this.contextExecutor = new ContextExecutor(properties);
         this.runtimeEnvironment = new SimpleRuntimeEnvironment();
-        this.startInitContext();
     }
 
-    protected void startInitContext(){
+
+
+    public final void startInitContext(){
         logger.info("start init necessary !");
         checkProperties();
         initNecessary();
@@ -72,6 +73,10 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         return contextExecutor;
     }
 
+    @Override
+    public LocalNode localNode() {
+        return localNode;
+    }
 
     @Override
     public void serverStop(LocalServer localServer) {

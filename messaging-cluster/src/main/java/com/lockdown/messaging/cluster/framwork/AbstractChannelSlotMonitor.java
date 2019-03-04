@@ -21,7 +21,7 @@ public abstract class AbstractChannelSlotMonitor<T extends ChannelSlot<D, M>, D 
     @Override
     public T findByDestination(D destination) {
         Objects.requireNonNull(destination);
-        if (destinationContext.containsKey(destination)) {
+        if (!destinationContext.containsKey(destination)) {
             throw new MessagingDestinationNotFoundException(destination);
         }
         return destinationContext.get(destination);

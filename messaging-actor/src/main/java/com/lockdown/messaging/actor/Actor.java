@@ -1,6 +1,4 @@
-package com.lockdown.messaging.actor.framework;
-
-import com.lockdown.messaging.actor.ActorDestination;
+package com.lockdown.messaging.actor;
 import com.lockdown.messaging.cluster.framwork.ChannelSlot;
 import com.lockdown.messaging.cluster.framwork.MessageEmitter;
 

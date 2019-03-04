@@ -6,6 +6,6 @@ public interface CommandConverter {
     NodeCommand bytesToCommand(byte[] content);
 
 
-    byte[] CommandToBytes(NodeCommand command);
+    byte[] commandToBytes(NodeCommand command);
 
 }

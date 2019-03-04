@@ -5,6 +5,6 @@ import com.lockdown.messaging.cluster.node.RemoteNode;
 
 public interface NodeCommandExecutor<T> {
 
-    public void executeCommand(T invoke, RemoteNode remote, NodeCommand command);
+    void executeCommand(T invoke, RemoteNode remote, NodeCommand command);
 
 }

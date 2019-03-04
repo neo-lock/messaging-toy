@@ -1,5 +1,6 @@
-package com.lockdown.messaging.actor;
+package com.lockdown.messaging.actor.framework;
 
+import com.lockdown.messaging.actor.ActorServerContext;
 import com.lockdown.messaging.actor.command.NodeActorCommandInvoker;
 import com.lockdown.messaging.cluster.node.ClusterNodeCommandExecutorFactory;
 import com.lockdown.messaging.cluster.node.LocalNode;

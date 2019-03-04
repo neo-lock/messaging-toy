@@ -22,11 +22,11 @@ public class ClusterNodeMonitor extends AbstractChannelSlotMonitor<RemoteNode, S
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Map<ChannelId, RemoteNode> invalidNodes = new ConcurrentHashMap<>();
-    private NodeMonitoringBeanFactory beanFactory;
+    private AbstractClusterNodeBeanFactory beanFactory;
     private NodeMessageAcceptor messageAcceptor;
     private Object lock = new Object();
 
-    public ClusterNodeMonitor(NodeMonitoringBeanFactory beanFactory) {
+    public ClusterNodeMonitor(AbstractClusterNodeBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
         beanFactory.setMonitorUnit(this);
     }

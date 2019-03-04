@@ -1,5 +1,6 @@
 package com.lockdown.messaging.actor.framework;
 
+import com.lockdown.messaging.actor.Actor;
 import com.lockdown.messaging.actor.ActorDestination;
 import com.lockdown.messaging.actor.ActorNodeType;
 import io.netty.channel.ChannelFuture;
@@ -7,12 +8,12 @@ import io.netty.channel.ChannelId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
 import java.util.Objects;
 
 public abstract class AbstractActor implements Actor {
 
-
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
     private ActorDestination destination;
     private ActorMonitor actorMonitor;
     private ChannelFuture channelFuture;
@@ -21,17 +22,22 @@ public abstract class AbstractActor implements Actor {
     public AbstractActor() {
     }
 
-    public void setDestination(ActorDestination destination) {
+    protected ActorDestination getDestination() {
+        return destination;
+    }
+
+    void setDestination(ActorDestination destination) {
         if (Objects.isNull(destination)) {
             throw new IllegalArgumentException(" destination can't be null !");
         }
         if (Objects.nonNull(this.destination)) {
             throw new IllegalStateException(" destination already set !");
         }
+        logger.info("当前actor destination {}",destination);
         this.destination = destination;
     }
 
-    public void setActorMonitor(ActorMonitor actorMonitor) {
+    void setActorMonitor(ActorMonitor actorMonitor) {
         if (Objects.isNull(actorMonitor)) {
             throw new IllegalArgumentException(" actor monitor can't be null !");
         }
@@ -41,17 +47,20 @@ public abstract class AbstractActor implements Actor {
         this.actorMonitor = actorMonitor;
     }
 
-    public void setChannelFuture(ChannelFuture channelFuture) {
+    void setChannelFuture(ChannelFuture channelFuture) {
         if (Objects.isNull(channelFuture)) {
             throw new IllegalArgumentException(" channel future can't be null !");
         }
         if (Objects.nonNull(this.channelFuture)) {
             throw new IllegalStateException(" channel future already set !");
         }
+        InetSocketAddress address = (InetSocketAddress) channelFuture.channel().localAddress();
+        logger.info("当前actor address {}",address);
+
         this.channelFuture = channelFuture;
     }
 
-    public void setMessageEmitter(ActorMessageEmitter messageEmitter) {
+    void setMessageEmitter(ActorMessageEmitter messageEmitter) {
         if (Objects.isNull(messageEmitter)) {
             throw new IllegalArgumentException(" message emitter can't be null !");
         }
@@ -62,8 +71,21 @@ public abstract class AbstractActor implements Actor {
     }
 
     @Override
-    public final void close() {
+    public  void close() {
         channelFuture.channel().close();
+        actorClosed();
+    }
+
+
+    protected abstract void actorClosed();
+
+    protected ChannelFuture getChannelFuture() {
+        return channelFuture;
+    }
+
+    @Override
+    public  void writeMessage(Object message) {
+        channelFuture.channel().writeAndFlush(message);
     }
 
     @Override
@@ -96,7 +118,7 @@ public abstract class AbstractActor implements Actor {
 
     @Override
     public final void sendMessage(ActorDestination destination, Object message) {
-        messageEmitter.sendMessage(destination, message);
+        messageEmitter.sendMessage(this,destination, message);
     }
 
     @Override

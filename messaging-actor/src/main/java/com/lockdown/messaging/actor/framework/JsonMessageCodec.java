@@ -8,12 +8,12 @@ public class JsonMessageCodec implements ActorMessageCodec {
 
 
     @Override
-    public byte[] encode(Serializable message) {
-        return JSON.toJSONBytes(message);
+    public byte[] encode(Object message) {
+        return new byte[0];
     }
 
     @Override
-    public Serializable decode(byte[] content) {
+    public Object decode(byte[] content) {
         return null;
     }
 }

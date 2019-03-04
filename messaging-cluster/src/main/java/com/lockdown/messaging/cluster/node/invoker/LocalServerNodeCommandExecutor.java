@@ -25,11 +25,6 @@ public class LocalServerNodeCommandExecutor implements NodeCommandExecutor<Local
         this.invokerContext.putIfAbsent(invoker.supportType(), invoker);
     }
 
-    public void setInvokerContext(Map<CommandType, NodeCommandInvoker<LocalNode>> invokerContext) {
-        this.invokerContext = invokerContext;
-    }
-
-
     @Override
     public void executeCommand(LocalNode local, RemoteNode remote, NodeCommand command) {
         if (!invokerContext.containsKey(command.type())) {

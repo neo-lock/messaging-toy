@@ -2,12 +2,12 @@ package com.lockdown.messaging.actor.framework;
 
 import java.io.Serializable;
 
-public interface ActorMessageCodec<T extends Serializable> {
+public interface ActorMessageCodec{
 
 
-    public byte[] encode(T message);
+    public byte[] encode(Object message);
 
 
-    public T decode(byte[] content);
+    public Object decode(byte[] content);
 
 }

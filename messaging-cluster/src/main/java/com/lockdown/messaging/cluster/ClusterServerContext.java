@@ -25,7 +25,7 @@ public class ClusterServerContext<T extends ClusterProperties> extends AbstractS
 
     @Override
     protected void checkProperties() {
-        if(StringUtil.isNullOrEmpty(this.properties.getNodeWhiteList())){
+        if(StringUtil.isNullOrEmpty(getProperties().getNodeWhiteList())){
             throw new IllegalArgumentException(" node white list can't be empty !");
         }
     }
@@ -40,7 +40,7 @@ public class ClusterServerContext<T extends ClusterProperties> extends AbstractS
     @Override
     protected void initNecessary() {
         this.nodeMonitor = new SimpleNodeMonitorFactory(this).getInstance();
-        this.commandRouter = new MessageSegmentRouter(nodeMonitor, this.contextExecutor);
+        this.commandRouter = new MessageSegmentRouter(nodeMonitor, contextExecutor());
     }
 
 

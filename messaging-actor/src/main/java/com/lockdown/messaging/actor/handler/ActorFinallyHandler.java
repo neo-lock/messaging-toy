@@ -1,11 +1,11 @@
 package com.lockdown.messaging.actor.handler;
 
 import com.lockdown.messaging.actor.ActorServerContext;
-import com.lockdown.messaging.actor.framework.Actor;
+import com.lockdown.messaging.actor.Actor;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
-public final class ActorFinallyHandler extends ChannelInboundHandlerAdapter {
+public class ActorFinallyHandler extends ChannelInboundHandlerAdapter {
 
     private final ActorServerContext serverContext;
     private Actor actor;

@@ -35,7 +35,7 @@ public class NodeCommandEncoder extends MessageToByteEncoder<NodeCommand> {
     protected void encode(ChannelHandlerContext ctx, NodeCommand command, ByteBuf byteBuf) throws Exception {
         if (isLocalPort(ctx)) {
             try {
-                byte[] content = command.type().CommandToBytes(command);
+                byte[] content = command.type().commandToBytes(command);
                 byteBuf.writeInt(NodeCommand.BASE_LENGTH + content.length);
                 byteBuf.writeShort(command.type().getType());
                 if (content.length > 0) {
@@ -45,9 +45,6 @@ public class NodeCommandEncoder extends MessageToByteEncoder<NodeCommand> {
                 ex.printStackTrace();
                 throw ex;
             }
-        } else {
-            logger.info("! 错误的消息处理=================");
         }
-
     }
 }

@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 
 public abstract class AbstractServer<T extends ServerContext> implements LocalServer<T> {
 
@@ -38,7 +40,17 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
     }
 
     @Override
-    public final void start() throws InterruptedException {
+    public final Future<?> start(){
+        return this.serverContext.contextExecutor().submitRunnable(() -> {
+            try {
+                startServer();
+            } catch (InterruptedException e) {
+                //ignore
+            }
+        });
+    }
+
+    private  void startServer() throws InterruptedException {
         try {
             bootstrap.bind(serverContext.getProperties().getNodePort()).sync();
             fireStartEvent();

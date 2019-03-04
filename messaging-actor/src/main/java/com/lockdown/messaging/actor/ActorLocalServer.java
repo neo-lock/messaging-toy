@@ -1,6 +1,5 @@
 package com.lockdown.messaging.actor;
 
-import com.lockdown.messaging.actor.handler.ActorCodecHandler;
 import com.lockdown.messaging.actor.handler.ActorFinallyHandler;
 import com.lockdown.messaging.cluster.AbstractServer;
 import com.lockdown.messaging.cluster.exception.MessagingInterruptedException;
@@ -16,11 +15,11 @@ import io.netty.channel.ChannelOption;
 import java.util.Arrays;
 import java.util.List;
 
-public class ActorLocalServer extends AbstractServer<ActorServerContext> {
+public class ActorLocalServer<T extends ActorServerContext> extends AbstractServer<T> {
 
 
     @Override
-    protected ServerBootstrap initServerBootstrap(ActorServerContext serverContext) {
+    protected ServerBootstrap initServerBootstrap(T serverContext) {
         ServerBootstrap bootstrap = super.initServerBootstrap(serverContext);
         ActorProperties properties = (ActorProperties) serverContext.getProperties();
         try {
@@ -38,7 +37,6 @@ public class ActorLocalServer extends AbstractServer<ActorServerContext> {
                 new NodeCommandEncoder(serverContext),
                 new SyncCommandHandler(serverContext),
                 new LocalNodeCommandHandler(serverContext),
-                new ActorCodecHandler(),
                 new ActorFinallyHandler(serverContext)
         );
     }

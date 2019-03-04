@@ -2,11 +2,12 @@ package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
+import com.lockdown.messaging.cluster.framwork.NodeMonitorUnit;
 import com.lockdown.messaging.cluster.sockethandler.ChannelInitializerProvider;
 import com.lockdown.messaging.cluster.sockethandler.LocalClientChannelInitializerProvider;
 import io.netty.channel.ChannelFuture;
 
-public abstract class AbstractClusterNodeBeanFactory implements ClusterNodeBeanFactory {
+public abstract class AbstractClusterNodeBeanFactory extends AbstractMonitoringBeanFactory<RemoteNode, ServerDestination, NodeMonitorUnit> implements ClusterNodeBeanFactory {
 
 
     private final ServerContext serverContext;
@@ -26,6 +27,7 @@ public abstract class AbstractClusterNodeBeanFactory implements ClusterNodeBeanF
     protected ServerContext getServerContext() {
         return serverContext;
     }
+
 
     @Override
     public RemoteNode getInstance(ServerDestination destination) {

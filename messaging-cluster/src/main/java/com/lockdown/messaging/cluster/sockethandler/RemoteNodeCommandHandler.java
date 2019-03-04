@@ -38,6 +38,7 @@ public class RemoteNodeCommandHandler extends AbstractNodeHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
         if (isLocalPort(ctx)) {
             //serverContext.nodeMonitor().exceptionCaught(serverNode,cause);
             serverNode.exceptionCaughtEvent(cause);

@@ -1,9 +1,6 @@
 package com.lockdown.messaging.actor.framework;
 
-import com.lockdown.messaging.actor.ActorDestination;
-import com.lockdown.messaging.actor.ActorProperties;
-import com.lockdown.messaging.actor.ActorServerContext;
-import com.lockdown.messaging.actor.ClusterActorServerContext;
+import com.lockdown.messaging.actor.*;
 import io.netty.channel.ChannelFuture;
 
 import java.util.Objects;
@@ -12,9 +9,9 @@ public class ClusterActorMonitoringBeanFactory implements ActorMonitoringBeanFac
 
 
     private ActorMonitor actorMonitor;
-    private ClusterActorServerContext serverContext;
+    private ClusterActorServerContext<? extends ActorProperties> serverContext;
 
-    public ClusterActorMonitoringBeanFactory(ClusterActorServerContext serverContext) {
+    public ClusterActorMonitoringBeanFactory(ClusterActorServerContext<? extends ActorProperties> serverContext) {
         this.serverContext = serverContext;
     }
 

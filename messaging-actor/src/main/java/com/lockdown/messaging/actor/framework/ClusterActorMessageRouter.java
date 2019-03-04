@@ -1,12 +1,10 @@
 package com.lockdown.messaging.actor.framework;
 
-import com.lockdown.messaging.actor.ActorDestination;
-import com.lockdown.messaging.actor.ActorNodeType;
-import com.lockdown.messaging.actor.ActorServerContext;
-import com.lockdown.messaging.actor.ClusterActorServerContext;
+import com.lockdown.messaging.actor.*;
 import com.lockdown.messaging.actor.command.NodeActorCommand;
 import com.lockdown.messaging.actor.exception.ActorNotFoundException;
 import com.lockdown.messaging.cluster.framwork.ChannelSlot;
+import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.node.RemoteNode;
 import com.lockdown.messaging.cluster.node.RemoteNodeType;
 import org.slf4j.Logger;
@@ -19,23 +17,25 @@ import java.util.Objects;
 public class ClusterActorMessageRouter implements ActorMessageRouter {
 
 
-    private final ActorMonitor actorMonitor;
-    private ActorMessageCodec<?> messageCodec;
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private ClusterActorServerContext serverContext;
+    private LocalNode localNode;
+    private final ActorMonitor actorMonitor;
+    private ActorMessageCodec messageCodec;
+    private ClusterActorServerContext<? extends ActorProperties> serverContext;
     private ChannelMessageHandler messageHandler = new ActorChannelMessageHandler();
 
-    public ClusterActorMessageRouter(ClusterActorServerContext serverContext) {
+    public ClusterActorMessageRouter(ClusterActorServerContext<? extends ActorProperties> serverContext) {
         this.serverContext = serverContext;
         this.actorMonitor = serverContext.actorMonitor();
         this.actorMonitor.registerAcceptor(this);
+        this.localNode = serverContext.localNode();
         this.initActorMessageCodec();
     }
 
     private void initActorMessageCodec(){
         try {
             Class<?> clazz = Class.forName(serverContext.getProperties().getActorCodecClassName());
-            messageCodec = (ActorMessageCodec<?>) clazz.newInstance();
+            messageCodec = (ActorMessageCodec) clazz.newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
             throw new IllegalStateException(e);
@@ -58,9 +58,18 @@ public class ClusterActorMessageRouter implements ActorMessageRouter {
     }
 
     @Override
-    public void sendMessage(ActorDestination destination, Object message) {
-        logger.info(" 发送消息 {}",message);
+    public void sendMessage(Actor actor, ActorDestination destination, Object obj) {
+        if(destination.getServerDestination().equals(serverContext.localDestination())){
+            serverContext.contextExecutor().executeRunnable(() -> actorMonitor.findByDestination(destination).writeMessage(obj));
+
+        }else{
+            serverContext.contextExecutor().executeRunnable(() -> {
+                NodeActorCommand actorCommand = new NodeActorCommand(actor.destination(),destination.getChannelId(),messageCodec.encode(obj));
+                localNode.sendCommand(destination.getServerDestination(),actorCommand);
+            });
+        }
     }
+
 
 
     private interface ChannelMessageHandler {
@@ -145,7 +154,7 @@ public class ClusterActorMessageRouter implements ActorMessageRouter {
 
         private void handleNodeCommand(RemoteNode node, NodeActorCommand actorCommand) {
             ActorDestination receiver = new ActorDestination(serverContext.localDestination(), actorCommand.getReceiverChannel());
-            ActorDestination sender = new ActorDestination(node.destination(), actorCommand.getSenderChannel());
+            ActorDestination sender = actorCommand.getActorDestination();
             Object object = messageCodec.decode(actorCommand.getContent());
             routeMessage(receiver, sender, object);
         }

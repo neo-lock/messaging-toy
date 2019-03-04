@@ -1,4 +1,4 @@
-package com.lockdown.messaging.cluster.node;
+package com.lockdown.messaging.cluster.support;
 
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
@@ -30,6 +30,7 @@ public class RemoteNodeSyncProxy implements MethodInterceptor {
 
     @Override
     public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+        System.out.println("执行sync!");
         Object result = null;
         MessageSync sync = method.getAnnotation(MessageSync.class);
         int paramIndex = getOriginArgIndex(sync, args, method);

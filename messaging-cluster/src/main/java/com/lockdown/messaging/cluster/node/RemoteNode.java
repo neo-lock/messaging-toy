@@ -6,6 +6,5 @@ import com.lockdown.messaging.cluster.framwork.ChannelSlot;
 
 public interface RemoteNode extends ChannelSlot<ServerDestination, SourceNodeCommand> {
 
-    public void applyDestination(ServerDestination destination);
-
+    void applyDestination(ServerDestination destination);
 }

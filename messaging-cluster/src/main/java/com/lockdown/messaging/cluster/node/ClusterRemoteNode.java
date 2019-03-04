@@ -1,28 +1,22 @@
 package com.lockdown.messaging.cluster.node;
-
-
 import com.lockdown.messaging.cluster.ServerDestination;
+import com.lockdown.messaging.cluster.command.NodeRegister;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
+import com.lockdown.messaging.cluster.command.SyncNodeRegister;
 import com.lockdown.messaging.cluster.framwork.NodeMonitorUnit;
+import com.lockdown.messaging.cluster.support.MessageSync;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Objects;
 
 public class ClusterRemoteNode implements RemoteNode {
 
     private final NodeMonitorUnit monitorUnit;
     private final ChannelFuture channelFuture;
-    private Logger logger = LoggerFactory.getLogger(getClass());
     private ServerDestination destination;
 
-    public ClusterRemoteNode(ChannelFuture channelFuture, NodeMonitorUnit monitorUnit) {
-        this(channelFuture, monitorUnit, null);
-    }
 
-    public ClusterRemoteNode(ChannelFuture channelFuture, NodeMonitorUnit monitorUnit, ServerDestination destination) {
+    ClusterRemoteNode(ChannelFuture channelFuture, NodeMonitorUnit monitorUnit, ServerDestination destination) {
         this.destination = destination;
         this.monitorUnit = monitorUnit;
         this.channelFuture = channelFuture;
@@ -74,7 +68,7 @@ public class ClusterRemoteNode implements RemoteNode {
         return destination;
     }
 
-    //@MessageSync(originParam = NodeRegister.class,convertTo = SyncNodeRegister.class)
+    @MessageSync(originParam = NodeRegister.class,convertTo = SyncNodeRegister.class)
     @Override
     public void writeMessage(SourceNodeCommand message) {
         channelFuture.channel().writeAndFlush(message);

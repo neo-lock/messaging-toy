@@ -18,12 +18,7 @@ public class ClusterServerApplication {
 
         ClusterServerContext<ClusterProperties> serverContext = new ClusterServerContext<>(properties);
         ClusterLocalServer localServer = new ClusterLocalServer();
-        try {
-            localServer.initializer(serverContext).start();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            localServer.stop();
-        }
+        localServer.initializer(serverContext).start();
     }
 
 }

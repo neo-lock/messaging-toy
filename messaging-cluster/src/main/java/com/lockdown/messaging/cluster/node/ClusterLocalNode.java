@@ -29,7 +29,7 @@ public class ClusterLocalNode implements LocalNode {
     private NodeCommandExecutor<LocalNode> commandExecutor;
 
 
-    public ClusterLocalNode(NodeMessageRouter messageRouter, ServerDestination destination) {
+    ClusterLocalNode(NodeMessageRouter messageRouter, ServerDestination destination) {
         this.messageRouter = messageRouter;
         this.localDestination = destination;
         this.messageRouter.registerAcceptor(this);

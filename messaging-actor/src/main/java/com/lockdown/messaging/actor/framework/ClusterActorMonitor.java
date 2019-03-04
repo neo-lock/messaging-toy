@@ -1,8 +1,11 @@
 package com.lockdown.messaging.actor.framework;
 
+import com.lockdown.messaging.actor.Actor;
 import com.lockdown.messaging.actor.ActorDestination;
 import com.lockdown.messaging.cluster.framwork.AbstractChannelSlotMonitor;
 import io.netty.channel.ChannelFuture;
+
+import java.util.Collection;
 
 public class ClusterActorMonitor extends AbstractChannelSlotMonitor<Actor, ActorDestination, Object>
         implements ActorMonitor, ActorBeanFactory {
@@ -38,5 +41,10 @@ public class ClusterActorMonitor extends AbstractChannelSlotMonitor<Actor, Actor
     @Override
     public void acceptedMessage(Actor actor, Object message) {
         messageTriggered(actor, message);
+    }
+
+    @Override
+    public Collection<ActorDestination> allActors() {
+        return destinationContext.keySet();
     }
 }

@@ -19,7 +19,7 @@ public enum CommandType implements CommandConverter {
         }
 
         @Override
-        public byte[] CommandToBytes(NodeCommand command) {
+        public byte[] commandToBytes(NodeCommand command) {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
@@ -37,7 +37,7 @@ public enum CommandType implements CommandConverter {
         }
 
         @Override
-        public byte[] CommandToBytes(NodeCommand command) {
+        public byte[] commandToBytes(NodeCommand command) {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
@@ -55,7 +55,7 @@ public enum CommandType implements CommandConverter {
         }
 
         @Override
-        public byte[] CommandToBytes(NodeCommand command) {
+        public byte[] commandToBytes(NodeCommand command) {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
@@ -73,7 +73,7 @@ public enum CommandType implements CommandConverter {
         }
 
         @Override
-        public byte[] CommandToBytes(NodeCommand command) {
+        public byte[] commandToBytes(NodeCommand command) {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
@@ -91,7 +91,7 @@ public enum CommandType implements CommandConverter {
         }
 
         @Override
-        public byte[] CommandToBytes(NodeCommand command) {
+        public byte[] commandToBytes(NodeCommand command) {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
@@ -102,7 +102,7 @@ public enum CommandType implements CommandConverter {
         }
 
         @Override
-        public byte[] CommandToBytes(NodeCommand command) {
+        public byte[] commandToBytes(NodeCommand command) {
             return new byte[0];
         }
     },
@@ -120,7 +120,7 @@ public enum CommandType implements CommandConverter {
         }
 
         @Override
-        public byte[] CommandToBytes(NodeCommand command) {
+        public byte[] commandToBytes(NodeCommand command) {
             return ProtostuffUtils.messageToBytes(command);
         }
     },
@@ -138,7 +138,7 @@ public enum CommandType implements CommandConverter {
         }
 
         @Override
-        public byte[] CommandToBytes(NodeCommand command) {
+        public byte[] commandToBytes(NodeCommand command) {
             return ProtostuffUtils.messageToBytes(command);
         }
     };

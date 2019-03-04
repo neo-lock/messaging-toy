@@ -6,34 +6,49 @@ import com.lockdown.messaging.cluster.node.ClusterLocalNode;
 import com.lockdown.messaging.cluster.node.LocalNode;
 import io.netty.channel.Channel;
 import io.netty.util.internal.StringUtil;
-
 import java.util.Objects;
 
-public class ClusterActorServerContext extends ClusterServerContext<ActorProperties> implements ActorServerContext<ActorProperties> {
+public class ClusterActorServerContext<T extends ActorProperties> extends ClusterServerContext<T> implements ActorServerContext<T> {
 
     private ClusterActorMonitor actorMonitor;
     private ActorMessageRouter actorMessageRouter;
 
-    public ClusterActorServerContext(ActorProperties properties) {
+    public ClusterActorServerContext(T properties) {
         super(properties);
+    }
+
+    protected ClusterActorMonitor getActorMonitor() {
+        return actorMonitor;
+    }
+
+    protected ActorMessageRouter getActorMessageRouter() {
+        return actorMessageRouter;
+    }
+
+    protected void setActorMonitor(ClusterActorMonitor actorMonitor) {
+        this.actorMonitor = actorMonitor;
+    }
+
+    protected void setActorMessageRouter(ActorMessageRouter actorMessageRouter) {
+        this.actorMessageRouter = actorMessageRouter;
     }
 
     @Override
     protected void checkProperties() {
         super.checkProperties();
-        if(StringUtil.isNullOrEmpty(this.properties.getActorClassName())){
+        if(StringUtil.isNullOrEmpty(getProperties().getActorClassName())){
             throw new IllegalArgumentException(" actor class name can't be empty !");
         }
         try {
-            Class.forName(this.properties.getActorClassName());
+            Class.forName(getProperties().getActorClassName());
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(e);
         }
-        if(StringUtil.isNullOrEmpty(this.properties.getActorCodecClassName())){
+        if(StringUtil.isNullOrEmpty(getProperties().getActorCodecClassName())){
             throw new IllegalArgumentException(" actor codec class name can't be empty !");
         }
         try {
-            Class.forName(this.properties.getActorCodecClassName());
+            Class.forName(getProperties().getActorCodecClassName());
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(e);
         }
@@ -53,7 +68,7 @@ public class ClusterActorServerContext extends ClusterServerContext<ActorPropert
         return localNode;
     }
 
-    private void initActorMessageRouter() {
+    protected void initActorMessageRouter() {
         if (Objects.isNull(this.actorMonitor)) {
             throw new IllegalArgumentException(" actor monitor not set !");
         }
@@ -61,7 +76,7 @@ public class ClusterActorServerContext extends ClusterServerContext<ActorPropert
     }
 
 
-    private void initActorMonitor() {
+    protected void initActorMonitor() {
         ActorMonitoringBeanFactory beanFactory = new ClusterActorMonitoringBeanFactory(this);
         this.actorMonitor = new ClusterActorMonitor(beanFactory);
     }
@@ -86,6 +101,5 @@ public class ClusterActorServerContext extends ClusterServerContext<ActorPropert
     public ActorDestination createActorDestination(Channel channel) {
         return new ActorDestination(localDestination(), channel.id().asLongText());
     }
-
 
 }

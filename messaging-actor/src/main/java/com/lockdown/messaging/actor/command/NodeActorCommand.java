@@ -1,5 +1,6 @@
 package com.lockdown.messaging.actor.command;
 
+import com.lockdown.messaging.actor.ActorDestination;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.AbstractNodeCommand;
 import com.lockdown.messaging.cluster.command.CommandType;
@@ -9,14 +10,14 @@ public class NodeActorCommand extends AbstractNodeCommand {
 
     private final String receiverChannel;
 
-    private final String senderChannel;
+    private ActorDestination actorDestination;
 
     private final byte[] content;
 
-    public NodeActorCommand(ServerDestination source, String receiverChannel, String senderChannel, byte[] content) {
-        super(source);
+    public NodeActorCommand(ActorDestination actorDestination, String receiverChannel, byte[] content) {
+        super(actorDestination.getServerDestination());
         this.receiverChannel = receiverChannel;
-        this.senderChannel = senderChannel;
+        this.actorDestination = actorDestination;
         this.content = content;
     }
 
@@ -24,8 +25,12 @@ public class NodeActorCommand extends AbstractNodeCommand {
         return receiverChannel;
     }
 
-    public String getSenderChannel() {
-        return senderChannel;
+    public ActorDestination getActorDestination() {
+        return actorDestination;
+    }
+
+    public void setActorDestination(ActorDestination actorDestination) {
+        this.actorDestination = actorDestination;
     }
 
     public byte[] getContent() {

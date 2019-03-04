@@ -4,7 +4,10 @@ import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.framwork.NodeMonitorUnit;
 import com.lockdown.messaging.cluster.framwork.NodeMonitoringBeanFactory;
+import com.lockdown.messaging.cluster.support.CommandEncode;
 import com.lockdown.messaging.cluster.support.MessageSync;
+import com.lockdown.messaging.cluster.support.RemoteNodeEncodeProxy;
+import com.lockdown.messaging.cluster.support.RemoteNodeSyncProxy;
 import io.netty.channel.ChannelFuture;
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
@@ -14,10 +17,11 @@ import net.sf.cglib.proxy.NoOp;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-public class ClusterMonitoringNodeBeanFactory extends AbstractClusterNodeBeanFactory implements NodeMonitoringBeanFactory {
+public class ClusterMonitoringNodeBeanFactory extends AbstractClusterNodeBeanFactory {
 
     private ProxyCallbackFilter callbackFilter = new ProxyCallbackFilter();
     private NodeMonitorUnit monitorSlot;
+    private RemoteNodeSyncProxy proxy = new RemoteNodeSyncProxy(getServerContext());
 
     ClusterMonitoringNodeBeanFactory(ServerContext serverContext) {
         super(serverContext);
@@ -27,10 +31,9 @@ public class ClusterMonitoringNodeBeanFactory extends AbstractClusterNodeBeanFac
     @Override
     public RemoteNode getInstance(ChannelFuture channelFuture, ServerDestination destination) {
         Objects.requireNonNull(monitorSlot);
-        RemoteNodeSyncProxy proxy = new RemoteNodeSyncProxy(getServerContext());
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(ClusterRemoteNode.class);
-        enhancer.setCallbacks(new Callback[]{NoOp.INSTANCE, proxy});
+        enhancer.setCallbacks(new Callback[]{NoOp.INSTANCE,proxy});
         enhancer.setCallbackFilter(callbackFilter);
         enhancer.setInterceptDuringConstruction(false);
         return (RemoteNode) enhancer.create(new Class[]{ChannelFuture.class, NodeMonitorUnit.class, ServerDestination.class}, new Object[]{channelFuture, this.monitorSlot, destination});
@@ -38,9 +41,10 @@ public class ClusterMonitoringNodeBeanFactory extends AbstractClusterNodeBeanFac
 
 
     @Override
-    public void setMonitorUnit(NodeMonitorUnit forwardSlot) {
-        this.monitorSlot = forwardSlot;
+    void setMonitorUnit(NodeMonitorUnit monitorUnit) {
+        this.monitorSlot = monitorUnit;
     }
+
 
 
     private static class ProxyCallbackFilter implements CallbackFilter {
