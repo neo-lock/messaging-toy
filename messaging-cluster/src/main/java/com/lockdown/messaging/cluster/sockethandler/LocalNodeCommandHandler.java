@@ -27,7 +27,6 @@ public class LocalNodeCommandHandler extends AbstractNodeHandler {
         } else {
             ctx.fireChannelInactive();
         }
-
     }
 
     @Override

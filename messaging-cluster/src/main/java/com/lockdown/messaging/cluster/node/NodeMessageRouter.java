@@ -2,10 +2,9 @@ package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.SourceNodeCommand;
-import com.lockdown.messaging.cluster.framwork.NodeMessageEmitter;
-import com.lockdown.messaging.cluster.framwork.NodeMessageTrigger;
+import com.lockdown.messaging.cluster.framwork.*;
 
-public interface NodeMessageRouter extends NodeMessageTrigger, NodeMessageEmitter {
+public interface NodeMessageRouter extends MessageEmitter<ServerDestination, SourceNodeCommand>, MessageTrigger<RemoteNode, SourceNodeCommand, NodeMessageAcceptor> {
 
     void notifyMessage(SourceNodeCommand command, ServerDestination... ignores);
 

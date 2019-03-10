@@ -29,7 +29,7 @@ public class RemoteNodeCommandHandler extends AbstractNodeHandler {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if (isLocalPort(ctx)) {
             //serverContext.nodeMonitor().inactive(serverNode);
-            serverNode.inactiveEvent();
+            //serverNode.inactiveEvent();
         } else {
             ctx.fireChannelInactive();
         }
@@ -41,7 +41,7 @@ public class RemoteNodeCommandHandler extends AbstractNodeHandler {
         cause.printStackTrace();
         if (isLocalPort(ctx)) {
             //serverContext.nodeMonitor().exceptionCaught(serverNode,cause);
-            serverNode.exceptionCaughtEvent(cause);
+            //serverNode.exceptionCaughtEvent(cause);
         } else {
             ctx.fireExceptionCaught(cause);
         }

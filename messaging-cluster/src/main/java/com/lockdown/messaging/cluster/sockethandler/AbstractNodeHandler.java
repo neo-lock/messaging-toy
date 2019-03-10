@@ -38,7 +38,7 @@ public abstract class AbstractNodeHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (isLocalPort(ctx)) {
             if (SourceNodeCommand.class.isAssignableFrom(msg.getClass())) {
-                serverNode.receivedMessageEvent((SourceNodeCommand) msg);
+                //serverNode.receivedMessageEvent((SourceNodeCommand) msg);
             } else {
                 logger.info(" 不能处理的消息========> {}", msg.getClass());
             }
