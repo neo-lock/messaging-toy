@@ -16,7 +16,7 @@ public class ClusterRemoteNode implements RemoteNode {
     private ServerDestination destination;
 
 
-    ClusterRemoteNode(ChannelFuture channelFuture, NodeMonitorUnit monitorUnit, ServerDestination destination) {
+    public ClusterRemoteNode(ChannelFuture channelFuture, NodeMonitorUnit monitorUnit, ServerDestination destination) {
         this.destination = destination;
         this.monitorUnit = monitorUnit;
         this.channelFuture = channelFuture;

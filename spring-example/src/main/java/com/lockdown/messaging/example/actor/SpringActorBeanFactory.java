@@ -19,8 +19,9 @@ import java.util.Objects;
 
 public class SpringActorBeanFactory extends ClusterActorMonitoringBeanFactory {
 
-    private ApplicationContext applicationContext;
+
     private Logger logger = LoggerFactory.getLogger(getClass());
+    private ApplicationContext applicationContext;
     private Map<String, FieldDefinition> injectMap = new HashMap<>();
 
     public SpringActorBeanFactory(ClusterActorServerContext<? extends ActorProperties> serverContext, ApplicationContext applicationContext) {
