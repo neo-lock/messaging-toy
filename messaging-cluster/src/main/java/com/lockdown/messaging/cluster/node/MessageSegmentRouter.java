@@ -13,9 +13,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MessageSegmentRouter implements NodeMessageRouter, NodeMessageAcceptor {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private final ClusterNodeMonitor nodeMonitor;
     private final ContextExecutor executor;
-    private Logger logger = LoggerFactory.getLogger(getClass());
     private NodeMessageAcceptor acceptor;
 
 
