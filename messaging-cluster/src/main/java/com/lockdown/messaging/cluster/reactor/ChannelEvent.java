@@ -1,6 +1,6 @@
 package com.lockdown.messaging.cluster.reactor;
 
-import com.lockdown.messaging.cluster.framwork.Destination;
+import com.lockdown.messaging.cluster.Destination;
 
 public class ChannelEvent {
 
@@ -43,4 +43,12 @@ public class ChannelEvent {
         this.param = param;
     }
 
+    @Override
+    public String toString() {
+        return "ChannelEvent{" +
+                "eventType=" + eventType +
+                ", destination=" + destination +
+                ", param=" + param +
+                '}';
+    }
 }

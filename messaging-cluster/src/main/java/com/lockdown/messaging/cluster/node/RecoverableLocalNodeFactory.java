@@ -2,6 +2,7 @@ package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
+import com.lockdown.messaging.cluster.reactor.NodeChannelGroup;
 import com.lockdown.messaging.cluster.support.Recoverable;
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
@@ -27,8 +28,7 @@ public class RecoverableLocalNodeFactory implements LocalNodeFactory {
         enhancer.setCallbacks(new Callback[]{NoOp.INSTANCE, new LocalServerNodeProxy(serverContext.runtimeEnvironment())});
         enhancer.setCallbackFilter(proxyCallbackFilter);
         enhancer.setInterceptDuringConstruction(false);
-        ClusterLocalNode localNode = (ClusterLocalNode) enhancer.create(new Class[]{NodeMessageRouter.class, ServerDestination.class}, new Object[]{serverContext.commandRouter(), serverContext.localDestination()});
-        localNode.setCommandExecutor(new ClusterNodeCommandExecutorFactory().getInstance());
+        ClusterLocalNode localNode = (ClusterLocalNode) enhancer.create(new Class[]{ServerDestination.class, NodeChannelGroup.class}, new Object[]{serverContext.localDestination(), serverContext.channelEventLoop().nodeChannelGroup()});
         return localNode;
     }
 

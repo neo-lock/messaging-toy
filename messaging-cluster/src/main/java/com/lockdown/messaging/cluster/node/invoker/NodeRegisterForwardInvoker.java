@@ -1,17 +1,23 @@
 package com.lockdown.messaging.cluster.node.invoker;
 
+import com.lockdown.messaging.cluster.channel.MessagingChannel;
+import com.lockdown.messaging.cluster.channel.RemoteNodeChannel;
 import com.lockdown.messaging.cluster.command.CommandType;
-import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.command.NodeGreeting;
 import com.lockdown.messaging.cluster.command.NodeRegisterForward;
+import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import com.lockdown.messaging.cluster.node.LocalNode;
-import com.lockdown.messaging.cluster.node.RemoteNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeRegisterForwardInvoker implements NodeCommandInvoker<LocalNode> {
+public class NodeRegisterForwardInvoker extends AbstractNodeCommandInvoker {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+
+    NodeRegisterForwardInvoker(MessagingChannel channel) {
+        super(channel);
+    }
+
 
     @Override
     public CommandType supportType() {
@@ -19,7 +25,8 @@ public class NodeRegisterForwardInvoker implements NodeCommandInvoker<LocalNode>
     }
 
     @Override
-    public void executeCommand(LocalNode local, RemoteNode remote, NodeCommand command) {
+    public void executeCommand(LocalNode local, SourceNodeCommand command) {
+        logger.info("收到注册转发");
         NodeRegisterForward registerForward = (NodeRegisterForward) command;
         if (local.isAttached()) {
             local.printNodes();
@@ -28,12 +35,11 @@ public class NodeRegisterForwardInvoker implements NodeCommandInvoker<LocalNode>
                 local.registerToCluster(registerForward.getTarget());
             } else {
                 logger.debug("发送GREETING {}", local.destination());
-                local.sendCommand(registerForward.getTarget(), new NodeGreeting(local.destination()));
+                ((RemoteNodeChannel)getChannel().eventLoop().nodeChannelGroup().getNodeChannel(registerForward.getTarget())).writeAndFlush(new NodeGreeting(local.destination()));
             }
         } else {
             logger.debug("当前对象没有attached,开始向{}注册", registerForward.getTarget());
             local.registerToCluster(registerForward.getTarget());
         }
-
     }
 }

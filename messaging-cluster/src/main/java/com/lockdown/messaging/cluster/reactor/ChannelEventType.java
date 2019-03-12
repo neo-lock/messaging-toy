@@ -2,6 +2,8 @@ package com.lockdown.messaging.cluster.reactor;
 
 public enum ChannelEventType {
 
-    CHANNEL_READ,CHANNEL_CLOSE
+    NODE,
+
+    CHANNEL_READ, CHANNEL_CLOSE
 
 }

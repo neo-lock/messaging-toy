@@ -24,7 +24,7 @@ public class SpringActorTestClient {
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
-                socketChannel.pipeline().addLast(new JsonMessageDecoder(),new JsonMessageEncoder(),new SpringActorHandler());
+                socketChannel.pipeline().addLast(new JsonMessageDecoder(), new JsonMessageEncoder(), new SpringActorHandler());
             }
         });
 

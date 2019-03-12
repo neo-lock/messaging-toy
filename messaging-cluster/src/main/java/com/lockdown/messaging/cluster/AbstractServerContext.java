@@ -1,6 +1,13 @@
 package com.lockdown.messaging.cluster;
 
-import com.lockdown.messaging.cluster.node.LocalNode;
+import com.lockdown.messaging.cluster.channel.RemoteNodeChannelFactory;
+import com.lockdown.messaging.cluster.channel.support.DefaultNodeChannelFactoryGroup;
+import com.lockdown.messaging.cluster.channel.support.DefaultRemoteNodeChannelFactory;
+import com.lockdown.messaging.cluster.node.*;
+import com.lockdown.messaging.cluster.node.invoker.LocalNodeMessagingChannel;
+import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
+import com.lockdown.messaging.cluster.reactor.NodeChannelFactoryGroup;
+import com.lockdown.messaging.cluster.reactor.support.DefaultChannelEventLoop;
 import com.lockdown.messaging.cluster.support.RuntimeEnvironment;
 import com.lockdown.messaging.cluster.support.SimpleRuntimeEnvironment;
 import com.lockdown.messaging.cluster.utils.IPUtils;
@@ -15,13 +22,15 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractServerContext<T extends ServerProperties> implements ServerContext<T> {
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
     private final T properties;
+    protected Logger logger = LoggerFactory.getLogger(getClass());
     private Pattern nodeWhiteList;
     private ContextExecutor contextExecutor;
     private ServerDestination localDestination;
     private RuntimeEnvironment runtimeEnvironment;
+    private DefaultChannelEventLoop eventLoop;
     private LocalNode localNode;
+    private NodeChannelFactoryGroup channelGroup;
 
 
     public AbstractServerContext(T properties) {
@@ -30,21 +39,27 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         this.localDestination = new ServerDestination(IPUtils.getLocalIP(), properties.getNodePort());
         this.contextExecutor = new ContextExecutor(properties);
         this.runtimeEnvironment = new SimpleRuntimeEnvironment();
+        LocalClient localClient = new ClusterLocalClient(this);
+        this.eventLoop = new DefaultChannelEventLoop(this.contextExecutor.getSegment());
+        RemoteNodeChannelFactory channelFactory = new DefaultRemoteNodeChannelFactory(this.eventLoop, localClient);
+        this.channelGroup = new DefaultNodeChannelFactoryGroup(channelFactory);
+        this.eventLoop.setNodeChannelGroup(channelGroup);
+        this.localNode = new RecoverableLocalNodeFactory(this).getNodeInstance();
+        LocalNodeMessagingChannel messagingChannel = new LocalNodeMessagingChannel(eventLoop,localNode);
+        this.eventLoop.setLocalChannel(messagingChannel);
     }
 
 
-
-    public final void startInitContext(){
+    public final void startInitContext() {
         logger.info("start init necessary !");
         checkProperties();
         initNecessary();
         logger.info(" start init local node ");
-        this.localNode =  initLocalNode();
+        this.localNode = new ClusterLocalNode(this.localDestination, this.channelGroup);
+
     }
 
     protected abstract void checkProperties();
-
-    protected abstract LocalNode initLocalNode();
 
     protected abstract void initNecessary();
 
@@ -75,7 +90,12 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
 
     @Override
     public LocalNode localNode() {
-        return localNode;
+        return this.localNode;
+    }
+
+    @Override
+    public ChannelEventLoop channelEventLoop() {
+        return this.eventLoop;
     }
 
     @Override
@@ -85,6 +105,7 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
 
     @Override
     public void shutdownContext() {
+        this.eventLoop.shutdown();
         if (Objects.nonNull(contextExecutor)) {
             this.contextExecutor.shutdown();
         }
@@ -95,6 +116,7 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
 
     @Override
     public void serverStartup(LocalServer localServer, ServerContext serverContext) {
+        this.eventLoop.start();
         if (null != this.properties.getMaster() && !this.localDestination.equals(this.properties.getMaster())) {
             logger.info(" 需要连接的master {}", this.properties.getMaster());
             this.localNode.registerToCluster(this.properties.getMaster());
@@ -125,7 +147,6 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         @Override
         public void run(Timeout timeout) throws Exception {
             localNode.printNodes();
-            nodeMonitor().printNodes();
             timeout.timer().newTimeout(this, delay, timeUnit);
         }
     }

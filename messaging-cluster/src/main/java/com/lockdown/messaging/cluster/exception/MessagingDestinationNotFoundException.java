@@ -1,6 +1,6 @@
 package com.lockdown.messaging.cluster.exception;
 
-import com.lockdown.messaging.cluster.framwork.Destination;
+import com.lockdown.messaging.cluster.Destination;
 
 public class MessagingDestinationNotFoundException extends MessagingException {
 

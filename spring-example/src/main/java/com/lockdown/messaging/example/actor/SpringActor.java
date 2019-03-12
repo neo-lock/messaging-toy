@@ -24,8 +24,8 @@ public class SpringActor extends AbstractActor {
 
     @Override
     public void receivedMessage(Object message) {
-        logger.info(" read message {}",message);
-        if(message instanceof RegisterMessage){
+        logger.info(" read message {}", message);
+        if (message instanceof RegisterMessage) {
             RegisterMessage registerMessage = (RegisterMessage) message;
             actorRecord.setActorDestination(getDestination());
             actorRecord.setAccountId(registerMessage.getId());

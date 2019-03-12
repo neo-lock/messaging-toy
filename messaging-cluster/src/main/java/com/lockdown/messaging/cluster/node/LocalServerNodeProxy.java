@@ -28,6 +28,7 @@ public class LocalServerNodeProxy implements MethodInterceptor {
         try {
             result = methodProxy.invokeSuper(o, args);
         } catch (Throwable ex) {
+            ex.printStackTrace();
             logger.info(" 方法 {} 执行失败 {}，将重新尝试", method.toGenericString(), ex.getMessage());
             runtimeEnvironment.methodRecoverable().registerRecoverable(method.toGenericString(), recoverable, o, methodProxy, args);
             if (recoverable.doThrow()) {

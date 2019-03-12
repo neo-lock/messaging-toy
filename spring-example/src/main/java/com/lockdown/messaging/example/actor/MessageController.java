@@ -13,21 +13,19 @@ public class MessageController {
     private MessageService messageService;
 
 
-
     @RequestMapping(value = "/actor/send", method = RequestMethod.POST)
     public void sendMessage(@RequestBody MessageRequest request) throws Exception {
-        messageService.sendMessage(request.getAccountId(),request.getMessage());
+        messageService.sendMessage(request.getAccountId(), request.getMessage());
     }
 
 
-    @RequestMapping(value = "/actors",method = RequestMethod.GET)
-    public Collection<ActorDestination> allActors() throws Exception{
+    @RequestMapping(value = "/actors", method = RequestMethod.GET)
+    public Collection<ActorDestination> allActors() throws Exception {
         return messageService.allActors();
     }
 
 
-
-    public static class MessageRequest{
+    public static class MessageRequest {
         private String accountId;
         private String message;
 

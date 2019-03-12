@@ -24,7 +24,7 @@ public class BaseMessageService implements MessageService {
     @Override
     public void sendMessage(String accountId, String message) {
         ActorRecord actorRecord = springActorService.getActor(accountId);
-        if(null != actorRecord){
+        if (null != actorRecord) {
             springActorServerContext.actorMonitor()
                     .findByDestination(actorRecord.getActorDestination())
                     .sendMessage(actorRecord.getActorDestination(), JsonMessage.wrap(new TextMessage(message)));

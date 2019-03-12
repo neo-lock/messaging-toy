@@ -1,9 +1,9 @@
 package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerDestination;
+import com.lockdown.messaging.cluster.channel.RemoteNodeChannel;
 import com.lockdown.messaging.cluster.command.NodeRegister;
-import com.lockdown.messaging.cluster.command.SourceNodeCommand;
-import com.lockdown.messaging.cluster.node.invoker.*;
+import com.lockdown.messaging.cluster.reactor.NodeChannelGroup;
 import com.lockdown.messaging.cluster.support.Recoverable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,31 +19,25 @@ import java.util.Objects;
  */
 public class ClusterLocalNode implements LocalNode {
 
-    private final NodeMessageRouter messageRouter;
+
     private final ServerDestination localDestination;
     private final Object lock = new Object();
+    private final NodeChannelGroup channelGroup;
     private Logger logger = LoggerFactory.getLogger(getClass());
     private volatile ServerDestination monitor = null;
     private volatile ServerDestination attached = null;
-    //调度算法，可以更换
-    private NodeCommandExecutor<LocalNode> commandExecutor;
 
 
-    ClusterLocalNode(NodeMessageRouter messageRouter, ServerDestination destination) {
-        this.messageRouter = messageRouter;
-        this.localDestination = destination;
-        this.messageRouter.registerAcceptor(this);
-    }
-
-
-    public void setCommandExecutor(NodeCommandExecutor<LocalNode> commandExecutor) {
-        this.commandExecutor = commandExecutor;
+    public ClusterLocalNode(ServerDestination localDestination, NodeChannelGroup channelGroup) {
+        this.localDestination = localDestination;
+        this.channelGroup = channelGroup;
     }
 
     @Recoverable(repeat = -1)
     @Override
     public void registerToCluster(ServerDestination destination) {
-        messageRouter.sendMessage(destination, new NodeRegister(this.localDestination));
+        RemoteNodeChannel channel = channelGroup.getMasterNodeChannel(destination);
+        channel.writeAndFlush(new NodeRegister(localDestination));
     }
 
 
@@ -52,10 +46,6 @@ public class ClusterLocalNode implements LocalNode {
         return Objects.nonNull(monitor);
     }
 
-    @Override
-    public void notifyRemote(SourceNodeCommand command, ServerDestination... ignore) {
-        messageRouter.notifyMessage(command, ignore);
-    }
 
     @Override
     public void monitor(ServerDestination destination) {
@@ -76,12 +66,6 @@ public class ClusterLocalNode implements LocalNode {
             attached = destination;
         }
     }
-
-    @Override
-    public void sendCommand(ServerDestination target, SourceNodeCommand command) {
-        messageRouter.sendMessage(target, command);
-    }
-
 
     @Override
     public boolean isAttached() {
@@ -129,12 +113,18 @@ public class ClusterLocalNode implements LocalNode {
     @Recoverable(repeat = -1)
     @Override
     public void registerRandomNode() {
-        messageRouter.sendRandomTarget(new NodeRegister(this.localDestination));
+        RemoteNodeChannel channel = channelGroup.randomNodeChannel();
+        channel.writeAndFlush(new NodeRegister(localDestination));
     }
 
     @Override
     public void printNodes() {
         logger.debug("Local[{}],Monitor[{}],Attached[{}]", localDestination, monitor, attached);
+    }
+
+    @Override
+    public ServerDestination destination() {
+        return localDestination;
     }
 
     @Override
@@ -147,14 +137,4 @@ public class ClusterLocalNode implements LocalNode {
         return result;
     }
 
-    @Override
-    public ServerDestination destination() {
-        return this.localDestination;
-    }
-
-
-    @Override
-    public void acceptedMessage(RemoteNode serverNode, SourceNodeCommand command) {
-        this.commandExecutor.executeCommand(this, serverNode, command);
-    }
 }

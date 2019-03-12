@@ -14,7 +14,6 @@ public class RemoteNodeEncodeProxy implements MethodInterceptor {
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        System.out.println("执行encode!");
         NodeCommand command = (NodeCommand) objects[0];
         ByteBuf byteBuf = Unpooled.buffer();
         byte[] content = command.type().commandToBytes(command);
@@ -24,7 +23,7 @@ public class RemoteNodeEncodeProxy implements MethodInterceptor {
             byteBuf.writeBytes(content);
         }
         objects[0] = byteBuf;
-        Object result =  methodProxy.invokeSuper(o,objects);
+        Object result = methodProxy.invokeSuper(o, objects);
         byteBuf.release();
         ReferenceCountUtil.release(byteBuf);
         return result;

@@ -1,20 +1,13 @@
 package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.command.SourceNodeCommand;
-import com.lockdown.messaging.cluster.framwork.Findable;
-import com.lockdown.messaging.cluster.framwork.NodeMessageAcceptor;
 
-public interface LocalNode extends Findable<ServerDestination>, NodeMessageAcceptor {
+public interface LocalNode {
 
 
     void registerToCluster(ServerDestination destination);
 
     boolean isMonitored();
-
-    void notifyRemote(SourceNodeCommand command, ServerDestination... ignore);
-
-    void sendCommand(ServerDestination target, SourceNodeCommand command);
 
     void monitor(ServerDestination destination);
 
@@ -29,6 +22,8 @@ public interface LocalNode extends Findable<ServerDestination>, NodeMessageAccep
     void registerRandomNode();
 
     void printNodes();
+
+    ServerDestination destination();
 
     ServerDestination forceMonitor(ServerDestination destination);
 }

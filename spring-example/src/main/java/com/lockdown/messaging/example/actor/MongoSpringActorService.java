@@ -22,7 +22,7 @@ public class MongoSpringActorService implements SpringActorService {
 
     @Override
     public ActorRecord getActor(String accountId) {
-        return actorRepository.findByAccountIdAndConnected(accountId,true);
+        return actorRepository.findByAccountIdAndConnected(accountId, true);
     }
 
     @Override

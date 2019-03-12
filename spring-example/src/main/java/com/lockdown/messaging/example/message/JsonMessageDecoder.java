@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 public class JsonMessageDecoder extends ByteToMessageDecoder {
@@ -33,11 +34,11 @@ public class JsonMessageDecoder extends ByteToMessageDecoder {
                 byteBuf.readBytes(content);
                 JSONObject object = (JSONObject) JSON.parse(content);
 
-                if(!object.containsKey("type")){
+                if (!object.containsKey("type")) {
                     throw new IllegalStateException(" error message !");
                 }
                 MessageType type = MessageType.stringValueOf(object.getString("type"));
-                list.add(JSON.toJavaObject(object,type.getClazz()));
+                list.add(JSON.toJavaObject(object, type.getClazz()));
             }
         } catch (Exception ex) {
             ex.printStackTrace();

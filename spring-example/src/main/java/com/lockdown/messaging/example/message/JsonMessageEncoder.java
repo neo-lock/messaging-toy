@@ -13,7 +13,7 @@ public class JsonMessageEncoder extends MessageToByteEncoder<JsonMessage> {
     @Override
     protected void encode(ChannelHandlerContext ctx, JsonMessage jsonMessage, ByteBuf byteBuf) throws Exception {
         int length = jsonMessage.getContent().length;
-        byteBuf.writeInt(length+4);
+        byteBuf.writeInt(length + 4);
         byteBuf.writeBytes(jsonMessage.getContent());
     }
 }

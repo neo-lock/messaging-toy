@@ -11,11 +11,11 @@ public class JsonMessage {
     private byte[] content;
 
 
-    public static JsonMessage wrap(BusinessMessage message){
+    public static JsonMessage wrap(BusinessMessage message) {
         return new JsonMessage(message);
     }
 
-    private JsonMessage(BusinessMessage message){
+    private JsonMessage(BusinessMessage message) {
         this.content = JSON.toJSONBytes(message);
         this.length = this.content.length;
     }

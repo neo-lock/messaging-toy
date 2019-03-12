@@ -1,11 +1,12 @@
 package com.lockdown.messaging.cluster.sockethandler;
 
 import com.lockdown.messaging.cluster.ServerContext;
+import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.command.SyncCommand;
 import com.lockdown.messaging.cluster.command.SyncCommandReceipt;
 import io.netty.channel.ChannelHandlerContext;
 
-public class SyncCommandHandler extends AbstractNodeHandler {
+public class SyncCommandHandler extends AbstractCommandHandler {
 
 
     public SyncCommandHandler(ServerContext serverContext) {

@@ -1,16 +1,17 @@
 package com.lockdown.messaging.cluster.channel;
 
-import com.lockdown.messaging.cluster.framwork.Destination;
+import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
-import io.netty.channel.ChannelHandlerContext;
+import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
+
 
 public interface MessagingChannel {
-
-    MessagingChannelPipeline pipeline();
-
-    ChannelHandlerContext nettyChannelContext();
 
     Destination destination();
 
     void handleEvent(ChannelEvent channelEvent);
+
+    ChannelEventLoop eventLoop();
+
+
 }

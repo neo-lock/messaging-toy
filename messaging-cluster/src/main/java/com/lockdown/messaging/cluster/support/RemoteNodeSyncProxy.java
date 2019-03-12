@@ -5,7 +5,6 @@ import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import com.lockdown.messaging.cluster.command.SyncCommand;
 import com.lockdown.messaging.cluster.exception.MessagingException;
 import com.lockdown.messaging.cluster.exception.MessagingTimeoutException;
-import com.lockdown.messaging.cluster.support.MessageSync;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import org.slf4j.Logger;
