@@ -8,7 +8,7 @@ public class ChannelEvent {
     private Destination destination;
     private Object param;
 
-    public ChannelEvent(){
+    public ChannelEvent() {
 
     }
 

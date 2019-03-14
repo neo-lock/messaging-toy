@@ -1,10 +1,8 @@
 package com.lockdown.messaging.cluster.channel.support;
 
-import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.cluster.channel.LocalChannelContext;
 import com.lockdown.messaging.cluster.channel.LocalChannelHandler;
 import com.lockdown.messaging.cluster.channel.NodeChannel;
-import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.command.NodeMonitored;
 import com.lockdown.messaging.cluster.command.NodeRegister;
 import com.lockdown.messaging.cluster.command.NodeRegisterForward;
@@ -21,34 +19,35 @@ public class LocalNodeRegisterHandler implements LocalChannelHandler {
     @Override
     public void channelReceived(LocalChannelContext ctx, Object message) {
         ChannelEvent event = (ChannelEvent) message;
-        if(event.getParam() instanceof NodeRegister){
+        if (event.getParam() instanceof NodeRegister) {
             NodeRegister command = (NodeRegister) event.getParam();
             LocalNode localNode = ctx.pipeline().channel().localNode();
-            logger.info("开始监控{}",command.getSource());
+            logger.info("开始监控{}", command.getSource());
             localNode.monitor(command.getSource());
             localNode.printNodes();
-            writeMonitor(ctx,command);
+            writeMonitor(ctx, command);
             logger.info("Notify All Channel");
-            notifyChannel(ctx,command);
-        }else{
+            notifyChannel(ctx, command);
+        } else {
             ctx.fireChannelReceived(message);
         }
     }
-    private void writeMonitor(LocalChannelContext ctx,NodeRegister register){
+
+    private void writeMonitor(LocalChannelContext ctx, NodeRegister register) {
         LocalNode localNode = ctx.pipeline().channel().localNode();
         NodeMonitored monitored = new NodeMonitored(localNode.destination());
-        ChannelEvent monitorEvent = new ChannelEvent(ChannelEventType.CHANNEL_WRITE,register.getSource(),monitored);
+        ChannelEvent monitorEvent = new ChannelEvent(ChannelEventType.CHANNEL_WRITE, register.getSource(), monitored);
         ctx.eventLoop().channelEvent(monitorEvent);
     }
 
-    private void notifyChannel(LocalChannelContext ctx,NodeRegister register){
+    private void notifyChannel(LocalChannelContext ctx, NodeRegister register) {
         LocalNode localNode = ctx.pipeline().channel().localNode();
         NodeRegisterForward registerForward = new NodeRegisterForward(localNode.destination(), register.getSource());
         ctx.eventLoop().nodeChannelGroup().nodeChannels().forEach(nodeChannel -> {
-            if(nodeChannel.destination().equals(register.getSource())){
+            if (nodeChannel.destination().equals(register.getSource())) {
                 return;
             }
-            if(NodeChannel.class.isAssignableFrom(nodeChannel.getClass())){
+            if (NodeChannel.class.isAssignableFrom(nodeChannel.getClass())) {
                 NodeChannel channel = (NodeChannel) nodeChannel;
                 channel.writeAndFlush(registerForward);
             }

@@ -1,7 +1,6 @@
 package com.lockdown.messaging.cluster.channel.support;
 
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.channel.ChannelInitializer;
 import com.lockdown.messaging.cluster.channel.NodeChannel;
 import com.lockdown.messaging.cluster.channel.NodeChannelFactory;
 import com.lockdown.messaging.cluster.node.LocalClient;

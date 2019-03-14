@@ -2,7 +2,6 @@ package com.lockdown.messaging.cluster.reactor;
 
 import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.channel.Channel;
-import com.lockdown.messaging.cluster.channel.NodeChannel;
 
 import java.util.Collection;
 

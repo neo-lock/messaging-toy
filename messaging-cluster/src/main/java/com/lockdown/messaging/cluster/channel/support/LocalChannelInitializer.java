@@ -1,4 +1,5 @@
 package com.lockdown.messaging.cluster.channel.support;
+
 import com.lockdown.messaging.cluster.channel.ChannelInitializer;
 import com.lockdown.messaging.cluster.channel.LocalChannel;
 

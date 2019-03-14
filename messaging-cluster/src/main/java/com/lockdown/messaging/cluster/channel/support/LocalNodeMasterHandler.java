@@ -19,36 +19,36 @@ public class LocalNodeMasterHandler implements LocalChannelHandler {
 
     @Override
     public void channelReceived(LocalChannelContext ctx, Object message) {
-        logger.info(" message :{}",message);
+        logger.info(" message :{}", message);
         ChannelEvent event = (ChannelEvent) message;
-        switch (event.getEventType()){
-            case RANDOM_REGISTER:{
-                try{
+        switch (event.getEventType()) {
+            case RANDOM_REGISTER: {
+                try {
                     logger.info("随机注册");
                     LocalNode node = ctx.pipeline().channel().localNode();
                     Channel channel = ctx.eventLoop().nodeChannelGroup().randomNodeChannel();
-                    ChannelEvent registerEvent = new ChannelEvent(ChannelEventType.CHANNEL_WRITE,channel.destination(),new NodeRegister(node.destination()));
+                    ChannelEvent registerEvent = new ChannelEvent(ChannelEventType.CHANNEL_WRITE, channel.destination(), new NodeRegister(node.destination()));
                     ctx.eventLoop().channelEvent(registerEvent);
-                }catch (Throwable e){
+                } catch (Throwable e) {
                     e.printStackTrace();
-                    ctx.eventLoop().scheduleEvent(event,5,TimeUnit.SECONDS);
+                    ctx.eventLoop().scheduleEvent(event, 5, TimeUnit.SECONDS);
                 }
                 break;
             }
-            case REGISTER_MASTER:{
-                try{
-                    logger.info("注册master {}",event.getParam());
+            case REGISTER_MASTER: {
+                try {
+                    logger.info("注册master {}", event.getParam());
                     LocalNode node = ctx.pipeline().channel().localNode();
                     Channel channel = ctx.eventLoop().nodeChannelGroup().getMasterNodeChannel((Destination) event.getParam());
-                    ChannelEvent registerEvent = new ChannelEvent(ChannelEventType.CHANNEL_WRITE,channel.destination(),new NodeRegister(node.destination()));
+                    ChannelEvent registerEvent = new ChannelEvent(ChannelEventType.CHANNEL_WRITE, channel.destination(), new NodeRegister(node.destination()));
                     ctx.eventLoop().channelEvent(registerEvent);
-                }catch (Throwable ex){
+                } catch (Throwable ex) {
                     ex.printStackTrace();
-                    ctx.eventLoop().scheduleEvent(event,5,TimeUnit.SECONDS);
+                    ctx.eventLoop().scheduleEvent(event, 5, TimeUnit.SECONDS);
                 }
                 break;
             }
-            default:{
+            default: {
                 ctx.fireChannelReceived(message);
             }
         }

@@ -3,11 +3,8 @@ package com.lockdown.messaging.cluster.channel.support;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.channel.NodeChannel;
 import com.lockdown.messaging.cluster.channel.NodeChannelPipeline;
-import com.lockdown.messaging.cluster.command.NodeClosed;
-import com.lockdown.messaging.cluster.exception.MessagingException;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
-import com.lockdown.messaging.cluster.reactor.ChannelEventType;
 import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,16 +51,16 @@ public class DefaultNodeChannel implements NodeChannel {
 
     @Override
     public void handleEvent(ChannelEvent channelEvent) {
-        switch (channelEvent.getEventType()){
-            case CHANNEL_WRITE:{
+        switch (channelEvent.getEventType()) {
+            case CHANNEL_WRITE: {
                 writeAndFlush(channelEvent.getParam());
                 break;
             }
-            case CHANNEL_CLOSE:{
+            case CHANNEL_CLOSE: {
                 pipeline.fireChannelClosed();
                 break;
             }
-            default:{
+            default: {
                 pipeline.fireChannelReceived(channelEvent);
             }
         }

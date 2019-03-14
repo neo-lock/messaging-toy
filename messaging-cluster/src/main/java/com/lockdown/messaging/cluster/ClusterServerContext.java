@@ -1,6 +1,5 @@
 package com.lockdown.messaging.cluster;
 
-import io.netty.util.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +11,6 @@ public class ClusterServerContext<T extends ClusterProperties> extends AbstractS
     public ClusterServerContext(T properties) {
         super(properties);
     }
-
 
 
 }

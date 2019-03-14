@@ -5,10 +5,14 @@ import com.lockdown.messaging.cluster.channel.NodeChannelFactory;
 import com.lockdown.messaging.cluster.channel.support.ClientNodeChannelFactory;
 import com.lockdown.messaging.cluster.channel.support.DefaultLocalChannelFactory;
 import com.lockdown.messaging.cluster.channel.support.DefaultNodeChannelFactoryGroup;
-import com.lockdown.messaging.cluster.node.*;
+import com.lockdown.messaging.cluster.node.ClusterLocalClient;
+import com.lockdown.messaging.cluster.node.LocalClient;
+import com.lockdown.messaging.cluster.node.LocalNode;
+import com.lockdown.messaging.cluster.node.RecoverableLocalNodeFactory;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 import com.lockdown.messaging.cluster.reactor.NodeChannelFactoryGroup;
 import com.lockdown.messaging.cluster.reactor.support.DefaultChannelEventLoop;
+import com.lockdown.messaging.cluster.reactor.support.DisruptorChannelEventLoop;
 import com.lockdown.messaging.cluster.support.RuntimeEnvironment;
 import com.lockdown.messaging.cluster.support.SimpleRuntimeEnvironment;
 import com.lockdown.messaging.cluster.utils.IPUtils;
@@ -29,7 +33,7 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
     private ContextExecutor contextExecutor;
     private ServerDestination localDestination;
     private RuntimeEnvironment runtimeEnvironment;
-    private DefaultChannelEventLoop eventLoop;
+    private ChannelEventLoop eventLoop;
     private LocalNode localNode;
     private NodeChannelFactoryGroup channelGroup;
 
@@ -41,13 +45,13 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         this.contextExecutor = new ContextExecutor(properties);
         this.runtimeEnvironment = new SimpleRuntimeEnvironment();
         LocalClient localClient = new ClusterLocalClient(this);
-        this.eventLoop = new DefaultChannelEventLoop(this);
+        this.eventLoop = new DisruptorChannelEventLoop(this);
         NodeChannelFactory nodeChannelFactory = new ClientNodeChannelFactory(eventLoop, localClient);
         this.channelGroup = new DefaultNodeChannelFactoryGroup(nodeChannelFactory);
         this.localNode = new RecoverableLocalNodeFactory(this).getNodeInstance();
         Channel localChannel = new DefaultLocalChannelFactory(eventLoop, localNode).newInstance();
         this.channelGroup.addNodeChannel(localChannel);
-        this.eventLoop.setNodeChannelGroup(this.channelGroup);
+        this.eventLoop.registerNodeChannelGroup(this.channelGroup);
     }
 
 

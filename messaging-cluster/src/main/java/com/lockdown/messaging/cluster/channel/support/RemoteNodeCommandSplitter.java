@@ -19,13 +19,13 @@ public class RemoteNodeCommandSplitter implements NodeChannelHandler {
     public void channelReceived(NodeChannelContext ctx, Object message) {
         ChannelEvent event = (ChannelEvent) message;
         NodeCommand command = (NodeCommand) event.getParam();
-        ChannelEvent local = new ChannelEvent(ChannelEventType.NODE_READ,ctx.eventLoop().localDestination(),command);
+        ChannelEvent local = new ChannelEvent(ChannelEventType.NODE_READ, ctx.eventLoop().localDestination(), command);
         ctx.eventLoop().channelEvent(local);
     }
 
     @Override
     public void channelClosed(NodeChannelContext ctx) {
-        ChannelEvent event = new ChannelEvent(ChannelEventType.NODE_READ,ctx.eventLoop().localDestination(),new NodeClosed(ctx.pipeline().channel().destination()));
+        ChannelEvent event = new ChannelEvent(ChannelEventType.NODE_READ, ctx.eventLoop().localDestination(), new NodeClosed(ctx.pipeline().channel().destination()));
         ctx.eventLoop().channelEvent(event);
         ctx.pipeline().channel().close();
     }

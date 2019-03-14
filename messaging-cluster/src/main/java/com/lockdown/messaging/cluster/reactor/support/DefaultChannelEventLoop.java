@@ -1,10 +1,8 @@
 package com.lockdown.messaging.cluster.reactor.support;
+
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.channel.Channel;
-import com.lockdown.messaging.cluster.channel.support.DefaultLocalChannelFactory;
-import com.lockdown.messaging.cluster.node.ClusterLocalNode;
-import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.reactor.*;
 import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
@@ -15,7 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class DefaultChannelEventLoop implements ChannelEventLoop,Runnable {
+public class DefaultChannelEventLoop implements ChannelEventLoop, Runnable {
 
 
     private final Selector selector;
@@ -37,10 +35,11 @@ public class DefaultChannelEventLoop implements ChannelEventLoop,Runnable {
 
     }
 
-    public void setNodeChannelGroup(NodeChannelFactoryGroup nodeChannelGroup) {
-        this.nodeChannelGroup = nodeChannelGroup;
-    }
 
+    @Override
+    public void registerNodeChannelGroup(NodeChannelFactoryGroup nodeChannelFactoryGroup) {
+        this.nodeChannelGroup = nodeChannelFactoryGroup;
+    }
 
     @Override
     public void registerNodeChannel(ChannelFuture channel, ServerDestination destination) {
@@ -83,7 +82,7 @@ public class DefaultChannelEventLoop implements ChannelEventLoop,Runnable {
 
     @Override
     public void scheduleEvent(ChannelEvent event, long delay, TimeUnit unit) {
-        executorService.schedule(new EventTask(event),delay,unit);
+        executorService.schedule(new EventTask(event), delay, unit);
     }
 
     @Override
@@ -103,8 +102,6 @@ public class DefaultChannelEventLoop implements ChannelEventLoop,Runnable {
     }
 
 
-
-
     private class EventTask implements Runnable {
         private final ChannelEvent event;
 
@@ -113,7 +110,7 @@ public class DefaultChannelEventLoop implements ChannelEventLoop,Runnable {
         }
 
         @Override
-        public void run(){
+        public void run() {
             DefaultChannelEventLoop.this.channelEvent(event);
         }
     }

@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 public interface ChannelEventLoop {
 
+    void registerNodeChannelGroup(NodeChannelFactoryGroup nodeChannelFactoryGroup);
+
     void registerNodeChannel(ChannelFuture channel, ServerDestination destination);
 
     void channelEvent(ChannelEvent event);

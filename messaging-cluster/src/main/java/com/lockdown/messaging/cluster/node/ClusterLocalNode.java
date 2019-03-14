@@ -1,19 +1,14 @@
 package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.channel.NodeChannel;
-import com.lockdown.messaging.cluster.command.NodeRegister;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 import com.lockdown.messaging.cluster.reactor.ChannelEventType;
-import com.lockdown.messaging.cluster.reactor.NodeChannelGroup;
 import com.lockdown.messaging.cluster.support.Recoverable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 状态
@@ -25,10 +20,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ClusterLocalNode implements LocalNode {
 
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
     private final ServerDestination localDestination;
     private final ChannelEventLoop eventLoop;
     private final Object lock = new Object();
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private volatile ServerDestination monitor = null;
     private volatile ServerDestination attached = null;
 
@@ -41,7 +36,7 @@ public class ClusterLocalNode implements LocalNode {
     @Recoverable(repeat = -1)
     @Override
     public void registerToCluster(ServerDestination destination) {
-        ChannelEvent channelEvent = new ChannelEvent(ChannelEventType.REGISTER_MASTER,localDestination,destination);
+        ChannelEvent channelEvent = new ChannelEvent(ChannelEventType.REGISTER_MASTER, localDestination, destination);
         eventLoop.channelEvent(channelEvent);
     }
 
@@ -54,7 +49,7 @@ public class ClusterLocalNode implements LocalNode {
 
     @Override
     public void monitor(ServerDestination destination) {
-        synchronized (lock){
+        synchronized (lock) {
             monitor = destination;
         }
 
@@ -62,7 +57,7 @@ public class ClusterLocalNode implements LocalNode {
 
     @Override
     public void attachTo(ServerDestination destination) {
-        synchronized (lock){
+        synchronized (lock) {
             attached = destination;
         }
     }
@@ -75,7 +70,7 @@ public class ClusterLocalNode implements LocalNode {
     @Override
     public synchronized boolean monitorCompareAndSet(ServerDestination old, ServerDestination update) {
         boolean result = false;
-        synchronized (lock){
+        synchronized (lock) {
             if (Objects.isNull(old)) {
                 if (monitor == null) {
                     monitor = update;
@@ -94,7 +89,7 @@ public class ClusterLocalNode implements LocalNode {
     @Override
     public boolean attachedCompareAndSet(ServerDestination old, ServerDestination update) {
         boolean result = false;
-        synchronized (lock){
+        synchronized (lock) {
             if (Objects.isNull(old)) {
                 if (attached == null) {
                     attached = update;
@@ -114,7 +109,7 @@ public class ClusterLocalNode implements LocalNode {
     @Override
     public void registerRandomNode() {
         logger.info("开始随机注册节点");
-        ChannelEvent channelEvent = new ChannelEvent(ChannelEventType.RANDOM_REGISTER,localDestination);
+        ChannelEvent channelEvent = new ChannelEvent(ChannelEventType.RANDOM_REGISTER, localDestination);
         eventLoop.channelEvent(channelEvent);
     }
 

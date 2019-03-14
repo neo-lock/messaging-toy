@@ -14,7 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class DefaultSelector implements Selector {
 
     private final Object lock = new Object();
-    private BlockingQueue<ChannelEvent> events = new LinkedBlockingQueue<>();
+    private BlockingQueue<ChannelEvent> events = new LinkedBlockingQueue<>(1024);
 
     @Override
     public void addEvent(ChannelEvent event) {

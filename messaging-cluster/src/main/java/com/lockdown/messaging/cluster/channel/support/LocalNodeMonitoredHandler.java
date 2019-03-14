@@ -15,7 +15,7 @@ public class LocalNodeMonitoredHandler implements LocalChannelHandler {
     @Override
     public void channelReceived(LocalChannelContext ctx, Object message) {
         ChannelEvent event = (ChannelEvent) message;
-        if(event.getParam() instanceof NodeMonitored){
+        if (event.getParam() instanceof NodeMonitored) {
             LocalNode localNode = ctx.pipeline().channel().localNode();
             NodeMonitored monitored = (NodeMonitored) event.getParam();
             if (localNode.isAttached()) {
@@ -25,7 +25,7 @@ public class LocalNodeMonitoredHandler implements LocalChannelHandler {
             localNode.attachTo(monitored.getSource());
             logger.info("注册成功！");
             localNode.printNodes();
-        }else {
+        } else {
             ctx.fireChannelReceived(message);
         }
 

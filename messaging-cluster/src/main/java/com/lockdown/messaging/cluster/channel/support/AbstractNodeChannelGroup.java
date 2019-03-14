@@ -8,9 +8,7 @@ import com.lockdown.messaging.cluster.reactor.NodeChannelGroup;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public abstract class AbstractNodeChannelGroup implements NodeChannelGroup {
 
@@ -32,13 +30,13 @@ public abstract class AbstractNodeChannelGroup implements NodeChannelGroup {
             throw new MessagingHostException("no host!");
         }
         NodeChannel nodeChannel = null;
-        for(Channel channel : nodeChannelMap.values()){
-            if(NodeChannel.class.isAssignableFrom(channel.getClass())){
+        for (Channel channel : nodeChannelMap.values()) {
+            if (NodeChannel.class.isAssignableFrom(channel.getClass())) {
                 nodeChannel = (NodeChannel) channel;
                 break;
             }
         }
-        if(null==nodeChannel){
+        if (null == nodeChannel) {
             throw new MessagingHostException(" no host !");
         }
         return nodeChannel;

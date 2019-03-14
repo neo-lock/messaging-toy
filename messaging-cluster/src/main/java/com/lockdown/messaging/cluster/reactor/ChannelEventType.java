@@ -8,8 +8,6 @@ public enum ChannelEventType {
     NODE_CLOSE,
 
 
-
-
     CHANNEL_WRITE,
     CHANNEL_READ,
     CHANNEL_CLOSE
