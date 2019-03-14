@@ -13,9 +13,8 @@ public class AbstractCommandHandler extends ChannelInboundHandlerAdapter {
 
 
     protected final ServerContext serverContext;
-    private Pattern nodeWhiteList;
-
     protected Logger logger = LoggerFactory.getLogger(getClass());
+    private Pattern nodeWhiteList;
 
 
     AbstractCommandHandler(ServerContext serverContext) {
@@ -29,7 +28,6 @@ public class AbstractCommandHandler extends ChannelInboundHandlerAdapter {
         return nodeWhiteList.matcher(String.valueOf(localAddress.getPort())).matches() ||
                 nodeWhiteList.matcher(String.valueOf(remoteAddress.getPort())).matches();
     }
-
 
 
 }

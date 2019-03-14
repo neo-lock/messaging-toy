@@ -1,17 +1,18 @@
 package com.lockdown.messaging.cluster.channel;
 
-import com.lockdown.messaging.cluster.Destination;
+import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 
 
-public interface MessagingChannel {
+public interface Channel {
 
-    Destination destination();
+    ChannelPipeline pipeline();
 
     void handleEvent(ChannelEvent channelEvent);
 
     ChannelEventLoop eventLoop();
 
+    ServerDestination destination();
 
 }

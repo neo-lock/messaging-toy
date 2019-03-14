@@ -23,13 +23,12 @@ public class DefaultSelector implements Selector {
             synchronized (lock) {
                 lock.notify();
             }
-
         }
     }
 
     @Override
     public List<ChannelEvent> select() {
-        return select(0);
+        return select(10);
     }
 
     private List<ChannelEvent> select(long timeout) {

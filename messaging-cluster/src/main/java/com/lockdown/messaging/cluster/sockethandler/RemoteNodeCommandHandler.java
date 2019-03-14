@@ -29,7 +29,6 @@ public class RemoteNodeCommandHandler extends AbstractNodeHandler {
             InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
             destination = new ServerDestination(socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
             serverContext.channelEventLoop().registerNodeChannel(ctx.newSucceededFuture(), destination);
-            logger.info(" 有新的活动连接! ");
         } else {
             ctx.fireChannelActive();
         }

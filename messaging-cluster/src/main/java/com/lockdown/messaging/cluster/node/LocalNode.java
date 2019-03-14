@@ -25,5 +25,4 @@ public interface LocalNode {
 
     ServerDestination destination();
 
-    ServerDestination forceMonitor(ServerDestination destination);
 }

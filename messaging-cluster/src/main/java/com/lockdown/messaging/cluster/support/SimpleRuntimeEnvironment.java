@@ -15,7 +15,7 @@ public class SimpleRuntimeEnvironment implements RuntimeEnvironment {
     public SimpleRuntimeEnvironment() {
         this.methodRecoverable = new TimerMethodRecoverable(this);
         this.commandMonitor = new DefaultSyncCommandMonitor();
-        this.hashedWheelTimer = new HashedWheelTimer(1, TimeUnit.SECONDS, 64);
+        this.hashedWheelTimer = new HashedWheelTimer();
     }
 
 

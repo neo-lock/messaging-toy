@@ -2,27 +2,27 @@ package com.lockdown.messaging.cluster.channel.support;
 
 import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.channel.RemoteNodeChannel;
-import com.lockdown.messaging.cluster.channel.RemoteNodeChannelFactory;
+import com.lockdown.messaging.cluster.channel.NodeChannel;
+import com.lockdown.messaging.cluster.channel.NodeChannelFactory;
 import com.lockdown.messaging.cluster.reactor.NodeChannelFactoryGroup;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 
 public class DefaultNodeChannelFactoryGroup extends AbstractNodeChannelGroup implements NodeChannelFactoryGroup {
 
-    private final RemoteNodeChannelFactory channelFactory;
-    private final Object lock = new Object();
 
-    public DefaultNodeChannelFactoryGroup(RemoteNodeChannelFactory channelFactory) {
-        this.channelFactory = channelFactory;
+    private final Object lock = new Object();
+    private final NodeChannelFactory nodeChannelFactory;
+
+    public DefaultNodeChannelFactoryGroup(NodeChannelFactory nodeChannelFactory) {
+        this.nodeChannelFactory = nodeChannelFactory;
     }
 
     @Override
-    public RemoteNodeChannel getMasterNodeChannel(Destination destination) {
-        RemoteNodeChannel channel = null;
+    public NodeChannel getMasterNodeChannel(Destination destination) {
+        NodeChannel channel = null;
         synchronized (lock) {
             if (contains(destination)) {
-                channel = getNodeChannel(destination);
+                channel = (NodeChannel) getNodeChannel(destination);
             } else {
                 channel = newInstance((ServerDestination) destination);
             }
@@ -30,20 +30,19 @@ public class DefaultNodeChannelFactoryGroup extends AbstractNodeChannelGroup imp
         return channel;
     }
 
-
     @Override
-    public RemoteNodeChannel newInstance(ChannelFuture channel, ServerDestination destination) {
-        RemoteNodeChannel nodeChannel = channelFactory.newInstance(channel, destination);
+    public NodeChannel newInstance(ChannelFuture channel, ServerDestination destination) {
+        NodeChannel nodeChannel = nodeChannelFactory.newInstance(channel, destination);
         addNodeChannel(nodeChannel);
         return nodeChannel;
     }
 
-
     @Override
-    public RemoteNodeChannel newInstance(ServerDestination destination) {
-        RemoteNodeChannel channel = channelFactory.newInstance(destination);
-        addNodeChannel(channel);
-        return channel;
+    public NodeChannel newInstance(ServerDestination destination) {
+        NodeChannel nodeChannel = nodeChannelFactory.newInstance(destination);
+        addNodeChannel(nodeChannel);
+        return nodeChannel;
     }
+
 
 }

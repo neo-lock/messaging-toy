@@ -1,23 +1,24 @@
 package com.lockdown.messaging.cluster.reactor;
 
 import com.lockdown.messaging.cluster.Destination;
-import com.lockdown.messaging.cluster.channel.MessagingChannel;
-import com.lockdown.messaging.cluster.channel.RemoteNodeChannel;
+import com.lockdown.messaging.cluster.channel.Channel;
+import com.lockdown.messaging.cluster.channel.NodeChannel;
 
 import java.util.Collection;
 
 
 public interface NodeChannelGroup {
 
-    void addNodeChannel(MessagingChannel channel);
+    void addNodeChannel(Channel channel);
 
     void removeNodeChannel(Destination destination);
 
-    RemoteNodeChannel getMasterNodeChannel(Destination destination);
+    Channel getMasterNodeChannel(Destination destination);
 
-    RemoteNodeChannel randomNodeChannel();
+    Channel randomNodeChannel();
 
-    Collection<MessagingChannel> nodeChannels();
+    Collection<Channel> nodeChannels();
 
-    MessagingChannel getNodeChannel(Destination source);
+    Channel getNodeChannel(Destination source);
+
 }

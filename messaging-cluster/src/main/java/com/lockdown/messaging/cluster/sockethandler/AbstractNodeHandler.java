@@ -7,16 +7,12 @@ import com.lockdown.messaging.cluster.command.SourceNodeCommand;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventType;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-import java.util.regex.Pattern;
-
 public abstract class AbstractNodeHandler extends AbstractCommandHandler {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+
     AbstractNodeHandler(ServerContext serverContext) {
         super(serverContext);
     }
@@ -24,11 +20,7 @@ public abstract class AbstractNodeHandler extends AbstractCommandHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (isLocalPort(ctx)) {
-            logger.info(" 收到消息 {}",msg);
-            if (SourceNodeCommand.class.isAssignableFrom(msg.getClass())) {
-                serverContext.channelEventLoop().registerNodeChannel(ctx.newSucceededFuture(), getChannelDestination());
-            }
-            ChannelEvent event = new ChannelEvent(ChannelEventType.NODE,getChannelDestination(),msg);
+            ChannelEvent event = new ChannelEvent(ChannelEventType.CHANNEL_READ, getChannelDestination(), msg);
             serverContext.channelEventLoop().channelEvent(event);
         } else {
             ctx.fireChannelRead(msg);
@@ -39,7 +31,7 @@ public abstract class AbstractNodeHandler extends AbstractCommandHandler {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if (isLocalPort(ctx)) {
             if (null != getChannelDestination()) {
-                ChannelEvent event = new ChannelEvent(ChannelEventType.NODE, getChannelDestination(),new NodeClosed(getChannelDestination()));
+                ChannelEvent event = new ChannelEvent(ChannelEventType.CHANNEL_CLOSE, getChannelDestination(), new NodeClosed(getChannelDestination()));
                 serverContext.channelEventLoop().channelEvent(event);
             }
         } else {
@@ -49,10 +41,10 @@ public abstract class AbstractNodeHandler extends AbstractCommandHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if(isLocalPort(ctx)){
+        if (isLocalPort(ctx)) {
             cause.printStackTrace();
             ctx.close();
-        }else{
+        } else {
             ctx.fireExceptionCaught(cause);
         }
 

@@ -1,10 +1,11 @@
 package com.lockdown.messaging.cluster;
 
-import com.lockdown.messaging.cluster.channel.RemoteNodeChannelFactory;
+import com.lockdown.messaging.cluster.channel.Channel;
+import com.lockdown.messaging.cluster.channel.NodeChannelFactory;
+import com.lockdown.messaging.cluster.channel.support.ClientNodeChannelFactory;
+import com.lockdown.messaging.cluster.channel.support.DefaultLocalChannelFactory;
 import com.lockdown.messaging.cluster.channel.support.DefaultNodeChannelFactoryGroup;
-import com.lockdown.messaging.cluster.channel.support.DefaultRemoteNodeChannelFactory;
 import com.lockdown.messaging.cluster.node.*;
-import com.lockdown.messaging.cluster.node.invoker.LocalNodeMessagingChannel;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 import com.lockdown.messaging.cluster.reactor.NodeChannelFactoryGroup;
 import com.lockdown.messaging.cluster.reactor.support.DefaultChannelEventLoop;
@@ -40,28 +41,15 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         this.contextExecutor = new ContextExecutor(properties);
         this.runtimeEnvironment = new SimpleRuntimeEnvironment();
         LocalClient localClient = new ClusterLocalClient(this);
-        this.eventLoop = new DefaultChannelEventLoop(this.contextExecutor.getSegment());
-        RemoteNodeChannelFactory channelFactory = new DefaultRemoteNodeChannelFactory(this.eventLoop, localClient);
-        this.channelGroup = new DefaultNodeChannelFactoryGroup(channelFactory);
-        this.eventLoop.setNodeChannelGroup(channelGroup);
+        this.eventLoop = new DefaultChannelEventLoop(this);
+        NodeChannelFactory nodeChannelFactory = new ClientNodeChannelFactory(eventLoop, localClient);
+        this.channelGroup = new DefaultNodeChannelFactoryGroup(nodeChannelFactory);
         this.localNode = new RecoverableLocalNodeFactory(this).getNodeInstance();
-        LocalNodeMessagingChannel messagingChannel = new LocalNodeMessagingChannel(eventLoop,localNode);
-        this.eventLoop.setLocalChannel(messagingChannel);
+        Channel localChannel = new DefaultLocalChannelFactory(eventLoop, localNode).newInstance();
+        this.channelGroup.addNodeChannel(localChannel);
+        this.eventLoop.setNodeChannelGroup(this.channelGroup);
     }
 
-
-    public final void startInitContext() {
-        logger.info("start init necessary !");
-        checkProperties();
-        initNecessary();
-        logger.info(" start init local node ");
-        this.localNode = new ClusterLocalNode(this.localDestination, this.channelGroup);
-
-    }
-
-    protected abstract void checkProperties();
-
-    protected abstract void initNecessary();
 
     @Override
     public Pattern nodeWhiteList() {

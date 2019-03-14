@@ -2,14 +2,12 @@ package com.lockdown.messaging.cluster.channel;
 
 import com.lockdown.messaging.cluster.ServerDestination;
 
-public interface RemoteNodeChannel extends MessagingChannel {
+public interface NodeChannel extends Channel {
 
-    MessagingChannelPipeline pipeline();
+    NodeChannelPipeline pipeline();
 
     void writeAndFlush(Object obj);
 
     void close();
-
-    ServerDestination destination();
 
 }

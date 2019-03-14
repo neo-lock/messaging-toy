@@ -22,7 +22,7 @@ public class LocalServerNodeProxy implements MethodInterceptor {
 
 
     @Override
-    public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+    public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) {
         Recoverable recoverable = method.getAnnotation(Recoverable.class);
         Object result = null;
         try {

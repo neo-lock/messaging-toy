@@ -11,12 +11,12 @@ public class ContextExecutor {
 
     private EventLoopGroup boss;
     private EventLoopGroup worker;
-    private ExecutorService segment;
+    private EventLoopGroup segment;
 
     public ContextExecutor(ServerProperties properties) {
         this.boss = new NioEventLoopGroup(properties.getBossThreads());
         this.worker = new NioEventLoopGroup(properties.getWorkerThreads());
-        this.segment = this.worker;
+        this.segment = new NioEventLoopGroup(properties.getWorkerThreads());
     }
 
 
@@ -28,7 +28,7 @@ public class ContextExecutor {
         return worker;
     }
 
-    public ExecutorService getSegment() {
+    public EventLoopGroup getSegment() {
         return segment;
     }
 
@@ -43,9 +43,7 @@ public class ContextExecutor {
     public void shutdown() {
         boss.shutdownGracefully();
         worker.shutdownGracefully();
-        if (!segment.isShutdown()) {
-            segment.shutdown();
-        }
+        segment.shutdownGracefully();
     }
 
 }
