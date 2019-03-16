@@ -11,6 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * 可以更换成 disruptor !!
  */
+@Deprecated
 public class DefaultSelector implements Selector {
 
     private final Object lock = new Object();

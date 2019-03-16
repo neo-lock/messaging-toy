@@ -100,6 +100,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
         serverContext.shutdownContext();
     }
 
+
     private void fireStartEvent() {
         final LocalServer localServer = this;
         eventListeners.forEach(serverEventListener -> serverEventListener.serverStartup(localServer, serverContext));

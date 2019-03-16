@@ -1,17 +1,9 @@
 package com.lockdown.messaging.cluster;
 
-import com.lockdown.messaging.cluster.channel.Channel;
-import com.lockdown.messaging.cluster.channel.NodeChannelFactory;
-import com.lockdown.messaging.cluster.channel.support.ClientNodeChannelFactory;
-import com.lockdown.messaging.cluster.channel.support.DefaultLocalChannelFactory;
-import com.lockdown.messaging.cluster.channel.support.DefaultNodeChannelFactoryGroup;
-import com.lockdown.messaging.cluster.node.ClusterLocalClient;
-import com.lockdown.messaging.cluster.node.LocalClient;
+import com.lockdown.messaging.cluster.node.ClusterLocalNode;
 import com.lockdown.messaging.cluster.node.LocalNode;
-import com.lockdown.messaging.cluster.node.RecoverableLocalNodeFactory;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
-import com.lockdown.messaging.cluster.reactor.NodeChannelFactoryGroup;
-import com.lockdown.messaging.cluster.reactor.support.DefaultChannelEventLoop;
+import com.lockdown.messaging.cluster.reactor.support.DefaultChannelEventLoopInitializer;
 import com.lockdown.messaging.cluster.reactor.support.DisruptorChannelEventLoop;
 import com.lockdown.messaging.cluster.support.RuntimeEnvironment;
 import com.lockdown.messaging.cluster.support.SimpleRuntimeEnvironment;
@@ -35,8 +27,6 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
     private RuntimeEnvironment runtimeEnvironment;
     private ChannelEventLoop eventLoop;
     private LocalNode localNode;
-    private NodeChannelFactoryGroup channelGroup;
-
 
     public AbstractServerContext(T properties) {
         this.properties = properties;
@@ -44,14 +34,8 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         this.localDestination = new ServerDestination(IPUtils.getLocalIP(), properties.getNodePort());
         this.contextExecutor = new ContextExecutor(properties);
         this.runtimeEnvironment = new SimpleRuntimeEnvironment();
-        LocalClient localClient = new ClusterLocalClient(this);
-        this.eventLoop = new DisruptorChannelEventLoop(this);
-        NodeChannelFactory nodeChannelFactory = new ClientNodeChannelFactory(eventLoop, localClient);
-        this.channelGroup = new DefaultNodeChannelFactoryGroup(nodeChannelFactory);
-        this.localNode = new RecoverableLocalNodeFactory(this).getNodeInstance();
-        Channel localChannel = new DefaultLocalChannelFactory(eventLoop, localNode).newInstance();
-        this.channelGroup.addNodeChannel(localChannel);
-        this.eventLoop.registerNodeChannelGroup(this.channelGroup);
+        this.eventLoop = new DisruptorChannelEventLoop(this, new DefaultChannelEventLoopInitializer());
+        this.localNode = this.eventLoop.localNode();
     }
 
 
@@ -127,7 +111,6 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
 
     private class NodeMonitorDebug implements TimerTask {
 
-
         private final long delay;
         private final TimeUnit timeUnit;
 
@@ -139,8 +122,12 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         @Override
         public void run(Timeout timeout) throws Exception {
             localNode.printNodes();
+            eventLoop.nodeChannelGroup().printNodes();
             timeout.timer().newTimeout(this, delay, timeUnit);
         }
     }
+
+
+
 
 }

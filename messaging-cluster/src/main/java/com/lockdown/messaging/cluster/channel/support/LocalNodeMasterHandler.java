@@ -2,8 +2,8 @@ package com.lockdown.messaging.cluster.channel.support;
 
 import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.channel.Channel;
-import com.lockdown.messaging.cluster.channel.LocalChannelContext;
-import com.lockdown.messaging.cluster.channel.LocalChannelHandler;
+import com.lockdown.messaging.cluster.channel.ChannelContext;
+import com.lockdown.messaging.cluster.channel.ChannelInboundHandlerAdapter;
 import com.lockdown.messaging.cluster.command.NodeRegister;
 import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
@@ -13,21 +13,20 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-public class LocalNodeMasterHandler implements LocalChannelHandler {
+public class LocalNodeMasterHandler extends ChannelInboundHandlerAdapter {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+
     @Override
-    public void channelReceived(LocalChannelContext ctx, Object message) {
-        logger.info(" message :{}", message);
+    public void channelReceived(ChannelContext ctx, Object message) {
         ChannelEvent event = (ChannelEvent) message;
         switch (event.getEventType()) {
             case RANDOM_REGISTER: {
                 try {
-                    logger.info("随机注册");
-                    LocalNode node = ctx.pipeline().channel().localNode();
+                    logger.debug("随机注册");
                     Channel channel = ctx.eventLoop().nodeChannelGroup().randomNodeChannel();
-                    ChannelEvent registerEvent = new ChannelEvent(ChannelEventType.CHANNEL_WRITE, channel.destination(), new NodeRegister(node.destination()));
+                    ChannelEvent registerEvent = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, channel.destination(), new NodeRegister(ctx.eventLoop().localDestination()));
                     ctx.eventLoop().channelEvent(registerEvent);
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -37,10 +36,9 @@ public class LocalNodeMasterHandler implements LocalChannelHandler {
             }
             case REGISTER_MASTER: {
                 try {
-                    logger.info("注册master {}", event.getParam());
-                    LocalNode node = ctx.pipeline().channel().localNode();
-                    Channel channel = ctx.eventLoop().nodeChannelGroup().getMasterNodeChannel((Destination) event.getParam());
-                    ChannelEvent registerEvent = new ChannelEvent(ChannelEventType.CHANNEL_WRITE, channel.destination(), new NodeRegister(node.destination()));
+                    logger.debug("注册master {}", event.getParam());
+                    Channel channel = ctx.eventLoop().nodeChannelGroup().connectOnNotExists((Destination) event.getParam());
+                    ChannelEvent registerEvent = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, channel.destination(), new NodeRegister(ctx.eventLoop().localDestination()));
                     ctx.eventLoop().channelEvent(registerEvent);
                 } catch (Throwable ex) {
                     ex.printStackTrace();
@@ -52,6 +50,6 @@ public class LocalNodeMasterHandler implements LocalChannelHandler {
                 ctx.fireChannelReceived(message);
             }
         }
-
     }
+
 }

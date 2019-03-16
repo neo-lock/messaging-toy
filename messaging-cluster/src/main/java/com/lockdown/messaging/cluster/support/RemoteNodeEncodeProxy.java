@@ -9,6 +9,7 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 
+@Deprecated
 public class RemoteNodeEncodeProxy implements MethodInterceptor {
 
 

@@ -1,8 +1,10 @@
 package com.lockdown.messaging.cluster.channel;
 
-public interface ChannelHandler<T extends ChannelContext> {
+public interface ChannelHandler {
 
-    void channelReceived(T ctx, Object message);
+    void exceptionCaught(ChannelContext ctx, Throwable throwable);
+
+    void channelClosed(ChannelContext ctx);
 
 
 }

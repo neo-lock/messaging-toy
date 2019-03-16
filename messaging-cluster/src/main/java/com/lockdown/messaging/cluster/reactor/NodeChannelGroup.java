@@ -1,23 +1,27 @@
 package com.lockdown.messaging.cluster.reactor;
 
 import com.lockdown.messaging.cluster.Destination;
-import com.lockdown.messaging.cluster.channel.Channel;
+import com.lockdown.messaging.cluster.ServerDestination;
+import com.lockdown.messaging.cluster.channel.ChannelFactory;
+import com.lockdown.messaging.cluster.channel.support.NodeChannel;
 
 import java.util.Collection;
 
 
-public interface NodeChannelGroup {
+public interface NodeChannelGroup extends ChannelFactory<NodeChannel, ServerDestination> {
 
-    void addNodeChannel(Channel channel);
+    void addNodeChannel(NodeChannel channel);
 
     void removeNodeChannel(Destination destination);
 
-    Channel getMasterNodeChannel(Destination destination);
+    NodeChannel connectOnNotExists(Destination destination);
 
-    Channel randomNodeChannel();
+    NodeChannel randomNodeChannel();
 
-    Collection<Channel> nodeChannels();
+    Collection<NodeChannel> nodeChannels();
 
-    Channel getNodeChannel(Destination source);
+    NodeChannel getNodeChannel(Destination source);
+
+    void printNodes();
 
 }

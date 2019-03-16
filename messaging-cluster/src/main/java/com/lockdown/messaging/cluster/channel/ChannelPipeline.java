@@ -1,11 +1,12 @@
 package com.lockdown.messaging.cluster.channel;
 
-public interface ChannelPipeline<T extends ChannelHandler> extends ChannelInBound {
+public interface ChannelPipeline extends ChannelInboundInvoker, ChannelOutboundInvoker, ChannelInvoker {
 
 
-    ChannelPipeline addLast(T handler);
-
+    ChannelPipeline addLast(ChannelHandler handler);
 
     Channel channel();
+
+    void writeAndFlush(Object message);
 
 }

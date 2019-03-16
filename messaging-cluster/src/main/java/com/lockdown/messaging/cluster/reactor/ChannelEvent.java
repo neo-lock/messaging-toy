@@ -4,6 +4,7 @@ import com.lockdown.messaging.cluster.Destination;
 
 public class ChannelEvent {
 
+    private Enum<?> channelType;
     private ChannelEventType eventType;
     private Destination destination;
     private Object param;
@@ -12,15 +13,29 @@ public class ChannelEvent {
 
     }
 
-    public ChannelEvent(ChannelEventType eventType, Destination destination) {
+    public ChannelEvent(Enum<?> channelType, ChannelEventType eventType, Object param) {
+        this.channelType = channelType;
+        this.eventType = eventType;
+        this.param = param;
+    }
+
+    public ChannelEvent(Enum<?> channelType, ChannelEventType eventType, Destination destination) {
+        this.channelType = channelType;
         this.eventType = eventType;
         this.destination = destination;
     }
 
-    public ChannelEvent(ChannelEventType eventType, Destination destination, Object param) {
-        this.eventType = eventType;
-        this.destination = destination;
+    public ChannelEvent(Enum<?> channelType, ChannelEventType eventType, Destination destination, Object param) {
+        this(channelType, eventType, destination);
         this.param = param;
+    }
+
+    public Enum<?> getChannelType() {
+        return channelType;
+    }
+
+    public void setChannelType(Enum<?> channelType) {
+        this.channelType = channelType;
     }
 
     public ChannelEventType getEventType() {
@@ -50,7 +65,8 @@ public class ChannelEvent {
     @Override
     public String toString() {
         return "ChannelEvent{" +
-                "eventType=" + eventType +
+                "channelType=" + channelType +
+                ", eventType=" + eventType +
                 ", destination=" + destination +
                 ", param=" + param +
                 '}';

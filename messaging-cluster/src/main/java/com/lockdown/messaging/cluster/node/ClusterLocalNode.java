@@ -1,10 +1,10 @@
 package com.lockdown.messaging.cluster.node;
 
 import com.lockdown.messaging.cluster.ServerDestination;
+import com.lockdown.messaging.cluster.channel.support.LocalChannel;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 import com.lockdown.messaging.cluster.reactor.ChannelEventType;
-import com.lockdown.messaging.cluster.support.Recoverable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +33,10 @@ public class ClusterLocalNode implements LocalNode {
         this.eventLoop = eventLoop;
     }
 
-    @Recoverable(repeat = -1)
+
     @Override
     public void registerToCluster(ServerDestination destination) {
-        ChannelEvent channelEvent = new ChannelEvent(ChannelEventType.REGISTER_MASTER, localDestination, destination);
+        ChannelEvent channelEvent = new ChannelEvent(LocalChannel.type(), ChannelEventType.REGISTER_MASTER, localDestination, destination);
         eventLoop.channelEvent(channelEvent);
     }
 
@@ -105,11 +105,11 @@ public class ClusterLocalNode implements LocalNode {
         return result;
     }
 
-    @Recoverable(repeat = -1)
+
     @Override
     public void registerRandomNode() {
         logger.info("开始随机注册节点");
-        ChannelEvent channelEvent = new ChannelEvent(ChannelEventType.RANDOM_REGISTER, localDestination);
+        ChannelEvent channelEvent = new ChannelEvent(LocalChannel.type(), ChannelEventType.RANDOM_REGISTER, localDestination);
         eventLoop.channelEvent(channelEvent);
     }
 
