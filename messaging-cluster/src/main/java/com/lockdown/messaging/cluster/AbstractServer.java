@@ -7,6 +7,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
@@ -15,9 +16,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
 
     private ServerBootstrap bootstrap;
     private T serverContext;
-    private CountDownLatch countDownLatch = new CountDownLatch(1);
     private List<ServerEventListener> eventListeners = new ArrayList<>();
-    private List<ChannelHandler> channelHandlers = new ArrayList<>();
 
     @Override
     public void addEventListener(ServerEventListener... listeners) {
@@ -44,22 +43,11 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
         }
     }
 
-    public void startServer() throws InterruptedException {
-        try {
-            bootstrap.bind(serverContext.getProperties().getNodePort()).sync();
-            fireStartEvent();
-            syncWait();
-        } finally {
-            fireStopEvent();
-            release();
-        }
+    private void startServer() throws InterruptedException {
+        bootstrap.bind(serverContext.getProperties().getNodePort()).sync();
+        fireStartEvent();
     }
 
-
-
-    private void syncWait() throws InterruptedException {
-        countDownLatch.await();
-    }
 
     protected ChannelInitializer<SocketChannel> channelInitializer(T serverContext) {
         return new ChannelInitializer<SocketChannel>() {
@@ -67,7 +55,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
             protected void initChannel(SocketChannel socketChannel) throws Exception {
                 List<ChannelHandler> handlers = new ArrayList<>();
                 handlers.addAll(providerHeadHandler(serverContext));
-                handlers.addAll(channelHandlers);
+                handlers.addAll(providerCustomHandler(serverContext));
                 handlers.addAll(providerTailHandler(serverContext));
                 socketChannel.pipeline().addLast(handlers.toArray(new ChannelHandler[0]));
             }
@@ -87,15 +75,15 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
         return Collections.emptyList();
     }
 
+    protected List<ChannelHandler> providerCustomHandler(T serverContext){
+        return Collections.emptyList();
+    }
+
     protected List<ChannelHandler> providerTailHandler(T serverContext){
         return Collections.emptyList();
     }
 
-    @Override
-    public LocalServer<T> addLastHandler(ChannelHandler handler) {
-        channelHandlers.add(handler);
-        return this;
-    }
+
 
     protected abstract void optionSetup(ServerBootstrap bootstrap);
 
@@ -106,7 +94,8 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
     }
 
     public void stop() {
-        countDownLatch.countDown();
+        fireStopEvent();
+        release();
     }
 
 
@@ -119,6 +108,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
         final LocalServer localServer = this;
         eventListeners.forEach(serverEventListener -> serverEventListener.serverStartup(localServer, serverContext));
     }
+
 
 
 }

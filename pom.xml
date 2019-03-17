@@ -13,6 +13,7 @@
         <module>messaging-actor</module>
     </modules>
 
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -63,11 +64,14 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.1</version>
                 <configuration>
+                    <encoding>UTF-8</encoding>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 </project>

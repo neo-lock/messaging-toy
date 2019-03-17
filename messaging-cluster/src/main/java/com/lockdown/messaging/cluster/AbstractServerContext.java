@@ -102,8 +102,9 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
     @Override
     public void serverStartup(LocalServer localServer, ServerContext serverContext) {
         this.eventLoop.start();
+        logger.info(" 需要连接的master {}", this.properties.getMaster());
         if (null != this.properties.getMaster() && !this.localDestination.equals(this.properties.getMaster())) {
-            logger.info(" 需要连接的master {}", this.properties.getMaster());
+
             this.localNode.registerToCluster(this.properties.getMaster());
         } else {
             this.localNode.registerRandomNode();

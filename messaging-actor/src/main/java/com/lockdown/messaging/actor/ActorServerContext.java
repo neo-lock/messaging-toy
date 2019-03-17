@@ -8,6 +8,8 @@ import com.lockdown.messaging.cluster.exception.MessagingException;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 import com.lockdown.messaging.cluster.reactor.support.NodeChannelInitializer;
 
+import java.util.Objects;
+
 public class ActorServerContext extends AbstractServerContext<ActorProperties> {
 
     private ActorMessageCodec actorMessageCodec;
@@ -33,11 +35,14 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
             this.initActorMessageCodec();
             this.checkActorClass();
         } catch (Throwable t) {
-            throw new MessagingException(t);
+            throw new MessagingException(t.getMessage());
         }
     }
 
     private void initActorMessageCodec() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        if(Objects.isNull(getProperties().getActorCodecClassName())){
+            throw new MessagingException("required ActorCodecClassName !");
+        }
         Class<?> codecClass =  Class.forName(getProperties().getActorCodecClassName());
         this.actorMessageCodec = (ActorMessageCodec) codecClass.newInstance();
     }
@@ -52,6 +57,9 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
 
 
     private void checkActorClass() throws ClassNotFoundException {
+        if(Objects.isNull(getProperties().getActorClassName())){
+            throw new MessagingException("required ActorClassName !");
+        }
         this.actorClass = Class.forName(getProperties().getActorClassName());
     }
 

@@ -5,16 +5,17 @@ import com.lockdown.messaging.cluster.ClusterProperties;
 public class SimpleActorProperties extends ClusterProperties implements ActorProperties {
 
 
-    private String actorMessageCodecClassName;
+    private String actorCodecClassName;
     private String actorClassName;
+    private int actorPort;
 
     @Override
     public String getActorCodecClassName() {
-        return actorMessageCodecClassName;
+        return actorCodecClassName;
     }
 
-    public void setActorMessageCodecClassName(String actorMessageCodecClassName) {
-        this.actorMessageCodecClassName = actorMessageCodecClassName;
+    public void setActorCodecClassName(String actorCodecClassName) {
+        this.actorCodecClassName = actorCodecClassName;
     }
 
     @Override
@@ -22,12 +23,16 @@ public class SimpleActorProperties extends ClusterProperties implements ActorPro
         return actorClassName;
     }
 
-    @Override
-    public int getActorPort() {
-        return 0;
-    }
-
     public void setActorClassName(String actorClassName) {
         this.actorClassName = actorClassName;
+    }
+
+    @Override
+    public int getActorPort() {
+        return actorPort;
+    }
+
+    public void setActorPort(int actorPort) {
+        this.actorPort = actorPort;
     }
 }

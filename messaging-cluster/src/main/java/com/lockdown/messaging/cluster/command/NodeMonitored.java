@@ -18,5 +18,10 @@ public class NodeMonitored extends AbstractNodeCommand implements RegisterNature
         return CommandType.MONITORED;
     }
 
-
+    @Override
+    public String toString() {
+        return "NodeMonitored{" +
+                "source=" + source +
+                '}';
+    }
 }

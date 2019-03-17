@@ -4,6 +4,7 @@ import com.lockdown.messaging.actor.ActorServerContext;
 import com.lockdown.messaging.example.message.JsonMessageDecoder;
 import com.lockdown.messaging.example.message.JsonMessageEncoder;
 import com.lockdown.messaging.example.message.SpringActorHandler;
+import io.netty.channel.ChannelHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.Arrays;
+import java.util.List;
 
 @EnableSwagger2
 @EnableConfigurationProperties(SpringActorProperties.class)
@@ -41,11 +44,14 @@ public class ExampleApplication {
         @PostConstruct
         public void init() {
             actorServerContext = new ActorServerContext(springActorProperties);
-            actorServer = new ActorServer();
-            actorServer.addLastHandler(new JsonMessageDecoder())
-                    .addLastHandler(new JsonMessageEncoder())
-                    .addLastHandler(new SpringActorHandler())
-                    .initializer(actorServerContext).start();
+            actorServer = new ActorServer(springActorProperties.getActorPort());
+            actorServer.customHandler(serverContext -> Arrays.asList(
+                    new JsonMessageDecoder(),
+                    new JsonMessageEncoder(),
+                    new SpringActorHandler()
+            )).initializer(actorServerContext).start();
+
+                    //.initializer(actorServerContext).start();
         }
 
         @PreDestroy

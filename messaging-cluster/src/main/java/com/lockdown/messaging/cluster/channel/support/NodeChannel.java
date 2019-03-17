@@ -32,7 +32,6 @@ public class NodeChannel extends AbstractChannel {
 
     @Override
     public void handleEvent(ChannelEvent channelEvent) {
-        logger.info(" handle channel event {}",channelEvent);
         switch (channelEvent.getEventType()){
             case CHANNEL_WRITE:{
                 pipeline().fireChannelWrite(channelEvent.getParam());

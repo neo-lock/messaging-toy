@@ -1,20 +1,23 @@
 package com.lockdown.messaging.cluster;
 
+import com.lockdown.messaging.cluster.utils.IPUtils;
+
 import java.util.Objects;
 
 public class ServerDestination implements Destination {
 
 
-    private String ipAddress;
+    private String address;
     private int port;
 
     public ServerDestination() {
     }
 
-    public ServerDestination(String ipAddress, int port) {
-        this.ipAddress = ipAddress;
+    public ServerDestination(String address, int port) {
+        this.address = convertLocal(address);
         this.port = port;
     }
+
 
 
     @Override
@@ -22,12 +25,12 @@ public class ServerDestination implements Destination {
         return toString();
     }
 
-    public String getIpAddress() {
-        return ipAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setAddress(String address) {
+        this.address = convertLocal(address);
     }
 
     public int getPort() {
@@ -42,7 +45,7 @@ public class ServerDestination implements Destination {
     @Override
     public String toString() {
         return "ServerDestination{" +
-                "ipAddress='" + ipAddress + '\'' +
+                "address='" + address + '\'' +
                 ", port=" + port +
                 '}';
     }
@@ -55,8 +58,16 @@ public class ServerDestination implements Destination {
         return this.toString().equals(that.toString());
     }
 
+    private String convertLocal(String address){
+        if(address.equals("127.0.0.1")||address.equals("localhost")){
+            return IPUtils.getLocalIP();
+        }
+        return address;
+    }
+
+
     @Override
     public int hashCode() {
-        return Objects.hash(ipAddress, port);
+        return Objects.hash(address, port);
     }
 }

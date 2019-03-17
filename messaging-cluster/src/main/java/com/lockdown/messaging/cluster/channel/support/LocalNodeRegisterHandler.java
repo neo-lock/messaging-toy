@@ -38,7 +38,7 @@ public class LocalNodeRegisterHandler extends ChannelInboundHandlerAdapter {
     private void writeMonitor(ChannelContext ctx, NodeRegister register) {
         LocalNode localNode = ((LocalChannel) ctx.pipeline().channel()).localNode();
         NodeMonitored monitored = new NodeMonitored(localNode.destination());
-        logger.info("发送监控响应{}",monitored);
+        logger.info("发送监控响应 {} ",monitored);
         ChannelEvent monitorEvent = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, register.getSource(), monitored);
         ctx.eventLoop().channelEvent(monitorEvent);
     }

@@ -11,7 +11,5 @@ public interface LocalServer<T extends ServerContext> {
 
     void stop();
 
-    LocalServer<T> addLastHandler(ChannelHandler handler);
-
     void addEventListener(ServerEventListener... listeners);
 }

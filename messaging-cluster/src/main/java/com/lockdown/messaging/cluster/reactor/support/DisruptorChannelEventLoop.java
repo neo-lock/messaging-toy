@@ -43,14 +43,18 @@ public class DisruptorChannelEventLoop implements ChannelEventLoop, EventHandler
 
 
     public DisruptorChannelEventLoop(ServerContext serverContext, ChannelEventLoopInitializer<ChannelEventLoop> eventLoopInitializer) {
+        logger.info("使用DisruptorEventLoop");
         this.serverContext = serverContext;
         this.disruptor = new Disruptor<>(new ChannelEventFactory(), 1024 * 1024, Executors.defaultThreadFactory(), ProducerType.MULTI, new BlockingWaitStrategy());
         this.disruptor.handleEventsWith(this);
         this.localDestination = serverContext.localDestination();
         this.localNode = new ClusterLocalNode(this.localDestination,this);
         this.localChannel = new LocalChannelFactory(this).newInstance(null, this.localDestination);
+        logger.info("使用 {} 本地channel",this.localChannel.getClass());
         this.nodeChannelGroup = new DefaultChannelGroup(serverContext, this);
+        logger.info("使用 {} NodeChannelGroup",this.nodeChannelGroup.getClass());
         this.eventInvokerContext = new DefaultChannelEventInvokerContext();
+        logger.info("使用 {} EventInvokerContext",this.eventInvokerContext.getClass());
         this.eventLoopInitializer = eventLoopInitializer;
         this.initChannelEventInvoker();
     }
@@ -82,6 +86,8 @@ public class DisruptorChannelEventLoop implements ChannelEventLoop, EventHandler
     @Override
     public void registerNodeChannel(ChannelFuture future, ServerDestination destination) {
         nodeChannelGroup.newInstance(future, destination);
+        logger.info("当前ChannelGroup");
+        nodeChannelGroup.printNodes();
     }
 
 

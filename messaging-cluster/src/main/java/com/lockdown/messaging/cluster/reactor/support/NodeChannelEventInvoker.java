@@ -32,6 +32,8 @@ public class NodeChannelEventInvoker implements ChannelTypeEventInvoker {
                 break;
             }
             default: {
+                logger.info("收到的Destination {}",event.getDestination());
+                nodeChannelGroup.printNodes();
                 nodeChannelGroup.getNodeChannel(event.getDestination()).handleEvent(event);
             }
         }
