@@ -34,9 +34,18 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         this.localDestination = new ServerDestination(IPUtils.getLocalIP(), properties.getNodePort());
         this.contextExecutor = new ContextExecutor(properties);
         this.runtimeEnvironment = new SimpleRuntimeEnvironment();
-        this.eventLoop = new DisruptorChannelEventLoop(this, new DefaultChannelEventLoopInitializer());
+        this.init();
+    }
+
+
+
+    protected void init(){
+        this.eventLoop = this.initEventLoop();
         this.localNode = this.eventLoop.localNode();
     }
+
+
+    protected abstract ChannelEventLoop initEventLoop();
 
 
     @Override

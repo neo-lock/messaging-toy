@@ -29,7 +29,7 @@ public class NodeCommandDecoder extends ByteToMessageDecoder {
     private boolean isLocalPort(ChannelHandlerContext ctx) {
         InetSocketAddress localAddress = (InetSocketAddress) ctx.channel().localAddress();
         InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        logger.info("LocalAddress{},RemoteAddress{}", localAddress, remoteAddress);
+        logger.debug("LocalAddress{},RemoteAddress{}", localAddress, remoteAddress);
         return nodeWhiteList.matcher(String.valueOf(localAddress.getPort())).matches() ||
                 nodeWhiteList.matcher(String.valueOf(remoteAddress.getPort())).matches();
     }

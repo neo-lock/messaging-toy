@@ -7,10 +7,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 public abstract class AbstractServer<T extends ServerContext> implements LocalServer<T> {
@@ -20,7 +17,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
     private T serverContext;
     private CountDownLatch countDownLatch = new CountDownLatch(1);
     private List<ServerEventListener> eventListeners = new ArrayList<>();
-
+    private List<ChannelHandler> channelHandlers = new ArrayList<>();
 
     @Override
     public void addEventListener(ServerEventListener... listeners) {
@@ -59,6 +56,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
     }
 
 
+
     private void syncWait() throws InterruptedException {
         countDownLatch.await();
     }
@@ -67,7 +65,11 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
         return new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
-                socketChannel.pipeline().addLast(providerHandler(serverContext).toArray(new ChannelHandler[0]));
+                List<ChannelHandler> handlers = new ArrayList<>();
+                handlers.addAll(providerHeadHandler(serverContext));
+                handlers.addAll(channelHandlers);
+                handlers.addAll(providerTailHandler(serverContext));
+                socketChannel.pipeline().addLast(handlers.toArray(new ChannelHandler[0]));
             }
         };
     }
@@ -81,7 +83,19 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
         return bootstrap;
     }
 
-    protected abstract List<ChannelHandler> providerHandler(T serverContext);
+    protected List<ChannelHandler> providerHeadHandler(T serverContext){
+        return Collections.emptyList();
+    }
+
+    protected List<ChannelHandler> providerTailHandler(T serverContext){
+        return Collections.emptyList();
+    }
+
+    @Override
+    public LocalServer<T> addLastHandler(ChannelHandler handler) {
+        channelHandlers.add(handler);
+        return this;
+    }
 
     protected abstract void optionSetup(ServerBootstrap bootstrap);
 

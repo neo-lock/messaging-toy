@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
-
+@Deprecated
 public class LocalServerNodeProxy implements MethodInterceptor {
 
     private final RuntimeEnvironment runtimeEnvironment;

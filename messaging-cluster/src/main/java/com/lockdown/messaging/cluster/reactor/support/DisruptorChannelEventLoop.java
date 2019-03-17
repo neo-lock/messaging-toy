@@ -98,6 +98,7 @@ public class DisruptorChannelEventLoop implements ChannelEventLoop, EventHandler
     @Override
     public void shutdown() {
         disruptor.shutdown();
+        executorService.shutdown();
     }
 
     @Override

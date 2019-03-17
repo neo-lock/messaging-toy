@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleRuntimeEnvironment implements RuntimeEnvironment {
 
+    @Deprecated
     private MethodRecoverable methodRecoverable;
     private SyncCommandMonitor commandMonitor;
     private HashedWheelTimer hashedWheelTimer;
@@ -24,6 +25,7 @@ public class SimpleRuntimeEnvironment implements RuntimeEnvironment {
         return hashedWheelTimer.newTimeout(task, delay, unit);
     }
 
+    @Deprecated
     @Override
     public MethodRecoverable methodRecoverable() {
         return methodRecoverable;

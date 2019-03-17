@@ -1,8 +1,11 @@
 package com.lockdown.messaging.cluster;
 
+import com.lockdown.messaging.cluster.channel.ChannelInitializer;
+import com.lockdown.messaging.cluster.channel.support.NodeChannel;
 import com.lockdown.messaging.cluster.event.ServerEventListener;
 import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
+import com.lockdown.messaging.cluster.reactor.support.NodeChannelInitializer;
 import com.lockdown.messaging.cluster.support.RuntimeEnvironment;
 
 import java.util.regex.Pattern;
@@ -26,6 +29,8 @@ public interface ServerContext<T extends ServerProperties> extends ServerEventLi
     LocalNode localNode();
 
     ChannelEventLoop channelEventLoop();
+
+    NodeChannelInitializer nodeChannelInitializer();
 
 
 }

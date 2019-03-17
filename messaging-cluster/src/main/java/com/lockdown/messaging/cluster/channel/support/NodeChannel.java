@@ -21,6 +21,10 @@ public class NodeChannel extends AbstractChannel {
         return ChannelType.NODE;
     }
 
+    protected ChannelFuture channelFuture(){
+        return this.channelFuture;
+    }
+
     @Override
     public void writeAndFlush(Object message) {
         this.channelFuture.channel().writeAndFlush(message);

@@ -1,14 +1,17 @@
 package com.lockdown.messaging.cluster;
 
 import com.lockdown.messaging.cluster.event.ServerEventListener;
+import io.netty.channel.ChannelHandler;
 
 public interface LocalServer<T extends ServerContext> {
 
-    public LocalServer<T> initializer(T serverContext);
+    LocalServer<T> initializer(T serverContext);
 
-    public void start();
+    void start();
 
-    public void stop();
+    void stop();
+
+    LocalServer<T> addLastHandler(ChannelHandler handler);
 
     void addEventListener(ServerEventListener... listeners);
 }

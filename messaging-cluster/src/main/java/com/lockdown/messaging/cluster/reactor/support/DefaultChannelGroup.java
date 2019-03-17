@@ -28,13 +28,13 @@ public class DefaultChannelGroup implements NodeChannelGroup {
     private final LocalClient localClient;
     private final ChannelEventLoop eventLoop;
     private final Object lock = new Object();
-    private final ChannelInitializer<Channel> channelInitializer;
+    private final ChannelInitializer<NodeChannel> channelInitializer;
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     public DefaultChannelGroup(ServerContext serverContext, ChannelEventLoop eventLoop) {
         this.localClient = new ClusterLocalClient(serverContext);
         this.eventLoop = eventLoop;
-        this.channelInitializer = new NodeChannelInitializer();
+        this.channelInitializer = serverContext.nodeChannelInitializer();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class DefaultChannelGroup implements NodeChannelGroup {
 
     @Override
     public void printNodes() {
-        logger.info("当前连接节点 {}",channelMap.keySet());
+        logger.debug("当前连接节点 {}",channelMap.keySet());
     }
 
     @Override
@@ -97,10 +97,4 @@ public class DefaultChannelGroup implements NodeChannelGroup {
         return channel;
     }
 
-    private class NodeChannelInitializer implements ChannelInitializer<Channel> {
-        @Override
-        public void initialize(Channel channel) {
-            channel.pipeline().addLast(new NodeCommandSplitter());
-        }
-    }
 }

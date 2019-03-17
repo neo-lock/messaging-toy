@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Deprecated
 public class TimerMethodRecoverable implements MethodRecoverable {
 
 

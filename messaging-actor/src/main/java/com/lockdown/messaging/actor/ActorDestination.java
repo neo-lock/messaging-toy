@@ -49,7 +49,7 @@ public class ActorDestination implements Destination {
     public String toString() {
         return "ActorDestination{" +
                 "channelId='" + channelId + '\'' +
-                ", destination=" + destination +
+                ", destination=" + destination.toString() +
                 '}';
     }
 }

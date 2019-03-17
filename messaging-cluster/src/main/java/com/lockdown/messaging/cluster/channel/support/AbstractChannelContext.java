@@ -79,7 +79,6 @@ public abstract class AbstractChannelContext implements ChannelContext {
 
     private void invokeChannelWrite(final AbstractChannelContext next, Object message) {
         eventLoop().execute(() -> next.invokeChannelWrite(message));
-
     }
 
     private void invokeChannelWrite(Object message) {

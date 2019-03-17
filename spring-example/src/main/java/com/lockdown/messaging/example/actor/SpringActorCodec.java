@@ -1,6 +1,6 @@
 package com.lockdown.messaging.example.actor;
 
-import com.lockdown.messaging.actor.framework.ActorMessageCodec;
+import com.lockdown.messaging.actor.ActorMessageCodec;
 
 public class SpringActorCodec implements ActorMessageCodec {
 

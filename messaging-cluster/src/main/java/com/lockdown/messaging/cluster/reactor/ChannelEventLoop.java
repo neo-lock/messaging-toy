@@ -14,7 +14,6 @@ public interface ChannelEventLoop {
 
     void execute(Runnable runnable);
 
-
     void registerNodeChannel(ChannelFuture future, ServerDestination destination);
 
     ServerDestination localDestination();

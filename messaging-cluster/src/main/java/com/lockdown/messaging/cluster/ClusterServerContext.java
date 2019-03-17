@@ -1,16 +1,28 @@
 package com.lockdown.messaging.cluster;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ClusterServerContext<T extends ClusterProperties> extends AbstractServerContext<T> {
+import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
+import com.lockdown.messaging.cluster.reactor.support.DefaultChannelEventLoopInitializer;
+import com.lockdown.messaging.cluster.reactor.support.DisruptorChannelEventLoop;
+import com.lockdown.messaging.cluster.reactor.support.NodeChannelInitializer;
+import com.lockdown.messaging.cluster.reactor.support.RemoteNodeChannelInitializer;
+
+public class ClusterServerContext extends AbstractServerContext<ClusterProperties> {
 
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public ClusterServerContext(T properties) {
+    public ClusterServerContext(ClusterProperties properties) {
         super(properties);
     }
 
+    @Override
+    protected ChannelEventLoop initEventLoop() {
+       return new DisruptorChannelEventLoop(this, new DefaultChannelEventLoopInitializer());
+    }
 
+
+    @Override
+    public NodeChannelInitializer nodeChannelInitializer() {
+        return new RemoteNodeChannelInitializer();
+    }
 }

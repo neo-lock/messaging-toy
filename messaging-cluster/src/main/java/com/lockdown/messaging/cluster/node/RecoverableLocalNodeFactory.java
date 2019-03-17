@@ -11,6 +11,7 @@ import net.sf.cglib.proxy.NoOp;
 
 import java.lang.reflect.Method;
 
+@Deprecated
 public class RecoverableLocalNodeFactory implements LocalNodeFactory {
 
 

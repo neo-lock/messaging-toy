@@ -3,7 +3,7 @@ server:
 spring:
   application:
     name: messaging-example
-  messaging:
+  actor:
     node-port: 9090
     actor-port: 8082
     boss-threads: 1
@@ -12,7 +12,7 @@ spring:
     monitor-enable: true
     enable-sync: true
     actor-class-name: com.lockdown.messaging.example.actor.SpringActor
-    actor-codec-class-name: com.lockdown.messaging.example.actor.SpringActorCodec
+    actor-message-codec-class-name:
   data:
     mongodb:
       uri: mongodb://actorRoot:actorRoot@139.199.57.133:27017

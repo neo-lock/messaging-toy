@@ -1,8 +1,7 @@
 package com.lockdown.messaging.example.actor;
 
+import com.lockdown.messaging.actor.AbstractActor;
 import com.lockdown.messaging.actor.ActorDestination;
-import com.lockdown.messaging.actor.framework.AbstractActor;
-import com.lockdown.messaging.example.message.BusinessMessage;
 import com.lockdown.messaging.example.message.RegisterMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,7 @@ public class SpringActor extends AbstractActor {
         logger.info(" read message {}", message);
         if (message instanceof RegisterMessage) {
             RegisterMessage registerMessage = (RegisterMessage) message;
-            actorRecord.setActorDestination(getDestination());
+            actorRecord.setActorDestination(getActorDestination());
             actorRecord.setAccountId(registerMessage.getId());
             actorRecord.setConnected(true);
             springActorService.saveOrUpdate(actorRecord);
@@ -35,8 +34,8 @@ public class SpringActor extends AbstractActor {
     }
 
     @Override
-    protected void actorClosed() {
-        actorRecord.setConnected(false);
-        springActorService.updateActor(actorRecord);
+    public void closedEvent() {
+
     }
+
 }

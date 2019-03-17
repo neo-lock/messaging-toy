@@ -15,13 +15,12 @@ public class ClusterLocalServer extends AbstractServer<ClusterServerContext> {
 
 
     @Override
-    protected List<ChannelHandler> providerHandler(ClusterServerContext serverContext) {
+    protected List<ChannelHandler> providerHeadHandler(ClusterServerContext serverContext) {
         return Arrays.asList(new NodeCommandDecoder(serverContext),
                 new NodeCommandEncoder(serverContext),
                 new SyncCommandHandler(serverContext),
                 new LocalNodeCommandHandler(serverContext));
     }
-
 
     @Override
     protected void optionSetup(ServerBootstrap bootstrap) {
