@@ -2,32 +2,56 @@ package com.lockdown.messaging.cluster.reactor;
 
 import com.lockdown.messaging.cluster.Destination;
 
-public class ChannelEvent {
+public final class ChannelEvent {
 
     private Enum<?> channelType;
     private ChannelEventType eventType;
     private Destination destination;
     private Object param;
+    private EventSource eventSource;
+
+
 
     public ChannelEvent() {
 
     }
 
     public ChannelEvent(Enum<?> channelType, ChannelEventType eventType, Object param) {
-        this.channelType = channelType;
-        this.eventType = eventType;
-        this.param = param;
+        this(channelType,eventType,null,param);
     }
 
     public ChannelEvent(Enum<?> channelType, ChannelEventType eventType, Destination destination) {
-        this.channelType = channelType;
-        this.eventType = eventType;
-        this.destination = destination;
+        this(channelType,eventType,destination,null);
     }
 
     public ChannelEvent(Enum<?> channelType, ChannelEventType eventType, Destination destination, Object param) {
-        this(channelType, eventType, destination);
+        this(null,channelType,eventType,destination,param);
+    }
+
+    public ChannelEvent(EventSource source,Enum<?> channelType, ChannelEventType eventType, Object param) {
+        this(source,channelType,eventType,null,param);
+    }
+
+    public ChannelEvent(EventSource source,Enum<?> channelType, ChannelEventType eventType, Destination destination) {
+        this(source,channelType,eventType,destination,null);
+    }
+
+    public ChannelEvent(EventSource source,Enum<?> channelType, ChannelEventType eventType, Destination destination, Object param) {
+        if(null!=source){
+            this.eventSource = new DefaultEventSource(source.channelType(),source.destination());
+        }
+        this.channelType = channelType;
+        this.eventType = eventType;
         this.param = param;
+        this.destination = destination;
+    }
+
+    public void setEventSource(EventSource eventSource) {
+        this.eventSource = eventSource;
+    }
+
+    public EventSource getEventSource() {
+        return eventSource;
     }
 
     public Enum<?> getChannelType() {
@@ -70,5 +94,26 @@ public class ChannelEvent {
                 ", destination=" + destination +
                 ", param=" + param +
                 '}';
+    }
+
+    private class DefaultEventSource implements EventSource{
+
+        private Enum<?> channelType;
+        private Destination destination;
+
+        public DefaultEventSource(Enum<?> channelType, Destination destination) {
+            this.channelType = channelType;
+            this.destination = destination;
+        }
+
+        @Override
+        public Enum<?> channelType() {
+            return channelType;
+        }
+
+        @Override
+        public Destination destination() {
+            return destination;
+        }
     }
 }

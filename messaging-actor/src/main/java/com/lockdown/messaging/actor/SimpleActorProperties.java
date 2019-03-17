@@ -7,7 +7,17 @@ public class SimpleActorProperties extends ClusterProperties implements ActorPro
 
     private String actorCodecClassName;
     private String actorClassName;
+    private String actorFactoryClassName;
     private int actorPort;
+
+    @Override
+    public String getActorFactoryClassName() {
+        return actorFactoryClassName;
+    }
+
+    public void setActorFactoryClassName(String actorFactoryClassName) {
+        this.actorFactoryClassName = actorFactoryClassName;
+    }
 
     @Override
     public String getActorCodecClassName() {

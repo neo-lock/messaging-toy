@@ -2,6 +2,8 @@ package com.lockdown.messaging.cluster;
 
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Future;
 
@@ -10,12 +12,11 @@ public class ContextExecutor {
 
     private EventLoopGroup boss;
     private EventLoopGroup worker;
-    private EventLoopGroup segment;
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public ContextExecutor(ServerProperties properties) {
         this.boss = new NioEventLoopGroup(properties.getBossThreads());
         this.worker = new NioEventLoopGroup(properties.getWorkerThreads());
-        this.segment = new NioEventLoopGroup(properties.getWorkerThreads());
     }
 
 
@@ -27,22 +28,12 @@ public class ContextExecutor {
         return worker;
     }
 
-    public EventLoopGroup getSegment() {
-        return segment;
-    }
-
-    public void executeRunnable(Runnable runnable) {
-        this.segment.execute(runnable);
-    }
-
-    public Future<?> submitRunnable(Runnable runnable) {
-        return segment.submit(runnable);
-    }
-
     public void shutdown() {
+
         boss.shutdownGracefully();
+        logger.info(" boss event loop shut down !");
         worker.shutdownGracefully();
-        segment.shutdownGracefully();
+        logger.info(" worker event loop shut down !");
     }
 
 }

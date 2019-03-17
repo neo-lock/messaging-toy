@@ -7,7 +7,7 @@ public enum ChannelEventType {
     RANDOM_REGISTER,
     NODE_READ,
 
-
+    EXCEPTION,
     CHANNEL_WRITE,
     CHANNEL_READ,
     CHANNEL_CLOSE,

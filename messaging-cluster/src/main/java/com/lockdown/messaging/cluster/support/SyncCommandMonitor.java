@@ -4,6 +4,7 @@ import com.lockdown.messaging.cluster.command.SyncCommand;
 
 import java.util.concurrent.CountDownLatch;
 
+@Deprecated
 public interface SyncCommandMonitor {
 
 

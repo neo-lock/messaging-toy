@@ -6,6 +6,8 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -15,6 +17,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
     private ServerBootstrap bootstrap;
     private T serverContext;
     private List<ServerEventListener> eventListeners = new ArrayList<>();
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void addEventListener(ServerEventListener... listeners) {
@@ -25,7 +28,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
 
 
     @Override
-    public final LocalServer<T> initializer(T serverContext) {
+    public LocalServer<T> initializer(T serverContext) {
         this.serverContext = serverContext;
         this.addEventListener(this.serverContext);
         this.bootstrap = initServerBootstrap(this.serverContext);
@@ -38,6 +41,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
             startServer();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            stop();
         }
     }
 
@@ -86,6 +90,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
 
 
     private void fireStopEvent() {
+        logger.info("fire server stop event !");
         final LocalServer localServer = this;
         eventListeners.forEach(serverEventListener -> serverEventListener.serverStop(localServer));
     }
@@ -97,6 +102,7 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
 
 
     private void release() {
+        logger.info(" server context shutdown !");
         serverContext.shutdownContext();
     }
 

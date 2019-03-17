@@ -42,6 +42,10 @@ public class NodeChannel extends AbstractChannel {
                 pipeline().fireChannelClosed();
                 break;
             }
+            case EXCEPTION:{
+                pipeline().fireExceptionCaught((Throwable) channelEvent.getParam());
+                break;
+            }
             default: {
                 pipeline().fireChannelReceived(channelEvent);
             }
@@ -56,6 +60,11 @@ public class NodeChannel extends AbstractChannel {
     @Override
     protected ChannelPipeline providerPipeline() {
         return new DefaultChannelPipeline(this);
+    }
+
+    @Override
+    public Enum<?> channelType() {
+        return type();
     }
 
     private enum ChannelType {

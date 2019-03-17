@@ -54,6 +54,11 @@ public class LocalChannel extends AbstractChannel {
         //ignore
     }
 
+    @Override
+    public Enum<?> channelType() {
+        return type();
+    }
+
     private enum ChannelType {
         LOCAL
     }

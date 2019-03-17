@@ -2,6 +2,7 @@ package com.lockdown.messaging.actor.channel;
 
 import com.lockdown.messaging.actor.Actor;
 import com.lockdown.messaging.actor.ActorDestination;
+import com.lockdown.messaging.actor.ActorServerContext;
 import com.lockdown.messaging.actor.command.NodeActorMessage;
 import com.lockdown.messaging.cluster.channel.Channel;
 import com.lockdown.messaging.cluster.channel.ChannelContext;
@@ -24,6 +25,7 @@ public class ActorChannelPipeline extends AbstractChannelPipeline {
 
         private ActorTailHandler(ActorChannel actorChannel) {
             this.actorChannel = actorChannel;
+            this.actor =  ((ActorServerContext)this.actorChannel.eventLoop().serverContext()).actorFactory().newInstance(actorChannel);
         }
 
         @Override
@@ -39,7 +41,7 @@ public class ActorChannelPipeline extends AbstractChannelPipeline {
 
         @Override
         public void exceptionCaught(ChannelContext ctx, Throwable throwable) {
-            //ignore
+            actor.exceptionCaught(throwable);
         }
 
         @Override

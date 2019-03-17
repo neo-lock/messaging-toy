@@ -87,6 +87,11 @@ public class DefaultChannelGroup implements NodeChannelGroup {
     }
 
     @Override
+    public boolean containsNode(Destination destination) {
+        return channelMap.containsKey(destination);
+    }
+
+    @Override
     public NodeChannel newInstance(ChannelFuture future, ServerDestination destination) {
         NodeChannel channel = new NodeChannel(eventLoop, destination, future);
         channelInitializer.initialize(channel);

@@ -10,8 +10,10 @@ public interface RuntimeEnvironment {
 
     Timeout newTimeout(TimerTask task, long delay, TimeUnit unit);
 
+    @Deprecated
     MethodRecoverable methodRecoverable();
 
+    @Deprecated
     SyncCommandMonitor syncCommandMonitor();
 
     void shutdown();

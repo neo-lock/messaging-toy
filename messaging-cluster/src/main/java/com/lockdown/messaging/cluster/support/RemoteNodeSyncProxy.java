@@ -52,7 +52,7 @@ public class RemoteNodeSyncProxy implements MethodInterceptor {
     }
 
     private Future<Object> getCommandFuture(CountDownLatch countDownLatch, Object invoker, MethodProxy methodProxy, Object[] args, MessageSync sync) {
-        return serverContext.contextExecutor().getSegment().submit(() -> {
+        return serverContext.contextExecutor().getWorker().submit(() -> {
             try {
                 Object result1 = null;
                 result1 = methodProxy.invokeSuper(invoker, args);

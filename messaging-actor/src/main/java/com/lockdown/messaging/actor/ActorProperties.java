@@ -8,6 +8,10 @@ public interface ActorProperties extends ServerProperties {
 
     String getActorClassName();
 
+    String getActorFactoryClassName();
+
     int getActorPort();
+
+
 
 }

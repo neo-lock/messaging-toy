@@ -24,4 +24,6 @@ public interface NodeChannelGroup extends ChannelFactory<NodeChannel, ServerDest
 
     void printNodes();
 
+    boolean containsNode(Destination destination);
+
 }

@@ -38,7 +38,8 @@ public abstract class AbstractChannelContext implements ChannelContext {
     }
 
     private void invokeExceptionCaught(final AbstractChannelContext next, Throwable throwable) {
-        next.invokeExceptionCaught(throwable);
+        eventLoop().execute(() -> next.invokeExceptionCaught(throwable));
+
     }
 
     private void invokeExceptionCaught(Throwable throwable) {
@@ -51,7 +52,8 @@ public abstract class AbstractChannelContext implements ChannelContext {
     }
 
     private void invokeChannelClosed(final AbstractChannelContext next) {
-        next.invokeChannelClosed();
+        eventLoop().execute(next::invokeChannelClosed);
+
     }
 
     private void invokeChannelClosed() {
@@ -65,7 +67,8 @@ public abstract class AbstractChannelContext implements ChannelContext {
     }
 
     private void invokeChannelReceived(final AbstractChannelContext next, Object message) {
-        next.invokeChannelReceived(message);
+        eventLoop().execute(() -> next.invokeChannelReceived(message));
+
     }
 
     private void invokeChannelReceived(Object message) {

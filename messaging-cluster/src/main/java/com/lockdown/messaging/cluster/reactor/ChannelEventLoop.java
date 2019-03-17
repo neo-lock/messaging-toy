@@ -1,5 +1,6 @@
 package com.lockdown.messaging.cluster.reactor;
 
+import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.channel.support.LocalChannel;
 import com.lockdown.messaging.cluster.node.LocalNode;
@@ -26,12 +27,13 @@ public interface ChannelEventLoop {
 
     NodeChannelGroup nodeChannelGroup();
 
-
     ChannelEventInvokerContext eventInvokerContext();
 
     LocalChannel localChannel();
 
     LocalNode localNode();
+
+    ServerContext serverContext();
 
 
 }

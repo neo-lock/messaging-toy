@@ -25,22 +25,22 @@ public class LocalNodeMasterHandler extends ChannelInboundHandlerAdapter {
                 try {
                     logger.debug("随机注册");
                     Channel channel = ctx.eventLoop().nodeChannelGroup().randomNodeChannel();
-                    ChannelEvent registerEvent = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, channel.destination(), new NodeRegister(ctx.eventLoop().localDestination()));
+                    ChannelEvent registerEvent = new ChannelEvent(ctx.pipeline().channel(),NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, channel.destination(), new NodeRegister(ctx.eventLoop().localDestination()));
                     ctx.eventLoop().channelEvent(registerEvent);
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    logger.warn("随机注册失败! 准备重新注册!");
                     ctx.eventLoop().scheduleEvent(event, 5, TimeUnit.SECONDS);
                 }
                 break;
             }
             case REGISTER_MASTER: {
                 try {
-                    logger.debug("注册master {}", event.getParam());
+                    logger.debug("注册Master {}", event.getParam());
                     Channel channel = ctx.eventLoop().nodeChannelGroup().connectOnNotExists((Destination) event.getParam());
-                    ChannelEvent registerEvent = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, channel.destination(), new NodeRegister(ctx.eventLoop().localDestination()));
+                    ChannelEvent registerEvent = new ChannelEvent(ctx.pipeline().channel(),NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, channel.destination(), new NodeRegister(ctx.eventLoop().localDestination()));
                     ctx.eventLoop().channelEvent(registerEvent);
                 } catch (Throwable ex) {
-                    ex.printStackTrace();
+                    logger.warn("注册Master {} 失败! 准备重新注册!",event.getParam());
                     ctx.eventLoop().scheduleEvent(event, 5, TimeUnit.SECONDS);
                 }
                 break;

@@ -11,6 +11,7 @@ public class ActorRecord {
     private ActorDestination actorDestination;
 
     public ActorRecord() {
+
     }
 
     public String getAccountId() {

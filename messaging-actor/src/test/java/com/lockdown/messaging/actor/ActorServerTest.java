@@ -1,6 +1,14 @@
 package com.lockdown.messaging.actor;
 
+import com.lockdown.messaging.actor.channel.support.SimpleActorFactory;
+import com.lockdown.messaging.actor.codec.ActorHandler;
+import com.lockdown.messaging.actor.codec.JsonMessageDecoder;
+import com.lockdown.messaging.actor.codec.JsonMessageEncoder;
 import com.lockdown.messaging.cluster.ServerDestination;
+import io.netty.channel.ChannelHandler;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ActorServerTest {
 
@@ -14,12 +22,17 @@ public class ActorServerTest {
         properties.setMonitorEnable(true);
         properties.setMonitorSeconds(10);
         properties.setNodeWhiteList("909.*");
-        properties.setNodePort(9092);
+        properties.setNodePort(9090);
+        properties.setActorFactoryClassName(SimpleActorFactory.class.getName());
         properties.setActorClassName(TestActor.class.getName());
         properties.setActorCodecClassName(TestActorCodec.class.getName());
         ActorServerContext serverContext = new ActorServerContext(properties);
-        ActorServer localServer = new ActorServer(9093);
-        localServer.initializer(serverContext).start();
+        ActorServer localServer = new ActorServer(8080);
+        localServer.customHandler(serverContext1 -> Arrays.asList(
+                new JsonMessageDecoder(),
+                new JsonMessageEncoder(),
+                new ActorHandler()
+        )).initializer(serverContext).start();
 
 
     }

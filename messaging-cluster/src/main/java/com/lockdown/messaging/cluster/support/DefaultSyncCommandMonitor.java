@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
+@Deprecated
 public class DefaultSyncCommandMonitor implements SyncCommandMonitor {
 
     private Logger logger = LoggerFactory.getLogger(getClass());

@@ -14,12 +14,9 @@ import io.netty.channel.ChannelHandlerContext;
 public class ActorDisruptorChannelEventLoop extends DisruptorChannelEventLoop implements ActorChannelEventLoop {
 
     private ActorChannelGroup actorChannelGroup;
-    private ActorMessageCodec actorMessageCodec;
-
 
     public ActorDisruptorChannelEventLoop(ActorServerContext serverContext, ChannelEventLoopInitializer<ChannelEventLoop> eventLoopInitializer) {
         super(serverContext, eventLoopInitializer);
-        this.actorMessageCodec = serverContext.actorMessageCodec();
         this.actorChannelGroup = new DefaultActorChannelGroup(this);
     }
 
@@ -35,8 +32,9 @@ public class ActorDisruptorChannelEventLoop extends DisruptorChannelEventLoop im
         return actorChannelGroup;
     }
 
+
     @Override
     public ActorMessageCodec actorMessageCodec() {
-        return actorMessageCodec;
+        return ((ActorServerContext)serverContext()).actorMessageCodec();
     }
 }

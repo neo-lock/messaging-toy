@@ -15,7 +15,7 @@ public class NodeCommandSplitter extends ChannelInboundHandlerAdapter {
     public void channelReceived(ChannelContext ctx, Object message) {
         ChannelEvent event = (ChannelEvent) message;
         NodeCommand command = (NodeCommand) event.getParam();
-        ChannelEvent local = new ChannelEvent(LocalChannel.type(), ChannelEventType.NODE_READ, command);
+        ChannelEvent local = new ChannelEvent(ctx.pipeline().channel(),LocalChannel.type(), ChannelEventType.NODE_READ, command);
         ctx.eventLoop().channelEvent(local);
     }
 

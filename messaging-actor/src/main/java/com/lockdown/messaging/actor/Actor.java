@@ -52,4 +52,7 @@ public interface Actor {
     void closedEvent();
 
 
+    void exceptionCaught(Throwable throwable);
+
+
 }

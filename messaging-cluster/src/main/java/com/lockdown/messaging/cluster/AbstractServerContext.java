@@ -81,7 +81,7 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
 
     @Override
     public void serverStop(LocalServer localServer) {
-        shutdownContext();
+        //shutdownContext();
     }
 
     @Override
@@ -114,6 +114,7 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
             runtimeEnvironment.newTimeout(new NodeMonitorDebug(delay, TimeUnit.SECONDS), delay, TimeUnit.SECONDS);
         }
     }
+
 
     private class NodeMonitorDebug implements TimerTask {
 

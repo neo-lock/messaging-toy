@@ -1,5 +1,4 @@
 package com.lockdown.messaging.actor.channel;
-
 import com.lockdown.messaging.actor.ActorDestination;
 import com.lockdown.messaging.actor.ActorMessageCodec;
 import com.lockdown.messaging.actor.command.NodeActorMessage;
@@ -9,10 +8,13 @@ import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 import com.lockdown.messaging.cluster.reactor.ChannelEventType;
 import io.netty.channel.ChannelFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ActorChannel extends NodeChannel {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public ActorChannel(ChannelEventLoop eventLoop, ActorDestination destination, ChannelFuture channelFuture) {
         super(eventLoop, destination, channelFuture);
@@ -42,13 +44,18 @@ public class ActorChannel extends NodeChannel {
             nodeActorMessage.setDestination((ActorDestination) destination());
             nodeActorMessage.setSource(destination.getDestination());
             nodeActorMessage.setChannelId(destination.getChannelId());
-            ChannelEvent channelEvent = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, destination.getDestination(), nodeActorMessage);
+            ChannelEvent channelEvent = new ChannelEvent(this,NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, destination.getDestination(), nodeActorMessage);
             eventLoop().channelEvent(channelEvent);
         }
     }
 
     public ActorMessageCodec actorMessageCodec() {
         return ((ActorChannelEventLoop) eventLoop()).actorMessageCodec();
+    }
+
+    @Override
+    public Enum<?> channelType() {
+        return type();
     }
 
     private enum ChannelType {

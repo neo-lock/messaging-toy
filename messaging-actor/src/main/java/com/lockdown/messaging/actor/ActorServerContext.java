@@ -14,6 +14,7 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
 
     private ActorMessageCodec actorMessageCodec;
     private Class<?> actorClass;
+    private ActorFactory actorFactory;
 
     public ActorServerContext(ActorProperties properties) {
         super(properties);
@@ -22,6 +23,10 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
     @Override
     protected ChannelEventLoop initEventLoop() {
         return new ActorDisruptorChannelEventLoop(this, new ActorChannelEventLoopInitializer());
+    }
+
+    public ActorFactory actorFactory(){
+        return this.actorFactory;
     }
 
     @Override
@@ -34,9 +39,19 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
         try {
             this.initActorMessageCodec();
             this.checkActorClass();
+            this.initActorFactory();
         } catch (Throwable t) {
             throw new MessagingException(t.getMessage());
         }
+    }
+
+    private void initActorFactory() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        ActorProperties properties = getProperties();
+        if(Objects.isNull(properties.getActorFactoryClassName())){
+            throw new MessagingException("required ActorFactoryClassName");
+        }
+        Class<?> clazz = Class.forName(properties.getActorFactoryClassName());
+        this.actorFactory = (ActorFactory) clazz.newInstance();
     }
 
     private void initActorMessageCodec() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
