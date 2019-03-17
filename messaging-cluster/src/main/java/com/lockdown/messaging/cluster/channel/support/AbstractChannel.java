@@ -12,11 +12,13 @@ public abstract class AbstractChannel implements Channel {
     private final ChannelPipeline pipeline;
 
 
-    public AbstractChannel(ChannelEventLoop eventLoop, Destination destination) {
+    AbstractChannel(ChannelEventLoop eventLoop, Destination destination) {
         this.eventLoop = eventLoop;
-        this.pipeline = new DefaultChannelPipeline(this);
+        this.pipeline = providerPipeline();
         this.destination = destination;
     }
+
+    protected abstract ChannelPipeline providerPipeline();
 
 
     @Override

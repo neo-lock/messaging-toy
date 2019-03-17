@@ -10,6 +10,6 @@ public class ActorChannelEventLoopInitializer extends DefaultChannelEventLoopIni
     @Override
     public void initialize(ChannelEventLoop eventLoop) {
         super.initialize(eventLoop);
-        eventLoop.eventInvokerContext().registerEventInvoker(new ActorChannelEventInvoker(((ActorChannelEventLoop)eventLoop).actorChannelGroup()));
+        eventLoop.eventInvokerContext().registerEventInvoker(new ActorChannelEventInvoker(((ActorChannelEventLoop) eventLoop).actorChannelGroup()));
     }
 }

@@ -7,8 +7,6 @@ import com.lockdown.messaging.cluster.command.NodeClosed;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NodeCommandSplitter extends ChannelInboundHandlerAdapter {
 
@@ -23,7 +21,7 @@ public class NodeCommandSplitter extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelClosed(ChannelContext ctx) {
-        ChannelEvent event = new ChannelEvent(LocalChannel.type(),ChannelEventType.NODE_READ, ctx.eventLoop().localDestination(), new NodeClosed((ServerDestination) ctx.pipeline().channel().destination()));
+        ChannelEvent event = new ChannelEvent(LocalChannel.type(), ChannelEventType.NODE_READ, ctx.eventLoop().localDestination(), new NodeClosed((ServerDestination) ctx.pipeline().channel().destination()));
         ctx.eventLoop().channelEvent(event);
         ctx.pipeline().channel().close();
     }

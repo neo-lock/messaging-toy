@@ -1,6 +1,7 @@
 package com.lockdown.messaging.cluster.channel.support;
 
 import com.lockdown.messaging.cluster.Destination;
+import com.lockdown.messaging.cluster.channel.ChannelPipeline;
 import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
@@ -24,6 +25,11 @@ public class LocalChannel extends AbstractChannel {
         return ChannelType.LOCAL;
     }
 
+    @Override
+    protected ChannelPipeline providerPipeline() {
+        return new DefaultChannelPipeline(this);
+    }
+
     public LocalNode localNode() {
         return localNode;
     }
@@ -36,10 +42,10 @@ public class LocalChannel extends AbstractChannel {
     @Override
     public void handleEvent(ChannelEvent channelEvent) {
         ChannelEventType eventType = channelEvent.getEventType();
-        if(eventType == ChannelEventType.NODE_READ | eventType == ChannelEventType.RANDOM_REGISTER | eventType == ChannelEventType.REGISTER_MASTER){
+        if (eventType == ChannelEventType.NODE_READ | eventType == ChannelEventType.RANDOM_REGISTER | eventType == ChannelEventType.REGISTER_MASTER) {
             this.pipeline().fireChannelReceived(channelEvent);
-        }else{
-            throw new UnsupportedOperationException("不支持当前事件"+channelEvent.toString());
+        } else {
+            throw new UnsupportedOperationException("不支持当前事件" + channelEvent.toString());
         }
     }
 

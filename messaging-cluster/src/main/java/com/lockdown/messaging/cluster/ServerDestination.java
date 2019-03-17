@@ -19,7 +19,6 @@ public class ServerDestination implements Destination {
     }
 
 
-
     @Override
     public String identifier() {
         return toString();
@@ -58,8 +57,8 @@ public class ServerDestination implements Destination {
         return this.toString().equals(that.toString());
     }
 
-    private String convertLocal(String address){
-        if(address.equals("127.0.0.1")||address.equals("localhost")){
+    private String convertLocal(String address) {
+        if (address.equals("127.0.0.1") || address.equals("localhost")) {
             return IPUtils.getLocalIP();
         }
         return address;

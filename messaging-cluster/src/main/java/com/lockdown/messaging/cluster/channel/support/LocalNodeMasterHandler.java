@@ -5,7 +5,6 @@ import com.lockdown.messaging.cluster.channel.Channel;
 import com.lockdown.messaging.cluster.channel.ChannelContext;
 import com.lockdown.messaging.cluster.channel.ChannelInboundHandlerAdapter;
 import com.lockdown.messaging.cluster.command.NodeRegister;
-import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventType;
 import org.slf4j.Logger;

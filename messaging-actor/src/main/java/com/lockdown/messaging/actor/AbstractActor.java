@@ -2,7 +2,7 @@ package com.lockdown.messaging.actor;
 
 import com.lockdown.messaging.actor.channel.ActorChannel;
 
-public abstract class AbstractActor  implements Actor {
+public abstract class AbstractActor implements Actor {
 
     private ActorChannel actorChannel;
 
@@ -11,8 +11,13 @@ public abstract class AbstractActor  implements Actor {
     }
 
     @Override
+    public void writeMessage(ActorDestination destination, Object message, boolean autoWrite) {
+        actorChannel.writeAndFlush(destination, message, autoWrite);
+    }
+
+    @Override
     public void writeMessage(ActorDestination destination, Object message) {
-        actorChannel.writeAndFlush(destination,message);
+        writeMessage(destination,message,false);
     }
 
     @Override
@@ -20,10 +25,9 @@ public abstract class AbstractActor  implements Actor {
         actorChannel.writeAndFlush(message);
     }
 
-    protected ActorDestination getActorDestination(){
+    protected ActorDestination getActorDestination() {
         return (ActorDestination) actorChannel.destination();
     }
-
 
 
 }

@@ -7,9 +7,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import java.net.InetSocketAddress;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
 
 public abstract class AbstractServer<T extends ServerContext> implements LocalServer<T> {
 
@@ -71,18 +69,17 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
         return bootstrap;
     }
 
-    protected List<ChannelHandler> providerHeadHandler(T serverContext){
+    protected List<ChannelHandler> providerHeadHandler(T serverContext) {
         return Collections.emptyList();
     }
 
-    protected List<ChannelHandler> providerCustomHandler(T serverContext){
+    protected List<ChannelHandler> providerCustomHandler(T serverContext) {
         return Collections.emptyList();
     }
 
-    protected List<ChannelHandler> providerTailHandler(T serverContext){
+    protected List<ChannelHandler> providerTailHandler(T serverContext) {
         return Collections.emptyList();
     }
-
 
 
     protected abstract void optionSetup(ServerBootstrap bootstrap);
@@ -108,7 +105,6 @@ public abstract class AbstractServer<T extends ServerContext> implements LocalSe
         final LocalServer localServer = this;
         eventListeners.forEach(serverEventListener -> serverEventListener.serverStartup(localServer, serverContext));
     }
-
 
 
 }

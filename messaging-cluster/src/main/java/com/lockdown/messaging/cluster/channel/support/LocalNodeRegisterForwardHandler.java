@@ -20,7 +20,7 @@ public class LocalNodeRegisterForwardHandler extends ChannelInboundHandlerAdapte
 
         ChannelEvent event = (ChannelEvent) message;
         if (event.getParam() instanceof NodeRegisterForward) {
-            logger.debug("收到RegisterForward{}",message);
+            logger.debug("收到RegisterForward{}", message);
             LocalNode localNode = ((LocalChannel) ctx.pipeline().channel()).localNode();
             NodeRegisterForward registerForward = (NodeRegisterForward) event.getParam();
             if (localNode.isAttached() && !localNode.attachedCompareAndSet(registerForward.getSource(), registerForward.getTarget())) {

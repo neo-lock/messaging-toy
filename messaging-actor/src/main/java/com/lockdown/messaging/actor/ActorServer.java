@@ -28,7 +28,7 @@ public class ActorServer extends AbstractServer<ActorServerContext> {
 
     @Override
     protected ServerBootstrap initServerBootstrap(ActorServerContext serverContext) {
-        ServerBootstrap bootstrap =  super.initServerBootstrap(serverContext);
+        ServerBootstrap bootstrap = super.initServerBootstrap(serverContext);
         try {
             bootstrap.bind(actorPort).sync();
         } catch (InterruptedException e) {
@@ -37,14 +37,14 @@ public class ActorServer extends AbstractServer<ActorServerContext> {
         return bootstrap;
     }
 
-    public ActorServer customHandler(ActorCustomHandlerInitializer handlerInitializer){
+    public ActorServer customHandler(ActorCustomHandlerInitializer handlerInitializer) {
         this.handlerInitializer = handlerInitializer;
         return this;
     }
 
     @Override
     protected List<ChannelHandler> providerHeadHandler(ActorServerContext serverContext) {
-                return Arrays.asList(
+        return Arrays.asList(
                 new NodeCommandDecoder(serverContext),
                 new NodeCommandEncoder(serverContext),
                 new LocalNodeCommandHandler(serverContext));
@@ -57,9 +57,9 @@ public class ActorServer extends AbstractServer<ActorServerContext> {
 
     @Override
     protected List<ChannelHandler> providerCustomHandler(ActorServerContext serverContext) {
-        if(null==this.handlerInitializer){
+        if (null == this.handlerInitializer) {
             return super.providerCustomHandler(serverContext);
-        }else{
+        } else {
             return this.handlerInitializer.initializer(serverContext);
         }
     }
@@ -67,7 +67,7 @@ public class ActorServer extends AbstractServer<ActorServerContext> {
     @Override
     protected void optionSetup(ServerBootstrap bootstrap) {
         bootstrap.option(ChannelOption.SO_BACKLOG, 128)
-        .childOption(ChannelOption.SO_KEEPALIVE, true);
+                .childOption(ChannelOption.SO_KEEPALIVE, true);
     }
 
     public interface ActorCustomHandlerInitializer {

@@ -11,15 +11,14 @@ import com.lockdown.messaging.cluster.reactor.ChannelEventType;
 public class ActorNodeCommandSplitter extends NodeCommandSplitter {
 
 
-
     @Override
     public void channelReceived(ChannelContext ctx, Object message) {
-        if(message instanceof NodeActorMessage){
+        if (message instanceof NodeActorMessage) {
             NodeActorMessage actorMessage = (NodeActorMessage) message;
-            ActorDestination receiver = new ActorDestination(actorMessage.getChannelId(),actorMessage.getSource());
-            ChannelEvent event = new ChannelEvent(ActorChannel.type(),ChannelEventType.CHANNEL_READ,receiver,actorMessage);
+            ActorDestination receiver = new ActorDestination(actorMessage.getChannelId(), actorMessage.getSource());
+            ChannelEvent event = new ChannelEvent(ActorChannel.type(), ChannelEventType.CHANNEL_READ, receiver, actorMessage);
             ctx.eventLoop().channelEvent(event);
-        }else{
+        } else {
             super.channelReceived(ctx, message);
         }
     }

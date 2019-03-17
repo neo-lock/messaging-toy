@@ -9,7 +9,7 @@ public class AbstractChannelPipeline implements ChannelPipeline {
     private AbstractChannelContext head;
     private AbstractChannelContext tail;
 
-    public AbstractChannelPipeline(Channel channel,ChannelHandler headHandler,ChannelHandler tailHandler) {
+    public AbstractChannelPipeline(Channel channel, ChannelHandler headHandler, ChannelHandler tailHandler) {
         this.channel = channel;
         this.head = new DefaultChannelContext(this, headHandler);
         this.tail = new DefaultChannelContext(this, tailHandler);

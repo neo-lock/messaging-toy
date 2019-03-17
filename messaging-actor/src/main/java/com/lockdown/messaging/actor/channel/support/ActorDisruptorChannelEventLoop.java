@@ -17,7 +17,6 @@ public class ActorDisruptorChannelEventLoop extends DisruptorChannelEventLoop im
     private ActorMessageCodec actorMessageCodec;
 
 
-
     public ActorDisruptorChannelEventLoop(ActorServerContext serverContext, ChannelEventLoopInitializer<ChannelEventLoop> eventLoopInitializer) {
         super(serverContext, eventLoopInitializer);
         this.actorMessageCodec = serverContext.actorMessageCodec();
@@ -25,13 +24,9 @@ public class ActorDisruptorChannelEventLoop extends DisruptorChannelEventLoop im
     }
 
 
-
-
-
-
     @Override
     public ActorDestination registerActorChannel(ChannelHandlerContext ctx) {
-        ActorChannel channel = actorChannelGroup.newInstance(ctx.newSucceededFuture(),localDestination());
+        ActorChannel channel = actorChannelGroup.newInstance(ctx.newSucceededFuture(), localDestination());
         return (ActorDestination) channel.destination();
     }
 

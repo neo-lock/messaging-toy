@@ -18,7 +18,7 @@ public class LocalNodeMonitoredHandler extends ChannelInboundHandlerAdapter {
 
         ChannelEvent event = (ChannelEvent) message;
         if (event.getParam() instanceof NodeMonitored) {
-            logger.debug("收到Monitored 信息{}",message);
+            logger.debug("收到Monitored 信息{}", message);
             LocalNode localNode = ((LocalChannel) ctx.pipeline().channel()).localNode();
             NodeMonitored monitored = (NodeMonitored) event.getParam();
             if (localNode.isAttached()) {
@@ -26,7 +26,7 @@ public class LocalNodeMonitoredHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
             localNode.attachTo(monitored.getSource());
-            logger.info("注册成功！{}",monitored.getSource());
+            logger.info("注册成功！{}", monitored.getSource());
             localNode.printNodes();
         } else {
             ctx.fireChannelReceived(message);

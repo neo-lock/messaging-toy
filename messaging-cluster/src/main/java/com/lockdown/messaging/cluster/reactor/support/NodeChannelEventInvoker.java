@@ -7,12 +7,10 @@ import com.lockdown.messaging.cluster.reactor.NodeChannelGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.function.Consumer;
-
 public class NodeChannelEventInvoker implements ChannelTypeEventInvoker {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
     private final NodeChannelGroup nodeChannelGroup;
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public NodeChannelEventInvoker(NodeChannelGroup nodeChannelGroup) {
         this.nodeChannelGroup = nodeChannelGroup;
@@ -24,7 +22,7 @@ public class NodeChannelEventInvoker implements ChannelTypeEventInvoker {
             case CHANNEL_NOTIFY: {
                 ChannelNotifyEvent notifyEvent = (ChannelNotifyEvent) event.getParam();
                 nodeChannelGroup.nodeChannels().forEach(nodeChannel -> {
-                    if(notifyEvent.getIgnore().contains(nodeChannel.destination())){
+                    if (notifyEvent.getIgnore().contains(nodeChannel.destination())) {
                         return;
                     }
                     nodeChannel.pipeline().writeAndFlush(notifyEvent.getCommand());
@@ -32,7 +30,7 @@ public class NodeChannelEventInvoker implements ChannelTypeEventInvoker {
                 break;
             }
             default: {
-                logger.info("收到的Destination {}",event.getDestination());
+                logger.info("收到的Destination {}", event.getDestination());
                 nodeChannelGroup.printNodes();
                 nodeChannelGroup.getNodeChannel(event.getDestination()).handleEvent(event);
             }

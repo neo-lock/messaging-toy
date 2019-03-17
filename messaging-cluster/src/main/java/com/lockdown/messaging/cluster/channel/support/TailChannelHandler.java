@@ -12,13 +12,13 @@ public class TailChannelHandler implements ChannelOutboundHandler, ChannelInboun
 
     @Override
     public void channelWrite(ChannelContext ctx, Object message) {
-        logger.debug("Tail channel write message {}",message);
+        logger.debug("Tail channel write message {}", message);
         ctx.fireChannelWrite(message);
     }
 
     @Override
     public void channelReceived(ChannelContext ctx, Object message) {
-        logger.warn("channel received discard !{}",message);
+        logger.warn("channel received discard !{}", message);
     }
 
     @Override

@@ -1,4 +1,5 @@
 package com.lockdown.messaging.cluster.node;
+
 @Deprecated
 public enum RemoteNodeType {
 

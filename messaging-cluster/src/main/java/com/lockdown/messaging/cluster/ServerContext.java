@@ -1,7 +1,5 @@
 package com.lockdown.messaging.cluster;
 
-import com.lockdown.messaging.cluster.channel.ChannelInitializer;
-import com.lockdown.messaging.cluster.channel.support.NodeChannel;
 import com.lockdown.messaging.cluster.event.ServerEventListener;
 import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;

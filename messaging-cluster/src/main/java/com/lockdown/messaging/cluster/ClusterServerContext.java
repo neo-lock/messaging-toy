@@ -10,14 +10,13 @@ import com.lockdown.messaging.cluster.reactor.support.RemoteNodeChannelInitializ
 public class ClusterServerContext extends AbstractServerContext<ClusterProperties> {
 
 
-
     public ClusterServerContext(ClusterProperties properties) {
         super(properties);
     }
 
     @Override
     protected ChannelEventLoop initEventLoop() {
-       return new DisruptorChannelEventLoop(this, new DefaultChannelEventLoopInitializer());
+        return new DisruptorChannelEventLoop(this, new DefaultChannelEventLoopInitializer());
     }
 
 

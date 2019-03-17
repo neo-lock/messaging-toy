@@ -3,11 +3,8 @@ package com.lockdown.messaging.cluster.reactor.support;
 import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.channel.Channel;
-import com.lockdown.messaging.cluster.channel.ChannelFactory;
 import com.lockdown.messaging.cluster.channel.ChannelInitializer;
 import com.lockdown.messaging.cluster.channel.support.NodeChannel;
-import com.lockdown.messaging.cluster.channel.support.NodeCommandSplitter;
 import com.lockdown.messaging.cluster.exception.MessagingHostException;
 import com.lockdown.messaging.cluster.node.ClusterLocalClient;
 import com.lockdown.messaging.cluster.node.LocalClient;
@@ -55,7 +52,7 @@ public class DefaultChannelGroup implements NodeChannelGroup {
                 channel = channelMap.get(destination);
             } else {
                 ChannelFuture future = localClient.connect((ServerDestination) destination);
-                channel = newInstance(future,(ServerDestination) destination);
+                channel = newInstance(future, (ServerDestination) destination);
                 addNodeChannel(channel);
             }
         }
@@ -86,7 +83,7 @@ public class DefaultChannelGroup implements NodeChannelGroup {
 
     @Override
     public void printNodes() {
-        logger.debug("当前连接节点 {}",channelMap.keySet());
+        logger.debug("当前连接节点 {}", channelMap.keySet());
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.lockdown.messaging.cluster.channel.ChannelContext;
 import com.lockdown.messaging.cluster.channel.ChannelInboundHandlerAdapter;
 import com.lockdown.messaging.cluster.channel.ChannelOutboundHandler;
 
-public class HeadChannelHandler  extends ChannelInboundHandlerAdapter implements ChannelOutboundHandler {
+public class HeadChannelHandler extends ChannelInboundHandlerAdapter implements ChannelOutboundHandler {
     private final Channel channel;
 
     public HeadChannelHandler(Channel channel) {

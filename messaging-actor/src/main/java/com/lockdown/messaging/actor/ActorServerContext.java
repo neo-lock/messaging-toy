@@ -21,7 +21,7 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
 
     @Override
     protected ChannelEventLoop initEventLoop() {
-        return new ActorDisruptorChannelEventLoop(this,new ActorChannelEventLoopInitializer());
+        return new ActorDisruptorChannelEventLoop(this, new ActorChannelEventLoopInitializer());
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
         this.initContext();
     }
 
-    private void initContext(){
+    private void initContext() {
         try {
             this.initActorMessageCodec();
             this.checkActorClass();
@@ -40,24 +40,24 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
     }
 
     private void initActorMessageCodec() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        if(Objects.isNull(getProperties().getActorCodecClassName())){
+        if (Objects.isNull(getProperties().getActorCodecClassName())) {
             throw new MessagingException("required ActorCodecClassName !");
         }
-        Class<?> codecClass =  Class.forName(getProperties().getActorCodecClassName());
+        Class<?> codecClass = Class.forName(getProperties().getActorCodecClassName());
         this.actorMessageCodec = (ActorMessageCodec) codecClass.newInstance();
     }
 
-    public Class<?> actorClass(){
+    public Class<?> actorClass() {
         return actorClass;
     }
 
-    public ActorMessageCodec actorMessageCodec(){
+    public ActorMessageCodec actorMessageCodec() {
         return this.actorMessageCodec;
     }
 
 
     private void checkActorClass() throws ClassNotFoundException {
-        if(Objects.isNull(getProperties().getActorClassName())){
+        if (Objects.isNull(getProperties().getActorClassName())) {
             throw new MessagingException("required ActorClassName !");
         }
         this.actorClass = Class.forName(getProperties().getActorClassName());

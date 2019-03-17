@@ -18,7 +18,7 @@ public class LocalNodeClosedHandler extends ChannelInboundHandlerAdapter {
 
         ChannelEvent event = (ChannelEvent) message;
         if (event.getParam() instanceof NodeClosed) {
-            logger.debug("收到节点关闭消息 {}",message);
+            logger.debug("收到节点关闭消息 {}", message);
             LocalNode localNode = ((LocalChannel) ctx.pipeline().channel()).localNode();
             NodeClosed closed = (NodeClosed) event.getParam();
             ctx.eventLoop().nodeChannelGroup().removeNodeChannel(closed.getSource());

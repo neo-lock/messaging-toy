@@ -7,6 +7,7 @@ public interface Actor {
 
     /**
      * 表示其他服务器发过来的消息
+     *
      * @param destination
      * @param message
      */
@@ -15,20 +16,31 @@ public interface Actor {
 
     /**
      * 表示本地消息
+     *
      * @param message
      */
     void receivedMessage(Object message);
 
     /**
      * 发送消息
-     * @param destination
-     * @param message
+     * @param destination   发送消息的目的地
+     * @param message       发送的消息
+     * @param autoWrite     目的地收到消息后，是否自动发送到客户端
      */
-    void writeMessage(ActorDestination destination,Object message);
+    void writeMessage(ActorDestination destination, Object message, boolean autoWrite);
 
 
     /**
      * 发送消息
+     * @param destination   发送消息的目的地
+     * @param message       发送的消息
+     */
+    void writeMessage(ActorDestination destination, Object message);
+
+
+    /**
+     * 发送消息
+     *
      * @param message
      */
     void writeMessage(Object message);

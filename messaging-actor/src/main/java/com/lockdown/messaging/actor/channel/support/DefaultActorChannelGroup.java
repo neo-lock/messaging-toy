@@ -12,11 +12,11 @@ import io.netty.channel.ChannelFuture;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultActorChannelGroup implements ActorChannelGroup{
+public class DefaultActorChannelGroup implements ActorChannelGroup {
 
-    private Map<Destination,ActorChannel> actorChannelMap = new ConcurrentHashMap<>();
     private final ChannelEventLoop eventLoop;
     private final ActorChannelInitializer channelInitializer;
+    private Map<Destination, ActorChannel> actorChannelMap = new ConcurrentHashMap<>();
 
     public DefaultActorChannelGroup(ChannelEventLoop eventLoop) {
         this.eventLoop = eventLoop;
@@ -25,7 +25,7 @@ public class DefaultActorChannelGroup implements ActorChannelGroup{
 
     @Override
     public void addActorChannel(ActorChannel actorChannel) {
-        actorChannelMap.put(actorChannel.destination(),actorChannel);
+        actorChannelMap.put(actorChannel.destination(), actorChannel);
     }
 
     @Override
@@ -35,8 +35,8 @@ public class DefaultActorChannelGroup implements ActorChannelGroup{
 
     @Override
     public ActorChannel newInstance(ChannelFuture future, ServerDestination destination) {
-        ActorDestination actorDestination = new ActorDestination(future.channel().id().asLongText(),destination);
-        ActorChannel actorChannel = new ActorChannel(eventLoop,actorDestination,future);
+        ActorDestination actorDestination = new ActorDestination(future.channel().id().asLongText(), destination);
+        ActorChannel actorChannel = new ActorChannel(eventLoop, actorDestination, future);
         this.channelInitializer.initialize(actorChannel);
         addActorChannel(actorChannel);
         return actorChannel;

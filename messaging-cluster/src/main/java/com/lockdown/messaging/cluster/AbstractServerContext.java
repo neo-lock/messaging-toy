@@ -1,10 +1,7 @@
 package com.lockdown.messaging.cluster;
 
-import com.lockdown.messaging.cluster.node.ClusterLocalNode;
 import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
-import com.lockdown.messaging.cluster.reactor.support.DefaultChannelEventLoopInitializer;
-import com.lockdown.messaging.cluster.reactor.support.DisruptorChannelEventLoop;
 import com.lockdown.messaging.cluster.support.RuntimeEnvironment;
 import com.lockdown.messaging.cluster.support.SimpleRuntimeEnvironment;
 import com.lockdown.messaging.cluster.utils.IPUtils;
@@ -38,8 +35,7 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
     }
 
 
-
-    protected void init(){
+    protected void init() {
         this.eventLoop = this.initEventLoop();
         this.localNode = this.eventLoop.localNode();
     }
@@ -136,8 +132,6 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
             timeout.timer().newTimeout(this, delay, timeUnit);
         }
     }
-
-
 
 
 }

@@ -1,14 +1,10 @@
 package com.lockdown.messaging.actor;
 
-import com.lockdown.messaging.cluster.ClusterLocalServer;
-import com.lockdown.messaging.cluster.ClusterProperties;
-import com.lockdown.messaging.cluster.ClusterServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
-import com.lockdown.messaging.cluster.utils.IPUtils;
 
 public class ActorServerTest {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         SimpleActorProperties properties = new SimpleActorProperties();
         properties.setBossThreads(1);

@@ -29,14 +29,14 @@ public class ActorSocketHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ChannelEvent event = new ChannelEvent(ActorChannel.type(),ChannelEventType.CHANNEL_READ,destination,msg);
+        ChannelEvent event = new ChannelEvent(ActorChannel.type(), ChannelEventType.CHANNEL_READ, destination, msg);
         eventLoop.channelEvent(event);
     }
 
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        ChannelEvent event = new ChannelEvent(ActorChannel.type(),ChannelEventType.CHANNEL_CLOSE,destination);
+        ChannelEvent event = new ChannelEvent(ActorChannel.type(), ChannelEventType.CHANNEL_CLOSE, destination);
         eventLoop.channelEvent(event);
     }
 
