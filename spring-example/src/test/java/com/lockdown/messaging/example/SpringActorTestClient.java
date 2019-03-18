@@ -12,6 +12,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class SpringActorTestClient {
 
@@ -31,9 +32,10 @@ public class SpringActorTestClient {
 
         try {
 
-            ChannelFuture channelFuture = bootstrap.connect(IPUtils.getLocalIP(), 8082).sync();
+            ChannelFuture channelFuture = bootstrap.connect(IPUtils.getLocalIP(), 8081).sync();
 
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 10; i++) {
+                TimeUnit.SECONDS.sleep(1);
                 executorService.execute(() -> channelFuture.channel().writeAndFlush(JsonMessage.wrap(new RegisterMessage("123"))));
             }
 

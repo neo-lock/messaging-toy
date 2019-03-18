@@ -1,23 +1,25 @@
 package com.lockdown.messaging.example;
+import com.lockdown.messaging.actor.ActorFactory;
 import com.lockdown.messaging.actor.ActorServer;
 import com.lockdown.messaging.actor.ActorServerContext;
 import com.lockdown.messaging.example.message.JsonMessageDecoder;
 import com.lockdown.messaging.example.message.JsonMessageEncoder;
 import com.lockdown.messaging.example.message.SpringActorHandler;
-import io.netty.channel.ChannelHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
-import java.util.List;
 
 @EnableSwagger2
 @EnableConfigurationProperties(SpringActorProperties.class)
@@ -29,6 +31,29 @@ public class ExampleApplication {
     }
 
 
+    @Configuration
+    public class ActorServerConfiguration{
+
+        @Autowired
+        private SpringActorProperties springActorProperties;
+
+        @Primary
+        @Bean
+        public ActorFactory actorFactory(){
+            return  new SpringActorFactory(springActorProperties);
+        }
+
+
+        @Primary
+        @Bean
+        public ActorServerContext actorServerContext(ActorFactory actorFactory){
+            ActorServerContext actorServerContext = new ActorServerContext(springActorProperties);
+            actorServerContext.setActorFactory(actorFactory);
+            return actorServerContext;
+        }
+
+    }
+
     @Component
     public class ActorServerApplication {
 
@@ -36,6 +61,7 @@ public class ExampleApplication {
 
         private ActorServer actorServer;
 
+        @Autowired
         private ActorServerContext actorServerContext;
 
         @Autowired
@@ -43,13 +69,12 @@ public class ExampleApplication {
 
         @PostConstruct
         public void init() {
-            actorServerContext = new ActorServerContext(springActorProperties);
             actorServer = new ActorServer(springActorProperties.getActorPort());
             actorServer.customHandler(serverContext -> Arrays.asList(
                     new JsonMessageDecoder(),
                     new JsonMessageEncoder(),
                     new SpringActorHandler()
-            )).initializer(actorServerContext).start();
+            )).initializer(actorServerContext.check()).start();
 
                     //.initializer(actorServerContext).start();
         }

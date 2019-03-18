@@ -7,10 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * 每个socket都有一个actor
+ */
 public class SpringActor extends AbstractActor {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ActorRecord actorRecord = new ActorRecord();
+
 
 
     @Autowired
@@ -35,7 +39,7 @@ public class SpringActor extends AbstractActor {
 
     @Override
     public void closedEvent() {
-
+        logger.info("当前actor {} 关闭!",getActorDestination());
     }
 
     @Override

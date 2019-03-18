@@ -30,6 +30,7 @@ public class ActorChannelPipeline extends AbstractChannelPipeline {
 
         @Override
         public void channelReceived(ChannelContext ctx, Object message) {
+
             if (message instanceof NodeActorMessage) {
                 NodeActorMessage actorMessage = (NodeActorMessage) message;
                 ActorDestination actorDestination = actorMessage.getDestination();

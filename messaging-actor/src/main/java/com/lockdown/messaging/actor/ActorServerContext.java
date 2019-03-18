@@ -5,6 +5,7 @@ import com.lockdown.messaging.actor.channel.support.ActorDisruptorChannelEventLo
 import com.lockdown.messaging.actor.channel.support.ActorRemoteNodeChannelInitializer;
 import com.lockdown.messaging.actor.command.CommandActorMessageCodec;
 import com.lockdown.messaging.cluster.AbstractServerContext;
+import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.command.CommandCodecHandler;
 import com.lockdown.messaging.cluster.command.NodeCommandCodecHandler;
 import com.lockdown.messaging.cluster.exception.MessagingException;
@@ -21,6 +22,14 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
 
     public ActorServerContext(ActorProperties properties) {
         super(properties);
+    }
+
+    public void setActorMessageCodec(ActorMessageCodec actorMessageCodec) {
+        this.actorMessageCodec = actorMessageCodec;
+    }
+
+    public void setActorFactory(ActorFactory actorFactory) {
+        this.actorFactory = actorFactory;
     }
 
     @Override
@@ -51,7 +60,7 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
     private void initActorFactory() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ActorProperties properties = getProperties();
         if(Objects.isNull(properties.getActorFactoryClassName())){
-            throw new MessagingException("required ActorFactoryClassName");
+            return;
         }
         Class<?> clazz = Class.forName(properties.getActorFactoryClassName());
         this.actorFactory = (ActorFactory) clazz.newInstance();
@@ -59,7 +68,7 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
 
     private void initActorMessageCodec() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         if (Objects.isNull(getProperties().getActorCodecClassName())) {
-            throw new MessagingException("required ActorCodecClassName !");
+            return;
         }
         Class<?> codecClass = Class.forName(getProperties().getActorCodecClassName());
         this.actorMessageCodec = (ActorMessageCodec) codecClass.newInstance();
@@ -92,5 +101,16 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
         NodeCommandCodecHandler handler = (NodeCommandCodecHandler) super.codecHandler();
         handler.registerCodec(new CommandActorMessageCodec());
         return handler;
+    }
+
+    @Override
+    public ActorServerContext check() {
+        if(Objects.isNull(actorFactory)){
+            throw new MessagingException(" actor factory not found !");
+        }
+        if(Objects.isNull(actorMessageCodec)){
+            throw new MessagingException(" actor message codec not found !");
+        }
+        return this;
     }
 }

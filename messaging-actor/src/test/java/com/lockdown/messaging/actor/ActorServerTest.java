@@ -1,14 +1,11 @@
 package com.lockdown.messaging.actor;
 
-import com.lockdown.messaging.actor.channel.support.SimpleActorFactory;
 import com.lockdown.messaging.actor.codec.ActorHandler;
 import com.lockdown.messaging.actor.codec.JsonMessageDecoder;
 import com.lockdown.messaging.actor.codec.JsonMessageEncoder;
 import com.lockdown.messaging.cluster.ServerDestination;
-import io.netty.channel.ChannelHandler;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class ActorServerTest {
 
@@ -32,7 +29,7 @@ public class ActorServerTest {
                 new JsonMessageDecoder(),
                 new JsonMessageEncoder(),
                 new ActorHandler()
-        )).initializer(serverContext).start();
+        )).initializer(serverContext.check()).start();
 
 
     }

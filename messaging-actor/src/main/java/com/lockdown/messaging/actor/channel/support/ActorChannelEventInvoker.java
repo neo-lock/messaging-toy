@@ -36,6 +36,6 @@ public class ActorChannelEventInvoker implements ChannelTypeEventInvoker {
             logger.warn("{} 找不到channel!", event.getDestination());
             return;
         }
-        eventLoop.actorChannelGroup().getChannel(event.getDestination()).handleEvent(event);
+        channel.handleEvent(event);
     }
 }

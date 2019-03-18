@@ -1,4 +1,4 @@
-package com.lockdown.messaging.actor.channel.support;
+package com.lockdown.messaging.actor;
 
 import com.lockdown.messaging.actor.AbstractActor;
 import com.lockdown.messaging.actor.ActorFactory;

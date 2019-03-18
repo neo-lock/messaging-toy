@@ -26,5 +26,10 @@ public class ClusterServerContext extends AbstractServerContext<ClusterPropertie
         return new RemoteNodeChannelInitializer();
     }
 
+    @Override
+    public ClusterServerContext check() {
+        return this;
+    }
+
 
 }

@@ -33,5 +33,7 @@ public interface ServerContext<T extends ServerProperties> extends ServerEventLi
 
     CommandCodecHandler codecHandler();
 
+    ServerContext check();
+
 
 }

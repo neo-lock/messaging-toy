@@ -30,7 +30,7 @@ public class ActorClientTest {
                         .addLast(new ActorHandler());
             }
         });
-        ChannelFuture channelFuture = bootstrap.connect("127.0.0.1",8080).sync();
+        ChannelFuture channelFuture = bootstrap.connect("127.0.0.1",8081).sync();
         new Thread(new Runnable() {
             @Override
             public void run() {

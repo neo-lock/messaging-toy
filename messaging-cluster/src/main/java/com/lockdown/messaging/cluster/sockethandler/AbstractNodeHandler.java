@@ -41,7 +41,6 @@ public abstract class AbstractNodeHandler extends AbstractCommandHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (isLocalPort(ctx)) {
-            cause.printStackTrace();
             ctx.close();
         } else {
             ctx.fireExceptionCaught(cause);
