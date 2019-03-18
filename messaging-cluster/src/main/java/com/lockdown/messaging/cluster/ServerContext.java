@@ -1,5 +1,6 @@
 package com.lockdown.messaging.cluster;
 
+import com.lockdown.messaging.cluster.command.CommandCodecHandler;
 import com.lockdown.messaging.cluster.event.ServerEventListener;
 import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
@@ -29,6 +30,8 @@ public interface ServerContext<T extends ServerProperties> extends ServerEventLi
     ChannelEventLoop channelEventLoop();
 
     NodeChannelInitializer nodeChannelInitializer();
+
+    CommandCodecHandler codecHandler();
 
 
 }

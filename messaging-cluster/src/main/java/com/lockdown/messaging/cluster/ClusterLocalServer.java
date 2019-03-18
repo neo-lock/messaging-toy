@@ -3,7 +3,6 @@ package com.lockdown.messaging.cluster;
 import com.lockdown.messaging.cluster.sockethandler.LocalNodeCommandHandler;
 import com.lockdown.messaging.cluster.sockethandler.NodeCommandDecoder;
 import com.lockdown.messaging.cluster.sockethandler.NodeCommandEncoder;
-import com.lockdown.messaging.cluster.sockethandler.SyncCommandHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
@@ -16,9 +15,9 @@ public class ClusterLocalServer extends AbstractServer<ClusterServerContext> {
 
     @Override
     protected List<ChannelHandler> providerHeadHandler(ClusterServerContext serverContext) {
-        return Arrays.asList(new NodeCommandDecoder(serverContext),
+        return Arrays.asList(
+                new NodeCommandDecoder(serverContext),
                 new NodeCommandEncoder(serverContext),
-                new SyncCommandHandler(serverContext),
                 new LocalNodeCommandHandler(serverContext));
     }
 

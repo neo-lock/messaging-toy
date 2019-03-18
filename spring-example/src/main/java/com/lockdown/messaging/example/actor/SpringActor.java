@@ -38,4 +38,9 @@ public class SpringActor extends AbstractActor {
 
     }
 
+    @Override
+    public void exceptionCaught(Throwable throwable) {
+
+    }
+
 }

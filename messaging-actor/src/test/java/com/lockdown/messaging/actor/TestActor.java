@@ -12,7 +12,6 @@ public class TestActor extends AbstractActor {
     @Override
     public void receivedMessage(ActorDestination destination, Object message) {
         logger.info("当前 actor {} 收到消息! {} {}",getActorDestination(),destination,JSON.toJSONString(message));
-
     }
 
     @Override

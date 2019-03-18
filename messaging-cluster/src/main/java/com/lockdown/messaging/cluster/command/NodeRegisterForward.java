@@ -26,7 +26,7 @@ public class NodeRegisterForward extends AbstractNodeCommand {
 
     @Override
     public CommandType type() {
-        return CommandType.REGISTER_FORWARD;
+        return DefaultCommandType.REGISTER_FORWARD;
     }
 
 

@@ -15,7 +15,7 @@ public class NodeMonitored extends AbstractNodeCommand implements RegisterNature
 
     @Override
     public CommandType type() {
-        return CommandType.MONITORED;
+        return DefaultCommandType.MONITORED;
     }
 
     @Override

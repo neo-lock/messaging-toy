@@ -6,7 +6,6 @@ import com.lockdown.messaging.cluster.exception.MessagingInterruptedException;
 import com.lockdown.messaging.cluster.sockethandler.NodeCommandDecoder;
 import com.lockdown.messaging.cluster.sockethandler.NodeCommandEncoder;
 import com.lockdown.messaging.cluster.sockethandler.RemoteNodeCommandHandler;
-import com.lockdown.messaging.cluster.sockethandler.SyncCommandHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -37,7 +36,6 @@ public class ClusterLocalClient implements LocalClient {
                 socketChannel.pipeline().addLast(
                         new NodeCommandDecoder(serverContext),
                         new NodeCommandEncoder(serverContext),
-                        new SyncCommandHandler(serverContext),
                         new RemoteNodeCommandHandler(serverContext));
             }
         });

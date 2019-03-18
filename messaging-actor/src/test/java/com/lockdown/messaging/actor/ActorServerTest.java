@@ -19,15 +19,15 @@ public class ActorServerTest {
         properties.setWorkerThreads(4);
         properties.setEnableSync(true);
         properties.setMaster(new ServerDestination("127.0.0.1", 9090));
-        properties.setMonitorEnable(true);
+        properties.setMonitorEnable(false);
         properties.setMonitorSeconds(10);
         properties.setNodeWhiteList("909.*");
-        properties.setNodePort(9090);
+        properties.setNodePort(9091);
         properties.setActorFactoryClassName(SimpleActorFactory.class.getName());
         properties.setActorClassName(TestActor.class.getName());
         properties.setActorCodecClassName(TestActorCodec.class.getName());
         ActorServerContext serverContext = new ActorServerContext(properties);
-        ActorServer localServer = new ActorServer(8080);
+        ActorServer localServer = new ActorServer(8081);
         localServer.customHandler(serverContext1 -> Arrays.asList(
                 new JsonMessageDecoder(),
                 new JsonMessageEncoder(),

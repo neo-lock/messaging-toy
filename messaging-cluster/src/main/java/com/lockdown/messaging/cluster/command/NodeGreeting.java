@@ -14,7 +14,7 @@ public class NodeGreeting extends AbstractNodeCommand implements RegisterNature 
 
     @Override
     public CommandType type() {
-        return CommandType.GREETING;
+        return DefaultCommandType.GREETING;
     }
 
 

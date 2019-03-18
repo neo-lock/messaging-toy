@@ -16,6 +16,6 @@ public class NodeClosed extends AbstractNodeCommand {
 
     @Override
     public CommandType type() {
-        return CommandType.CLOSED;
+        return DefaultCommandType.CLOSED;
     }
 }

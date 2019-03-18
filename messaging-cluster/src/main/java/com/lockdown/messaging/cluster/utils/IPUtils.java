@@ -1,15 +1,23 @@
 package com.lockdown.messaging.cluster.utils;
 
+import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.exception.MessagingHostException;
+import io.netty.channel.ChannelHandlerContext;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.Enumeration;
+import java.util.regex.Pattern;
 
 
 public class IPUtils {
+
+
+    public static boolean isLocalPort(ChannelHandlerContext ctx, Pattern nodeWhiteList){
+        InetSocketAddress localAddress = (InetSocketAddress) ctx.channel().localAddress();
+        InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        return nodeWhiteList.matcher(String.valueOf(localAddress.getPort())).matches() ||
+                nodeWhiteList.matcher(String.valueOf(remoteAddress.getPort())).matches();
+    }
 
 
     public static String getLocalIP() {

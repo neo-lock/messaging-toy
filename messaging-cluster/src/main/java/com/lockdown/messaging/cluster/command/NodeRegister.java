@@ -14,7 +14,7 @@ public class NodeRegister extends AbstractNodeCommand implements RegisterNature 
 
     @Override
     public CommandType type() {
-        return CommandType.REGISTER_ASK;
+        return DefaultCommandType.REGISTER_ASK;
     }
 
 

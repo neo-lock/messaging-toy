@@ -3,7 +3,10 @@ package com.lockdown.messaging.actor;
 import com.lockdown.messaging.actor.channel.support.ActorChannelEventLoopInitializer;
 import com.lockdown.messaging.actor.channel.support.ActorDisruptorChannelEventLoop;
 import com.lockdown.messaging.actor.channel.support.ActorRemoteNodeChannelInitializer;
+import com.lockdown.messaging.actor.command.CommandActorMessageCodec;
 import com.lockdown.messaging.cluster.AbstractServerContext;
+import com.lockdown.messaging.cluster.command.CommandCodecHandler;
+import com.lockdown.messaging.cluster.command.NodeCommandCodecHandler;
 import com.lockdown.messaging.cluster.exception.MessagingException;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 import com.lockdown.messaging.cluster.reactor.support.NodeChannelInitializer;
@@ -82,5 +85,12 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
     @Override
     public NodeChannelInitializer nodeChannelInitializer() {
         return new ActorRemoteNodeChannelInitializer();
+    }
+
+    @Override
+    public CommandCodecHandler codecHandler() {
+        NodeCommandCodecHandler handler = (NodeCommandCodecHandler) super.codecHandler();
+        handler.registerCodec(new CommandActorMessageCodec());
+        return handler;
     }
 }

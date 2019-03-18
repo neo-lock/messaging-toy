@@ -1,5 +1,6 @@
 package com.lockdown.messaging.cluster;
 
+import com.lockdown.messaging.cluster.command.*;
 import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 import com.lockdown.messaging.cluster.support.RuntimeEnvironment;
@@ -93,6 +94,17 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         if (Objects.nonNull(runtimeEnvironment)) {
             this.runtimeEnvironment.shutdown();
         }
+    }
+
+    @Override
+    public CommandCodecHandler codecHandler() {
+        NodeCommandCodecHandler commandCodecHandler = new NodeCommandCodecHandler();
+        commandCodecHandler.registerCodec(new CommandClosedCodec());
+        commandCodecHandler.registerCodec(new CommandRegisterAskCodec());
+        commandCodecHandler.registerCodec(new CommandMonitoredCodec());
+        commandCodecHandler.registerCodec(new CommandGreetingCodec());
+        commandCodecHandler.registerCodec(new CommandRegisterForwardCodec());
+        return commandCodecHandler;
     }
 
     @Override

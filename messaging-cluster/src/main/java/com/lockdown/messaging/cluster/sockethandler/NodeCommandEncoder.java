@@ -1,7 +1,9 @@
 package com.lockdown.messaging.cluster.sockethandler;
 
 import com.lockdown.messaging.cluster.ServerContext;
+import com.lockdown.messaging.cluster.command.CommandCodecHandler;
 import com.lockdown.messaging.cluster.command.NodeCommand;
+import com.lockdown.messaging.cluster.utils.IPUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -15,19 +17,17 @@ public class NodeCommandEncoder extends MessageToByteEncoder<NodeCommand> {
 
 
     private Pattern nodeWhiteList;
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private CommandCodecHandler commandCodecHandler;
 
     public NodeCommandEncoder(ServerContext serverContext) {
         super();
         this.nodeWhiteList = serverContext.nodeWhiteList();
+        this.commandCodecHandler = serverContext.codecHandler();
     }
 
 
     private boolean isLocalPort(ChannelHandlerContext ctx) {
-        InetSocketAddress localAddress = (InetSocketAddress) ctx.channel().localAddress();
-        InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        return nodeWhiteList.matcher(String.valueOf(localAddress.getPort())).matches() ||
-                nodeWhiteList.matcher(String.valueOf(remoteAddress.getPort())).matches();
+        return IPUtils.isLocalPort(ctx,nodeWhiteList);
     }
 
 
@@ -35,7 +35,7 @@ public class NodeCommandEncoder extends MessageToByteEncoder<NodeCommand> {
     protected void encode(ChannelHandlerContext ctx, NodeCommand command, ByteBuf byteBuf) throws Exception {
         if (isLocalPort(ctx)) {
             try {
-                byte[] content = command.type().commandToBytes(command);
+                byte[] content = commandCodecHandler.encode(command);
                 byteBuf.writeInt(NodeCommand.BASE_LENGTH + content.length);
                 byteBuf.writeShort(command.type().getType());
                 if (content.length > 0) {

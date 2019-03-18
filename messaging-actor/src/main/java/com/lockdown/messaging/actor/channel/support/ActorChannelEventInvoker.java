@@ -30,7 +30,6 @@ public class ActorChannelEventInvoker implements ChannelTypeEventInvoker {
      */
     @Override
     public void handleEvent(ChannelEvent event) {
-        logger.info(" event {}",event);
         Channel channel = eventLoop.actorChannelGroup().getChannel(event.getDestination());
         //这里应该抛出 找不到channel的 exception event，让对应的actor去进行处理,如果是消息的话，可以返回给发送方!
         if (null == channel) {

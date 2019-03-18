@@ -41,7 +41,7 @@ public class NodeActorMessage extends AbstractNodeCommand {
 
     @Override
     public CommandType type() {
-        return CommandType.ACTOR_MSG;
+        return ActorCommandType.ACTOR_MSG;
     }
 
     public byte[] getContent() {

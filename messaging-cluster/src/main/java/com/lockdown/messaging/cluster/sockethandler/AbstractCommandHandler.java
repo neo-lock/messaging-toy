@@ -1,6 +1,7 @@
 package com.lockdown.messaging.cluster.sockethandler;
 
 import com.lockdown.messaging.cluster.ServerContext;
+import com.lockdown.messaging.cluster.utils.IPUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
@@ -23,10 +24,7 @@ public class AbstractCommandHandler extends ChannelInboundHandlerAdapter {
     }
 
     boolean isLocalPort(ChannelHandlerContext ctx) {
-        InetSocketAddress localAddress = (InetSocketAddress) ctx.channel().localAddress();
-        InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        return nodeWhiteList.matcher(String.valueOf(localAddress.getPort())).matches() ||
-                nodeWhiteList.matcher(String.valueOf(remoteAddress.getPort())).matches();
+        return IPUtils.isLocalPort(ctx,nodeWhiteList);
     }
 
 

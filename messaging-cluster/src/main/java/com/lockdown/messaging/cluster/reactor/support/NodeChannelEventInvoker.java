@@ -31,7 +31,6 @@ public class NodeChannelEventInvoker implements ChannelTypeEventInvoker {
                 break;
             }
             default: {
-                logger.info("收到的Destination {}", event.getDestination());
                 if(!nodeChannelGroup.containsNode(event.getDestination())){
                     throw new MessagingException(" destination not found!");
                 }
