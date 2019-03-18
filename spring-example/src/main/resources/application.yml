@@ -11,15 +11,15 @@ spring:
     monitor-enable: true
     enable-sync: true
     actor-class-name: com.lockdown.messaging.example.actor.SpringActor
-    actor-codec-class-name: com.lockdown.messaging.example.actor.SpringActorCodec
+    actor-codec-class-name: com.lockdown.messaging.example.actor.SimpleStringCodec
     actor-port: 8081
     master:
       address: 127.0.0.1
       port: 9090
   data:
     mongodb:
-      uri: mongodb://actorRoot:actorRoot@139.199.57.133:27017
-      authentication-database: admin
+      uri: mongodb://localhost:27017
+      #authentication-database: admin
       database: actor
 
 

@@ -21,7 +21,7 @@ public class LocalNodeCommandHandler extends AbstractNodeHandler {
         if (RegisterNature.class.isAssignableFrom(msg.getClass()) && null == destination) {
             SourceNodeCommand command = (SourceNodeCommand) msg;
             destination = command.getSource();
-            serverContext.channelEventLoop().registerNodeChannel(ctx.newSucceededFuture(), destination);
+            serverContext.eventLoop().registerNodeChannel(ctx.newSucceededFuture(), destination);
         }
         super.channelRead(ctx, msg);
     }

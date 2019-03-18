@@ -27,13 +27,12 @@ public interface ServerContext<T extends ServerProperties> extends ServerEventLi
 
     LocalNode localNode();
 
-    ChannelEventLoop channelEventLoop();
+    ChannelEventLoop eventLoop();
 
     NodeChannelInitializer nodeChannelInitializer();
 
     CommandCodecHandler codecHandler();
 
     ServerContext check();
-
 
 }

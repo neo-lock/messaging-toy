@@ -19,7 +19,7 @@ public abstract class AbstractNodeHandler extends AbstractCommandHandler {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (isLocalPort(ctx)) {
             ChannelEvent event = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_READ, getChannelDestination(), msg);
-            serverContext.channelEventLoop().channelEvent(event);
+            serverContext.eventLoop().channelEvent(event);
         } else {
             ctx.fireChannelRead(msg);
         }
@@ -31,7 +31,7 @@ public abstract class AbstractNodeHandler extends AbstractCommandHandler {
         if (isLocalPort(ctx)) {
             if (null != getChannelDestination()) {
                 ChannelEvent event = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_CLOSE, getChannelDestination(), new NodeClosed(getChannelDestination()));
-                serverContext.channelEventLoop().channelEvent(event);
+                serverContext.eventLoop().channelEvent(event);
             }
         } else {
             ctx.fireChannelInactive();

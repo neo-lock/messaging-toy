@@ -1,6 +1,4 @@
 package com.lockdown.messaging.example.message;
-
-import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
@@ -12,7 +10,8 @@ public class SpringActorHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        logger.info(" channel read message {}", JSON.toJSONString(msg));
+        logger.info(" SpringActor 收到消息{}",msg);
+        ctx.fireChannelRead(msg);
     }
 
     @Override

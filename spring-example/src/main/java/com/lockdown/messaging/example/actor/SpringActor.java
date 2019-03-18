@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 每个socket都有一个actor
+ * 每个socket都有一个actor,当前对象不处于 spring bean factory 里面!!
  */
 public class SpringActor extends AbstractActor {
 
@@ -25,9 +25,9 @@ public class SpringActor extends AbstractActor {
         logger.info(" received message ");
     }
 
+
     @Override
     public void receivedMessage(Object message) {
-        logger.info(" read message {}", message);
         if (message instanceof RegisterMessage) {
             RegisterMessage registerMessage = (RegisterMessage) message;
             actorRecord.setActorDestination(getActorDestination());
@@ -37,14 +37,16 @@ public class SpringActor extends AbstractActor {
         }
     }
 
+
+
     @Override
     public void closedEvent() {
-        logger.info("当前actor {} 关闭!",getActorDestination());
+        actorRecord.setConnected(false);
+        springActorService.updateActor(actorRecord);
     }
 
     @Override
     public void exceptionCaught(Throwable throwable) {
-
     }
 
 }

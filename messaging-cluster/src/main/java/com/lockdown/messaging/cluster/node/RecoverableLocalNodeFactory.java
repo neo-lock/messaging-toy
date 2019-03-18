@@ -29,7 +29,7 @@ public class RecoverableLocalNodeFactory implements LocalNodeFactory {
         enhancer.setCallbacks(new Callback[]{NoOp.INSTANCE, new LocalServerNodeProxy(serverContext.runtimeEnvironment())});
         enhancer.setCallbackFilter(proxyCallbackFilter);
         enhancer.setInterceptDuringConstruction(false);
-        ClusterLocalNode localNode = (ClusterLocalNode) enhancer.create(new Class[]{ServerDestination.class, ChannelEventLoop.class}, new Object[]{serverContext.localDestination(), serverContext.channelEventLoop()});
+        ClusterLocalNode localNode = (ClusterLocalNode) enhancer.create(new Class[]{ServerDestination.class, ChannelEventLoop.class}, new Object[]{serverContext.localDestination(), serverContext.eventLoop()});
         return localNode;
     }
 

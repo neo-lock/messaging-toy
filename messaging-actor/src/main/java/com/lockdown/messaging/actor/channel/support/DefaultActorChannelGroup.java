@@ -9,6 +9,7 @@ import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 import io.netty.channel.ChannelFuture;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,6 +32,11 @@ public class DefaultActorChannelGroup implements ActorChannelGroup {
     @Override
     public ActorChannel getChannel(Destination destination) {
         return actorChannelMap.get(destination);
+    }
+
+    @Override
+    public Collection<ActorChannel> actorChannels() {
+        return  actorChannelMap.values();
     }
 
     @Override

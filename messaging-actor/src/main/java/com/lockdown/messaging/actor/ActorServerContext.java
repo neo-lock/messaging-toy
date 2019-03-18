@@ -1,15 +1,21 @@
 package com.lockdown.messaging.actor;
 
+import com.lockdown.messaging.actor.channel.ActorChannel;
 import com.lockdown.messaging.actor.channel.support.ActorChannelEventLoopInitializer;
 import com.lockdown.messaging.actor.channel.support.ActorDisruptorChannelEventLoop;
 import com.lockdown.messaging.actor.channel.support.ActorRemoteNodeChannelInitializer;
 import com.lockdown.messaging.actor.command.CommandActorMessageCodec;
+import com.lockdown.messaging.actor.command.NodeActorNotifyMessage;
 import com.lockdown.messaging.cluster.AbstractServerContext;
 import com.lockdown.messaging.cluster.ServerContext;
+import com.lockdown.messaging.cluster.channel.support.NodeChannel;
 import com.lockdown.messaging.cluster.command.CommandCodecHandler;
 import com.lockdown.messaging.cluster.command.NodeCommandCodecHandler;
 import com.lockdown.messaging.cluster.exception.MessagingException;
+import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
+import com.lockdown.messaging.cluster.reactor.ChannelEventType;
+import com.lockdown.messaging.cluster.reactor.ChannelNotifyEvent;
 import com.lockdown.messaging.cluster.reactor.support.NodeChannelInitializer;
 
 import java.util.Objects;
@@ -113,4 +119,20 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
         }
         return this;
     }
+
+    /**
+     * 全局广播
+     * @param message
+     */
+    public void notifyActorMessage(Object message){
+        NodeActorNotifyMessage notifyMessage = new NodeActorNotifyMessage();
+        notifyMessage.setSource(localDestination());
+        notifyMessage.setContent(actorMessageCodec().encode(message));
+        ChannelNotifyEvent notifyEvent = new ChannelNotifyEvent(notifyMessage);
+        ChannelEvent nodeNotify = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_NOTIFY,notifyEvent);
+        ChannelEvent actorNotify = new ChannelEvent(ActorChannel.type(), ChannelEventType.CHANNEL_NOTIFY,notifyEvent);
+        eventLoop().channelEvent(actorNotify);
+        eventLoop().channelEvent(nodeNotify);
+    }
+
 }

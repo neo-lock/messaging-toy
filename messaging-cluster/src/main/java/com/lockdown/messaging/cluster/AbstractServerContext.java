@@ -76,7 +76,7 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
     }
 
     @Override
-    public ChannelEventLoop channelEventLoop() {
+    public ChannelEventLoop eventLoop() {
         return this.eventLoop;
     }
 

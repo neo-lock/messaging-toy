@@ -27,10 +27,10 @@ public class SpringActorFactory implements ActorFactory {
     }
 
     private void initInjectField(Class<?> actorClass){
-        Field[] fields = actorClass.getFields();
+        Field[] fields = actorClass.getDeclaredFields();
         this.fieldSet = new HashSet<>();
         for(Field f : fields){
-            if(null==f.getAnnotationsByType(Autowired.class)){
+            if(null==f.getAnnotation(Autowired.class)){
                 continue;
             }
             f.setAccessible(true);

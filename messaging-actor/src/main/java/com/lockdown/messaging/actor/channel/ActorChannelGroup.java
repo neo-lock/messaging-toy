@@ -4,6 +4,8 @@ import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.channel.ChannelFactory;
 
+import java.util.Collection;
+
 public interface ActorChannelGroup extends ChannelFactory<ActorChannel, ServerDestination> {
 
 
@@ -13,4 +15,5 @@ public interface ActorChannelGroup extends ChannelFactory<ActorChannel, ServerDe
     ActorChannel getChannel(Destination destination);
 
 
+    Collection<ActorChannel> actorChannels();
 }

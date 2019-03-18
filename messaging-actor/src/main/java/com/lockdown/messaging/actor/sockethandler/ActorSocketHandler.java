@@ -17,7 +17,7 @@ public class ActorSocketHandler extends ChannelInboundHandlerAdapter {
 
 
     public ActorSocketHandler(ActorServerContext actorServerContext) {
-        this.eventLoop = (ActorChannelEventLoop) actorServerContext.channelEventLoop();
+        this.eventLoop = (ActorChannelEventLoop) actorServerContext.eventLoop();
     }
 
 

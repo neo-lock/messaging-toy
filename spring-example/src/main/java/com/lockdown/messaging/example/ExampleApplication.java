@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
@@ -54,8 +55,8 @@ public class ExampleApplication {
 
     }
 
-    @Component
-    public class ActorServerApplication {
+    @Service
+    public final class ActorServerApplication implements ActorServerUtils{
 
         private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -77,6 +78,10 @@ public class ExampleApplication {
             )).initializer(actorServerContext.check()).start();
 
                     //.initializer(actorServerContext).start();
+        }
+
+        public final void notifyMessage(Object message){
+            actorServerContext.notifyActorMessage(message);
         }
 
         @PreDestroy

@@ -34,7 +34,7 @@ public class SpringActorTestClient {
 
             ChannelFuture channelFuture = bootstrap.connect(IPUtils.getLocalIP(), 8081).sync();
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 1; i++) {
                 TimeUnit.SECONDS.sleep(1);
                 executorService.execute(() -> channelFuture.channel().writeAndFlush(JsonMessage.wrap(new RegisterMessage("123"))));
             }

@@ -28,7 +28,7 @@ public class RemoteNodeCommandHandler extends AbstractNodeHandler {
         if (isLocalPort(ctx)) {
             InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
             destination = new ServerDestination(socketAddress.getAddress().getHostAddress(), socketAddress.getPort());
-            serverContext.channelEventLoop().registerNodeChannel(ctx.newSucceededFuture(), destination);
+            serverContext.eventLoop().registerNodeChannel(ctx.newSucceededFuture(), destination);
         } else {
             ctx.fireChannelActive();
         }
