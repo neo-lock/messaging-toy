@@ -18,12 +18,12 @@ public class AbstractCommandHandler extends ChannelInboundHandlerAdapter {
     private Pattern nodeWhiteList;
 
 
-    AbstractCommandHandler(ServerContext serverContext) {
+    public AbstractCommandHandler(ServerContext serverContext) {
         this.serverContext = serverContext;
         this.nodeWhiteList = serverContext.nodeWhiteList();
     }
 
-    boolean isLocalPort(ChannelHandlerContext ctx) {
+    protected boolean isLocalPort(ChannelHandlerContext ctx) {
         return IPUtils.isLocalPort(ctx,nodeWhiteList);
     }
 

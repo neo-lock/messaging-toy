@@ -36,7 +36,7 @@ public class SpringActorTestClient {
 
             for (int i = 0; i < 1; i++) {
                 TimeUnit.SECONDS.sleep(1);
-                executorService.execute(() -> channelFuture.channel().writeAndFlush(JsonMessage.wrap(new RegisterMessage("123"))));
+                executorService.execute(() -> channelFuture.channel().writeAndFlush(new RegisterMessage("123")));
             }
 
 

@@ -24,7 +24,7 @@ public class NodeCommandCodecHandler implements CommandCodecHandler {
 
     protected void checkType(short type){
         if(!codecMap.containsKey(type)){
-            throw new UnsupportedOperationException("unsupported command type!");
+            throw new UnsupportedOperationException("unsupported command type number ["+type+"] !");
         }
     }
 

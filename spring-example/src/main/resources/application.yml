@@ -1,18 +1,18 @@
 server:
-  port: 8080
+  port: 8082
 spring:
   application:
     name: messaging-example
   actor:
-    node-port: 9090
+    node-port: 9091
     boss-threads: 1
     worker-threads: 4
     node-white-list: 909.*
     monitor-enable: true
     enable-sync: true
     actor-class-name: com.lockdown.messaging.example.actor.SpringActor
-    actor-codec-class-name: com.lockdown.messaging.example.actor.SimpleStringCodec
-    actor-port: 8081
+    actor-codec-class-name: com.lockdown.messaging.example.message.SimpleBusinessMessageCodec
+    actor-port: 8083
     master:
       address: 127.0.0.1
       port: 9090

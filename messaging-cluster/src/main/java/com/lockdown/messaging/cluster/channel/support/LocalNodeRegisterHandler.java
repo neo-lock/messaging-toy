@@ -1,14 +1,12 @@
 package com.lockdown.messaging.cluster.channel.support;
 
 import com.lockdown.messaging.cluster.channel.ChannelContext;
-import com.lockdown.messaging.cluster.channel.ChannelInboundHandlerAdapter;
 import com.lockdown.messaging.cluster.command.NodeMonitored;
 import com.lockdown.messaging.cluster.command.NodeRegister;
 import com.lockdown.messaging.cluster.command.NodeRegisterForward;
 import com.lockdown.messaging.cluster.node.LocalNode;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventType;
-import com.lockdown.messaging.cluster.reactor.ChannelNotifyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +44,7 @@ public class LocalNodeRegisterHandler extends ChannelInboundHandlerAdapter {
     private void notifyChannel(ChannelContext ctx, NodeRegister register) {
         LocalNode localNode = ((LocalChannel) ctx.pipeline().channel()).localNode();
         NodeRegisterForward registerForward = new NodeRegisterForward(localNode.destination(), register.getSource());
-        ChannelNotifyEvent notifyEvent = new ChannelNotifyEvent(registerForward);
-        notifyEvent.addIgnore(register.getSource());
-        ChannelEvent forwardEvent = new ChannelEvent(ctx.pipeline().channel(),NodeChannel.type(), ChannelEventType.CHANNEL_NOTIFY, notifyEvent);
-        ctx.eventLoop().channelEvent(forwardEvent);
+        ctx.eventLoop().notifyWriteMessage(NodeChannel.type(),registerForward,register.getSource());
     }
 
 

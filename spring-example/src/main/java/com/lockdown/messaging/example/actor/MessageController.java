@@ -1,9 +1,12 @@
 package com.lockdown.messaging.example.actor;
 
 import com.lockdown.messaging.example.ActorServerUtils;
+import com.lockdown.messaging.example.message.JsonMessage;
+import com.lockdown.messaging.example.message.TextMessage;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class MessageController {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private ActorServerUtils actorServerUtils;
@@ -22,7 +26,8 @@ public class MessageController {
     })
     @RequestMapping(value = "/message/notify",method = RequestMethod.POST)
     public void notifyMessage(@RequestParam String message){
-        actorServerUtils.notifyMessage(message);
+        logger.info(" 开始推送消息===========》 {}",message);
+        actorServerUtils.notifyMessage(new TextMessage(message));
     }
 
 

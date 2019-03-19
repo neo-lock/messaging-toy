@@ -1,7 +1,7 @@
 package com.lockdown.messaging.actor.channel.support;
 
 import com.lockdown.messaging.cluster.channel.ChannelContext;
-import com.lockdown.messaging.cluster.channel.ChannelInboundHandlerAdapter;
+import com.lockdown.messaging.cluster.channel.support.ChannelInboundHandlerAdapter;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 
 public class ChannelEventUnpackHandler extends ChannelInboundHandlerAdapter {

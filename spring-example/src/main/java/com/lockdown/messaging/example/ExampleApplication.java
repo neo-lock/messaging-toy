@@ -52,7 +52,6 @@ public class ExampleApplication {
             actorServerContext.setActorFactory(actorFactory);
             return actorServerContext;
         }
-
     }
 
     @Service

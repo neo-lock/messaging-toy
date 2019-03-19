@@ -1,21 +1,20 @@
 package com.lockdown.messaging.cluster.reactor.support;
 
+import com.alibaba.fastjson.JSON;
 import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
+import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.channel.ChannelEventLoopInitializer;
 import com.lockdown.messaging.cluster.channel.support.LocalChannel;
 import com.lockdown.messaging.cluster.node.ClusterLocalNode;
 import com.lockdown.messaging.cluster.node.LocalNode;
-import com.lockdown.messaging.cluster.reactor.ChannelEvent;
-import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
-import com.lockdown.messaging.cluster.reactor.ChannelEventType;
-import com.lockdown.messaging.cluster.reactor.NodeChannelGroup;
+import com.lockdown.messaging.cluster.reactor.*;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
@@ -88,7 +87,7 @@ public class DisruptorChannelEventLoop implements ChannelEventLoop, EventHandler
     @Override
     public void registerNodeChannel(ChannelFuture future, ServerDestination destination) {
         nodeChannelGroup.newInstance(future, destination);
-        logger.info("当前ChannelGroup");
+        logger.info("当前ChannelGroup {}",nodeChannelGroup.getClass());
         nodeChannelGroup.printNodes();
     }
 
@@ -139,6 +138,22 @@ public class DisruptorChannelEventLoop implements ChannelEventLoop, EventHandler
     @Override
     public ServerContext serverContext() {
         return serverContext;
+    }
+
+    @Override
+    public void notifyWriteMessage(Enum<?> channelType, Object message, Destination... ignores) {
+        notifyWriteMessage(channelType,message,false,ignores);
+    }
+
+    @Override
+    public void notifyWriteMessage(Enum<?> channelType, Object message, boolean multiple, Destination... ignores) {
+        logger.info("{} EventLoop Notify Message {} to channel {}",localDestination,JSON.toJSONString(message),channelType);
+        ChannelNotifyEvent notifyEvent = new ChannelNotifyEvent(message);
+        if(null!=ignores&&ignores.length>0){
+            notifyEvent.addIgnores(ignores);
+        }
+        ChannelEvent event= new ChannelEvent(channelType,ChannelEventType.CHANNEL_NOTIFY,notifyEvent);
+        channelEvent(event);
     }
 
     @Override

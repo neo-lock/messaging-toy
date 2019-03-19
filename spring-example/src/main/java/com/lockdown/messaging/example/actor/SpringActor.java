@@ -1,5 +1,6 @@
 package com.lockdown.messaging.example.actor;
 
+import com.alibaba.fastjson.JSON;
 import com.lockdown.messaging.actor.AbstractActor;
 import com.lockdown.messaging.actor.ActorDestination;
 import com.lockdown.messaging.example.message.RegisterMessage;
@@ -28,6 +29,7 @@ public class SpringActor extends AbstractActor {
 
     @Override
     public void receivedMessage(Object message) {
+        logger.info(" actor 收到消息 {}", JSON.toJSONString(message));
         if (message instanceof RegisterMessage) {
             RegisterMessage registerMessage = (RegisterMessage) message;
             actorRecord.setActorDestination(getActorDestination());

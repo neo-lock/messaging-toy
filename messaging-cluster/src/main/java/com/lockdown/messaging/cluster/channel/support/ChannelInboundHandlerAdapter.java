@@ -1,4 +1,7 @@
-package com.lockdown.messaging.cluster.channel;
+package com.lockdown.messaging.cluster.channel.support;
+
+import com.lockdown.messaging.cluster.channel.ChannelContext;
+import com.lockdown.messaging.cluster.channel.ChannelInboundHandler;
 
 public class ChannelInboundHandlerAdapter implements ChannelInboundHandler {
 

@@ -4,25 +4,30 @@ import com.lockdown.messaging.actor.ActorDestination;
 import com.lockdown.messaging.actor.ActorServerContext;
 import com.lockdown.messaging.actor.channel.ActorChannel;
 import com.lockdown.messaging.actor.channel.ActorChannelEventLoop;
+import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventType;
+import com.lockdown.messaging.cluster.sockethandler.AbstractCommandHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
-public class ActorSocketHandler extends ChannelInboundHandlerAdapter {
+public class ActorSocketHandler extends AbstractCommandHandler {
 
 
-    private final ActorChannelEventLoop eventLoop;
+    private  final ActorChannelEventLoop eventLoop;
     private ActorDestination destination;
 
-
-    public ActorSocketHandler(ActorServerContext actorServerContext) {
-        this.eventLoop = (ActorChannelEventLoop) actorServerContext.eventLoop();
+    public ActorSocketHandler(ActorServerContext serverContext) {
+        super(serverContext);
+        this.eventLoop = (ActorChannelEventLoop)serverContext.eventLoop();
     }
 
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        if(isLocalPort(ctx)){
+           return;
+        }
         destination = eventLoop.registerActorChannel(ctx);
     }
 

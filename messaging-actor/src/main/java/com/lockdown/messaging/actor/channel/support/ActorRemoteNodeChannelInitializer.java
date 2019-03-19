@@ -7,6 +7,8 @@ public class ActorRemoteNodeChannelInitializer extends RemoteNodeChannelInitiali
 
     @Override
     public void initialize(NodeChannel channel) {
-        channel.pipeline().addLast(new ActorNodeCommandSplitter());
+        super.initialize(channel);
+        channel.pipeline().addLast(new NodeActorMessageHandler());
+        channel.pipeline().addLast(new NodeActorNotifyMessageHandler());
     }
 }

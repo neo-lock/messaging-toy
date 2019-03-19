@@ -1,5 +1,6 @@
 package com.lockdown.messaging.cluster.reactor;
 
+import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.channel.support.LocalChannel;
@@ -34,6 +35,10 @@ public interface ChannelEventLoop {
     LocalNode localNode();
 
     ServerContext serverContext();
+
+    void notifyWriteMessage(Enum<?> channelType, Object message, Destination...ignores);
+
+    void notifyWriteMessage(Enum<?> channelType, Object message,boolean multiple, Destination...ignores);
 
 
 }

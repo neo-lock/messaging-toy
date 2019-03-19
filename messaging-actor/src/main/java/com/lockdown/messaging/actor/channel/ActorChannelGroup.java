@@ -16,4 +16,9 @@ public interface ActorChannelGroup extends ChannelFactory<ActorChannel, ServerDe
 
 
     Collection<ActorChannel> actorChannels();
+
+
+    void printNodes();
+
+    void removeActorChannel(Destination destination);
 }

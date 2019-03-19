@@ -83,7 +83,7 @@ public class DefaultChannelGroup implements NodeChannelGroup {
 
     @Override
     public void printNodes() {
-        logger.debug("当前连接节点 {}", channelMap.keySet());
+        logger.info("当前连接节点 {}", channelMap.keySet());
     }
 
     @Override

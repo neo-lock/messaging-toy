@@ -115,7 +115,7 @@ public class ClusterLocalNode implements LocalNode {
 
     @Override
     public void printNodes() {
-        logger.debug("Local[{}],Monitor[{}],Attached[{}]", localDestination, monitor, attached);
+        logger.info("Local[{}],Monitor[{}],Attached[{}]", localDestination, monitor, attached);
     }
 
     @Override
