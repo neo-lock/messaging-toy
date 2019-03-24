@@ -1,4 +1,6 @@
 package com.lockdown.messaging.actor.channel;
+import com.lockdown.messaging.actor.AbstractActor;
+import com.lockdown.messaging.actor.Actor;
 import com.lockdown.messaging.actor.ActorDestination;
 import com.lockdown.messaging.actor.ActorMessageCodec;
 import com.lockdown.messaging.actor.command.NodeActorMessage;
@@ -11,18 +13,29 @@ import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 
 public class ActorChannel extends NodeChannel {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+    private AbstractActor actor;
 
-    public ActorChannel(ChannelEventLoop eventLoop, ActorDestination destination, ChannelFuture channelFuture) {
+    public ActorChannel(ChannelEventLoop eventLoop, ActorDestination destination, ChannelFuture channelFuture, AbstractActor abstractActor) {
         super(eventLoop, destination, channelFuture);
+        this.actor = abstractActor;
+    }
+
+
+
+    public Actor actor(){
+        return actor;
     }
 
     public static Enum<?> type() {
         return ChannelType.ACTOR;
     }
+    
 
     @Override
     protected ChannelPipeline providerPipeline() {

@@ -1,7 +1,6 @@
 package com.lockdown.messaging.example.actor;
 
 import com.lockdown.messaging.example.ActorServerUtils;
-import com.lockdown.messaging.example.message.JsonMessage;
 import com.lockdown.messaging.example.message.TextMessage;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -21,13 +20,46 @@ public class MessageController {
     @Autowired
     private ActorServerUtils actorServerUtils;
 
+    @Autowired
+    private MessageService messageService;
+
     @ApiImplicitParams({
             @ApiImplicitParam(name = "message",paramType = "form",required = true)
     })
     @RequestMapping(value = "/message/notify",method = RequestMethod.POST)
     public void notifyMessage(@RequestParam String message){
-        logger.info(" 开始推送消息===========》 {}",message);
         actorServerUtils.notifyMessage(new TextMessage(message));
+    }
+
+
+    @RequestMapping(value = "/message/push",method = RequestMethod.POST)
+    public void sendMessage(@RequestBody PushMessageRequest request) throws Exception {
+        messageService.pushMessage(request);
+    }
+
+
+
+
+    public static class PushMessageRequest {
+        private String receiverId;
+        private String message;
+
+
+        public String getReceiverId() {
+            return receiverId;
+        }
+
+        public void setReceiverId(String receiverId) {
+            this.receiverId = receiverId;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
 

@@ -1,19 +1,13 @@
 package com.lockdown.messaging.actor.channel.support;
 
-import com.alibaba.fastjson.JSON;
+import com.lockdown.messaging.actor.Actor;
 import com.lockdown.messaging.actor.channel.ActorChannel;
 import com.lockdown.messaging.actor.channel.ActorChannelEventLoop;
-import com.lockdown.messaging.actor.channel.ActorChannelGroup;
-import com.lockdown.messaging.actor.command.NodeActorNotifyMessage;
-import com.lockdown.messaging.cluster.channel.Channel;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
-import com.lockdown.messaging.cluster.reactor.ChannelEventType;
 import com.lockdown.messaging.cluster.reactor.ChannelNotifyEvent;
 import com.lockdown.messaging.cluster.reactor.support.ChannelTypeEventInvoker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.function.Consumer;
 
 public class ActorChannelEventInvoker implements ChannelTypeEventInvoker {
 
@@ -36,28 +30,27 @@ public class ActorChannelEventInvoker implements ChannelTypeEventInvoker {
      */
     @Override
     public void handleEvent(ChannelEvent event) {
-        logger.info("ActorChannelEvent handle event {}", JSON.toJSONString(event));
         switch (event.getEventType()){
             case CHANNEL_NOTIFY:{
-                eventLoop.actorChannelGroup().printNodes();
+                eventLoop.actorGroup().printNodes();
                 ChannelNotifyEvent notifyEvent = (ChannelNotifyEvent) event.getParam();
-                eventLoop.actorChannelGroup().actorChannels().forEach(actorChannel -> {
-                    actorChannel.writeAndFlush(notifyEvent.getCommand());
+                eventLoop.actorGroup().allActors().forEach(actor -> {
+                    actor.writeMessage(notifyEvent.getCommand());
                 });
                 break;
             }
             case CHANNEL_CLOSE:{
                 //不需要break,让default 触发pipe close event !!!
-                eventLoop.actorChannelGroup().removeActorChannel(event.getDestination());
+                eventLoop.actorGroup().removeActor(event.getDestination());
             }
             default:{
-                Channel channel = eventLoop.actorChannelGroup().getChannel(event.getDestination());
+                Actor actor = eventLoop.actorGroup().getActor(event.getDestination());
                 //这里应该抛出 找不到channel的 exception event，让对应的actor去进行处理,如果是消息的话，可以返回给发送方!
-                if (null == channel) {
+                if (null == actor) {
                     logger.warn("{} 找不到channel!", event.getDestination());
                     return;
                 }
-                channel.handleEvent(event);
+                actor.channel().handleEvent(event);
             }
         }
 

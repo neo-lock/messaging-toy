@@ -8,5 +8,8 @@ public interface SpringActorService {
 
     ActorRecord getActor(String accountId);
 
+
     void updateActor(ActorRecord actorRecord);
+
+
 }

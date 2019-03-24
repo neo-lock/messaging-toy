@@ -10,5 +10,6 @@ public class ActorRemoteNodeChannelInitializer extends RemoteNodeChannelInitiali
         super.initialize(channel);
         channel.pipeline().addLast(new NodeActorMessageHandler());
         channel.pipeline().addLast(new NodeActorNotifyMessageHandler());
+        channel.pipeline().addLast(new NodeActorPushMessageHandler());
     }
 }

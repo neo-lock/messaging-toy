@@ -10,22 +10,20 @@ import com.lockdown.messaging.cluster.channel.ChannelInboundHandler;
 import com.lockdown.messaging.cluster.channel.support.AbstractChannelPipeline;
 import com.lockdown.messaging.cluster.channel.support.HeadChannelHandler;
 
-public class ActorChannelPipeline extends AbstractChannelPipeline {
+class ActorChannelPipeline extends AbstractChannelPipeline {
 
 
     ActorChannelPipeline(Channel channel) {
-        super(channel, new HeadChannelHandler(channel), new ActorTailHandler((ActorChannel) channel));
+        super(channel, new HeadChannelHandler(channel), new ActorTailHandler(((ActorChannel)channel)));
     }
 
 
     private static class ActorTailHandler implements ChannelInboundHandler {
 
-        private final ActorChannel actorChannel;
-        private Actor actor;
+        private final ActorChannel channel;
 
-        private ActorTailHandler(ActorChannel actorChannel) {
-            this.actorChannel = actorChannel;
-            this.actor =  ((ActorServerContext)this.actorChannel.eventLoop().serverContext()).actorFactory().newInstance(actorChannel);
+        private ActorTailHandler(ActorChannel channel) {
+            this.channel = channel;
         }
 
         @Override
@@ -33,20 +31,20 @@ public class ActorChannelPipeline extends AbstractChannelPipeline {
             if (message instanceof NodeActorMessage) {
                 NodeActorMessage actorMessage = (NodeActorMessage) message;
                 ActorDestination actorDestination = actorMessage.getDestination();
-                actor.receivedMessage(actorDestination, actorChannel.actorMessageCodec().decode(actorMessage.getContent()));
+                channel.actor().receivedMessage(actorDestination, channel.actorMessageCodec().decode(actorMessage.getContent()));
             } else {
-                actor.receivedMessage(message);
+                channel.actor().receivedMessage(message);
             }
         }
 
         @Override
         public void exceptionCaught(ChannelContext ctx, Throwable throwable) {
-            actor.exceptionCaught(throwable);
+            channel.actor().exceptionCaught(throwable);
         }
 
         @Override
         public void channelClosed(ChannelContext ctx) {
-            actor.closedEvent();
+            channel.actor().closedEvent();
         }
     }
 

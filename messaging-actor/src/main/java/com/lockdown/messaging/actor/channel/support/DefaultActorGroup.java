@@ -1,8 +1,8 @@
 package com.lockdown.messaging.actor.channel.support;
 
-import com.lockdown.messaging.actor.ActorDestination;
+import com.lockdown.messaging.actor.*;
 import com.lockdown.messaging.actor.channel.ActorChannel;
-import com.lockdown.messaging.actor.channel.ActorChannelGroup;
+import com.lockdown.messaging.actor.channel.ActorGroup;
 import com.lockdown.messaging.actor.channel.ActorChannelInitializer;
 import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.ServerDestination;
@@ -15,50 +15,59 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultActorChannelGroup implements ActorChannelGroup {
+public class DefaultActorGroup implements ActorGroup {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private final ChannelEventLoop eventLoop;
     private final ActorChannelInitializer channelInitializer;
+    private final ActorServerContext actorServerContext;
     private Map<Destination, ActorChannel> actorChannelMap = new ConcurrentHashMap<>();
+    private Map<Destination,Actor> actorMap = new ConcurrentHashMap<>();
 
-    public DefaultActorChannelGroup(ChannelEventLoop eventLoop) {
+
+    DefaultActorGroup(ChannelEventLoop eventLoop, ActorServerContext actorServerContext) {
         this.eventLoop = eventLoop;
+        this.actorServerContext = actorServerContext;
         this.channelInitializer = new ActorChannelInitializer();
     }
 
-    @Override
-    public void addActorChannel(ActorChannel actorChannel) {
-        logger.info("添加ActorChannel {}",actorChannel.destination());
-        actorChannelMap.put(actorChannel.destination(), actorChannel);
-    }
 
     @Override
-    public ActorChannel getChannel(Destination destination) {
-        return actorChannelMap.get(destination);
+    public void addActor(Actor actor) {
+        actorMap.put(actor.destination(),actor);
     }
 
+
     @Override
-    public Collection<ActorChannel> actorChannels() {
-        return  actorChannelMap.values();
+    public Actor getActor(Destination destination) {
+        return actorMap.get(destination);
+    }
+
+
+    @Override
+    public Collection<Actor> allActors() {
+        return actorMap.values();
     }
 
     @Override
     public void printNodes() {
-        logger.info(" actor nodes {}",actorChannelMap.keySet());
+        logger.debug(" actor nodes {}",actorChannelMap.keySet());
     }
 
     @Override
-    public void removeActorChannel(Destination destination) {
-        actorChannelMap.remove(destination);
+    public void removeActor(Destination destination) {
+        logger.info(" destination {}",destination);
+        actorMap.remove(destination);
     }
 
     @Override
     public ActorChannel newInstance(ChannelFuture future, ServerDestination destination) {
         ActorDestination actorDestination = new ActorDestination(future.channel().id().asLongText(), destination);
-        ActorChannel actorChannel = new ActorChannel(eventLoop, actorDestination, future);
+        AbstractActor actor = actorServerContext.actorFactory().newInstance();
+        ActorChannel actorChannel = new ActorChannel(eventLoop, actorDestination, future,actor);
         this.channelInitializer.initialize(actorChannel);
-        addActorChannel(actorChannel);
+        actor.setActorChannel(actorChannel);
+        addActor(actor);
         return actorChannel;
     }
 }

@@ -1,18 +1,20 @@
 package com.lockdown.messaging.actor;
 
 import com.lockdown.messaging.actor.channel.ActorChannel;
+import com.lockdown.messaging.actor.channel.ActorChannelEventLoop;
+import com.lockdown.messaging.actor.channel.ActorGroup;
 import com.lockdown.messaging.actor.channel.support.ActorChannelEventLoopInitializer;
 import com.lockdown.messaging.actor.channel.support.ActorDisruptorChannelEventLoop;
 import com.lockdown.messaging.actor.channel.support.ActorRemoteNodeChannelInitializer;
-import com.lockdown.messaging.actor.command.CommandActorMessageCodec;
-import com.lockdown.messaging.actor.command.CommandActorNotifyMessageCodec;
-import com.lockdown.messaging.actor.command.NodeActorNotifyMessage;
+import com.lockdown.messaging.actor.command.*;
 import com.lockdown.messaging.cluster.AbstractServerContext;
 import com.lockdown.messaging.cluster.channel.support.NodeChannel;
 import com.lockdown.messaging.cluster.command.CommandCodecHandler;
 import com.lockdown.messaging.cluster.command.NodeCommandCodecHandler;
 import com.lockdown.messaging.cluster.exception.MessagingException;
+import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
+import com.lockdown.messaging.cluster.reactor.ChannelEventType;
 import com.lockdown.messaging.cluster.reactor.support.NodeChannelInitializer;
 
 import java.util.Objects;
@@ -104,6 +106,7 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
         NodeCommandCodecHandler handler = (NodeCommandCodecHandler) super.codecHandler();
         handler.registerCodec(new CommandActorMessageCodec());
         handler.registerCodec(new CommandActorNotifyMessageCodec());
+        handler.registerCodec(new CommandActorPushMessageCodec());
         return handler;
     }
 
@@ -128,6 +131,27 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
         notifyMessage.setSource(localDestination());
         notifyMessage.setContent(actorMessageCodec().encode(message));
         eventLoop().notifyWriteMessage(NodeChannel.type(),notifyMessage);
+    }
+
+    /**
+     * 发送给指定的actor消息
+     * @param destination
+     * @param message
+     */
+    public void pushActorMessage(ActorDestination destination, Object message){
+        ActorChannelEventLoop eventLoop = ((ActorChannelEventLoop)eventLoop());
+        Actor actor = eventLoop.actorGroup().getActor(destination);
+        if(null!=actor){
+            actor.writeMessage(message);
+        }else{
+            NodeActorPushMessage pushMessage = new NodeActorPushMessage();
+            pushMessage.setContent(eventLoop.actorMessageCodec().encode(message));
+            pushMessage.setDestination(destination);
+            pushMessage.setSource(localNode().destination());
+            ChannelEvent event = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_WRITE,destination.getDestination(),pushMessage);
+            eventLoop.channelEvent(event);
+        }
+
     }
 
 }

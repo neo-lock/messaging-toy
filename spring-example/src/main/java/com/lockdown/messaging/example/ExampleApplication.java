@@ -1,7 +1,6 @@
 package com.lockdown.messaging.example;
-import com.lockdown.messaging.actor.ActorFactory;
-import com.lockdown.messaging.actor.ActorServer;
-import com.lockdown.messaging.actor.ActorServerContext;
+import com.lockdown.messaging.actor.*;
+import com.lockdown.messaging.actor.channel.ActorChannelEventLoop;
 import com.lockdown.messaging.example.message.JsonMessageDecoder;
 import com.lockdown.messaging.example.message.JsonMessageEncoder;
 import com.lockdown.messaging.example.message.SpringActorHandler;
@@ -14,7 +13,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -75,13 +73,23 @@ public class ExampleApplication {
                     new JsonMessageEncoder(),
                     new SpringActorHandler()
             )).initializer(actorServerContext.check()).start();
-
-                    //.initializer(actorServerContext).start();
         }
 
         public final void notifyMessage(Object message){
             actorServerContext.notifyActorMessage(message);
         }
+
+        @Override
+        public final void pushMessage(ActorDestination destination, Object message) {
+            actorServerContext.pushActorMessage(destination,message);
+        }
+
+
+        @Override
+        public Actor getLocalActor(ActorDestination destination) {
+            return ((ActorChannelEventLoop)actorServerContext.eventLoop()).actorGroup().getActor(destination);
+        }
+
 
         @PreDestroy
         public void destroy() {

@@ -41,12 +41,15 @@ public class ActorSocketHandler extends AbstractCommandHandler {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        ChannelEvent event = new ChannelEvent(ActorChannel.type(), ChannelEventType.CHANNEL_CLOSE, destination);
-        eventLoop.channelEvent(event);
+        if(null!=destination){
+            ChannelEvent event = new ChannelEvent(ActorChannel.type(), ChannelEventType.CHANNEL_CLOSE, destination);
+            eventLoop.channelEvent(event);
+        }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
         ctx.close();
     }
 }

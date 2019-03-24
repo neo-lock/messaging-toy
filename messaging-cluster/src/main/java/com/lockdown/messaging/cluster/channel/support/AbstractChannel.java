@@ -9,14 +9,15 @@ public abstract class AbstractChannel implements Channel {
 
     private final ChannelEventLoop eventLoop;
     private final Destination destination;
-    private final ChannelPipeline pipeline;
+    private ChannelPipeline pipeline;
 
 
     AbstractChannel(ChannelEventLoop eventLoop, Destination destination) {
         this.eventLoop = eventLoop;
-        this.pipeline = providerPipeline();
         this.destination = destination;
+        this.pipeline = providerPipeline();
     }
+
 
     protected abstract ChannelPipeline providerPipeline();
 

@@ -15,10 +15,12 @@ import java.util.Set;
 public class SpringActorFactory implements ActorFactory {
 
     private Set<Field> fieldSet;
+    private Class<?> actorClass;
 
     public SpringActorFactory(ActorProperties actorProperties) {
         try {
             Class<?> actorClass = Class.forName(actorProperties.getActorClassName());
+            this.actorClass = actorClass;
             this.initInjectField(actorClass);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -39,14 +41,11 @@ public class SpringActorFactory implements ActorFactory {
     }
 
     @Override
-    public AbstractActor newInstance(ActorChannel actorChannel) {
-        Class<?> actorClass = ((ActorServerContext)actorChannel.eventLoop().serverContext()).actorClass();
+    public AbstractActor newInstance() {
         try {
-            Object actor = actorClass.newInstance();
+            AbstractActor actor = (AbstractActor) actorClass.newInstance();
             injectField(actor);
-            AbstractActor abstractActor = (AbstractActor) actor;
-            abstractActor.setActorChannel(actorChannel);
-            return abstractActor;
+            return actor;
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
             throw new MessagingException(e);
