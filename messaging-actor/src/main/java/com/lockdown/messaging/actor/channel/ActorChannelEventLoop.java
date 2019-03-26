@@ -15,5 +15,4 @@ public interface ActorChannelEventLoop extends ChannelEventLoop {
     ActorMessageCodec actorMessageCodec();
 
 
-
 }

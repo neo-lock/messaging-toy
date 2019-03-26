@@ -4,7 +4,7 @@ import com.lockdown.messaging.cluster.command.CommandType;
 
 public enum ActorCommandType implements CommandType {
 
-    ACTOR_MSG((short)6), ACTOR_PUSH((short)7), ACTOR_NOTIFY((short)8);
+    ACTOR_MSG((short) 6), ACTOR_PUSH((short) 7), ACTOR_NOTIFY((short) 8);
 
 
     private short type;

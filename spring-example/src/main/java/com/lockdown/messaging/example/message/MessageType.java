@@ -1,16 +1,12 @@
 package com.lockdown.messaging.example.message;
 
 public enum MessageType {
-    REGISTER(RegisterMessage.class), TEXT(TextMessage.class);
+    REGISTER(RegisterMessage.class), TEXT(TextMessage.class), COMMUNITY(CommunityMessage.class);
 
     private Class<?> clazz;
 
     MessageType(Class<?> clazz) {
         this.clazz = clazz;
-    }
-
-    public Class<?> getClazz() {
-        return clazz;
     }
 
     public static MessageType stringValueOf(String type) {
@@ -20,5 +16,9 @@ public enum MessageType {
             }
         }
         throw new IllegalArgumentException(" can't supported type " + type);
+    }
+
+    public Class<?> getClazz() {
+        return clazz;
     }
 }

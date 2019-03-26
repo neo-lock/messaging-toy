@@ -1,6 +1,5 @@
 package com.lockdown.messaging.cluster.utils;
 
-import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.exception.MessagingHostException;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -12,7 +11,7 @@ import java.util.regex.Pattern;
 public class IPUtils {
 
 
-    public static boolean isLocalPort(ChannelHandlerContext ctx, Pattern nodeWhiteList){
+    public static boolean isLocalPort(ChannelHandlerContext ctx, Pattern nodeWhiteList) {
         InetSocketAddress localAddress = (InetSocketAddress) ctx.channel().localAddress();
         InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         return nodeWhiteList.matcher(String.valueOf(localAddress.getPort())).matches() ||

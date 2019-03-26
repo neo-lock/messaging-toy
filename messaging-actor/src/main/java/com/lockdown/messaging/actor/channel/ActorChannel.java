@@ -1,4 +1,5 @@
 package com.lockdown.messaging.actor.channel;
+
 import com.lockdown.messaging.actor.AbstractActor;
 import com.lockdown.messaging.actor.Actor;
 import com.lockdown.messaging.actor.ActorDestination;
@@ -13,8 +14,6 @@ import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
-
 
 public class ActorChannel extends NodeChannel {
 
@@ -26,16 +25,13 @@ public class ActorChannel extends NodeChannel {
         this.actor = abstractActor;
     }
 
-
-
-    public Actor actor(){
-        return actor;
-    }
-
     public static Enum<?> type() {
         return ChannelType.ACTOR;
     }
-    
+
+    public Actor actor() {
+        return actor;
+    }
 
     @Override
     protected ChannelPipeline providerPipeline() {
@@ -49,7 +45,8 @@ public class ActorChannel extends NodeChannel {
 
     public void writeAndFlush(ActorDestination destination, Object message, boolean autoWrite) {
         if (destination.getDestination().equals(eventLoop().localDestination())) {
-            writeAndFlush(message);
+            ChannelEvent channelEvent = new ChannelEvent(ActorChannel.type(),ChannelEventType.CHANNEL_WRITE,destination,message);
+            eventLoop().channelEvent(channelEvent);
         } else {
             NodeActorMessage nodeActorMessage = new NodeActorMessage();
             nodeActorMessage.setAutoWrite(autoWrite);
@@ -57,7 +54,7 @@ public class ActorChannel extends NodeChannel {
             nodeActorMessage.setDestination((ActorDestination) destination());
             nodeActorMessage.setSource(destination.getDestination());
             nodeActorMessage.setChannelId(destination.getChannelId());
-            ChannelEvent channelEvent = new ChannelEvent(this,NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, destination.getDestination(), nodeActorMessage);
+            ChannelEvent channelEvent = new ChannelEvent(this, NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, destination.getDestination(), nodeActorMessage);
             eventLoop().channelEvent(channelEvent);
         }
     }

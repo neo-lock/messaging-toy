@@ -1,4 +1,5 @@
 package com.lockdown.messaging.example;
+
 import com.lockdown.messaging.actor.*;
 import com.lockdown.messaging.actor.channel.ActorChannelEventLoop;
 import com.lockdown.messaging.example.message.JsonMessageDecoder;
@@ -31,21 +32,21 @@ public class ExampleApplication {
 
 
     @Configuration
-    public class ActorServerConfiguration{
+    public class ActorServerConfiguration {
 
         @Autowired
         private SpringActorProperties springActorProperties;
 
         @Primary
         @Bean
-        public ActorFactory actorFactory(){
-            return  new SpringActorFactory(springActorProperties);
+        public ActorFactory actorFactory() {
+            return new SpringActorFactory(springActorProperties);
         }
 
 
         @Primary
         @Bean
-        public ActorServerContext actorServerContext(ActorFactory actorFactory){
+        public ActorServerContext actorServerContext(ActorFactory actorFactory) {
             ActorServerContext actorServerContext = new ActorServerContext(springActorProperties);
             actorServerContext.setActorFactory(actorFactory);
             return actorServerContext;
@@ -53,7 +54,7 @@ public class ExampleApplication {
     }
 
     @Service
-    public final class ActorServerApplication implements ActorServerUtils{
+    public final class ActorServerApplication implements ActorServerUtils {
 
         private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -75,20 +76,15 @@ public class ExampleApplication {
             )).initializer(actorServerContext.check()).start();
         }
 
-        public final void notifyMessage(Object message){
+        public final void notifyMessage(Object message) {
             actorServerContext.notifyActorMessage(message);
         }
 
         @Override
         public final void pushMessage(ActorDestination destination, Object message) {
-            actorServerContext.pushActorMessage(destination,message);
+            actorServerContext.pushActorMessage(destination, message);
         }
 
-
-        @Override
-        public Actor getLocalActor(ActorDestination destination) {
-            return ((ActorChannelEventLoop)actorServerContext.eventLoop()).actorGroup().getActor(destination);
-        }
 
 
         @PreDestroy

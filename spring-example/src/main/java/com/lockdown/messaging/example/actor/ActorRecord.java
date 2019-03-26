@@ -14,16 +14,16 @@ public class ActorRecord {
 
     }
 
+    public ActorRecord(ActorDestination actorDestination) {
+        this.actorDestination = actorDestination;
+    }
+
     public String getAccountId() {
         return accountId;
     }
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
-    }
-
-    public ActorRecord(ActorDestination actorDestination) {
-        this.actorDestination = actorDestination;
     }
 
     public boolean isConnected() {

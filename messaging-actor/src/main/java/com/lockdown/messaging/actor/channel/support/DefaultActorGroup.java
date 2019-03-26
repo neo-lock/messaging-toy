@@ -1,9 +1,12 @@
 package com.lockdown.messaging.actor.channel.support;
 
-import com.lockdown.messaging.actor.*;
+import com.lockdown.messaging.actor.AbstractActor;
+import com.lockdown.messaging.actor.Actor;
+import com.lockdown.messaging.actor.ActorDestination;
+import com.lockdown.messaging.actor.ActorServerContext;
 import com.lockdown.messaging.actor.channel.ActorChannel;
-import com.lockdown.messaging.actor.channel.ActorGroup;
 import com.lockdown.messaging.actor.channel.ActorChannelInitializer;
+import com.lockdown.messaging.actor.channel.ActorGroup;
 import com.lockdown.messaging.cluster.Destination;
 import com.lockdown.messaging.cluster.ServerDestination;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
@@ -17,12 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultActorGroup implements ActorGroup {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
     private final ChannelEventLoop eventLoop;
     private final ActorChannelInitializer channelInitializer;
     private final ActorServerContext actorServerContext;
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private Map<Destination, ActorChannel> actorChannelMap = new ConcurrentHashMap<>();
-    private Map<Destination,Actor> actorMap = new ConcurrentHashMap<>();
+    private Map<Destination, Actor> actorMap = new ConcurrentHashMap<>();
 
 
     DefaultActorGroup(ChannelEventLoop eventLoop, ActorServerContext actorServerContext) {
@@ -34,7 +37,7 @@ public class DefaultActorGroup implements ActorGroup {
 
     @Override
     public void addActor(Actor actor) {
-        actorMap.put(actor.destination(),actor);
+        actorMap.put(actor.destination(), actor);
     }
 
 
@@ -51,12 +54,12 @@ public class DefaultActorGroup implements ActorGroup {
 
     @Override
     public void printNodes() {
-        logger.debug(" actor nodes {}",actorChannelMap.keySet());
+        logger.debug(" actor nodes {}", actorChannelMap.keySet());
     }
 
     @Override
     public void removeActor(Destination destination) {
-        logger.info(" destination {}",destination);
+        logger.info(" destination {}", destination);
         actorMap.remove(destination);
     }
 
@@ -64,7 +67,7 @@ public class DefaultActorGroup implements ActorGroup {
     public ActorChannel newInstance(ChannelFuture future, ServerDestination destination) {
         ActorDestination actorDestination = new ActorDestination(future.channel().id().asLongText(), destination);
         AbstractActor actor = actorServerContext.actorFactory().newInstance();
-        ActorChannel actorChannel = new ActorChannel(eventLoop, actorDestination, future,actor);
+        ActorChannel actorChannel = new ActorChannel(eventLoop, actorDestination, future, actor);
         this.channelInitializer.initialize(actorChannel);
         actor.setActorChannel(actorChannel);
         addActor(actor);

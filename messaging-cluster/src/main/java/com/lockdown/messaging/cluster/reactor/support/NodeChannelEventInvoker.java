@@ -21,7 +21,7 @@ public class NodeChannelEventInvoker implements ChannelTypeEventInvoker {
     @Override
     public void handleEvent(ChannelEvent event) {
         nodeChannelGroup.printNodes();
-        logger.info(" NodeChannelEvent handle event {}",event.toString());
+        logger.info(" NodeChannelEvent handle event {}", event.toString());
         switch (event.getEventType()) {
             case CHANNEL_NOTIFY: {
                 ChannelNotifyEvent notifyEvent = (ChannelNotifyEvent) event.getParam();
@@ -29,13 +29,13 @@ public class NodeChannelEventInvoker implements ChannelTypeEventInvoker {
                     if (notifyEvent.getIgnore().contains(nodeChannel.destination())) {
                         return;
                     }
-                    logger.info(" Write Message {} to Node {}", JSON.toJSONString(notifyEvent.getCommand()),nodeChannel.destination());
+                    logger.info(" Write Message {} to Node {}", JSON.toJSONString(notifyEvent.getCommand()), nodeChannel.destination());
                     nodeChannel.pipeline().writeAndFlush(notifyEvent.getCommand());
                 });
                 break;
             }
             default: {
-                if(!nodeChannelGroup.containsNode(event.getDestination())){
+                if (!nodeChannelGroup.containsNode(event.getDestination())) {
                     throw new MessagingException(" destination not found!");
                 }
                 nodeChannelGroup.getNodeChannel(event.getDestination()).handleEvent(event);

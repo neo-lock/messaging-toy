@@ -24,20 +24,18 @@ public class MessageController {
     private MessageService messageService;
 
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "message",paramType = "form",required = true)
+            @ApiImplicitParam(name = "message", paramType = "form", required = true)
     })
-    @RequestMapping(value = "/message/notify",method = RequestMethod.POST)
-    public void notifyMessage(@RequestParam String message){
+    @RequestMapping(value = "/message/notify", method = RequestMethod.POST)
+    public void notifyMessage(@RequestParam String message) {
         actorServerUtils.notifyMessage(new TextMessage(message));
     }
 
 
-    @RequestMapping(value = "/message/push",method = RequestMethod.POST)
+    @RequestMapping(value = "/message/push", method = RequestMethod.POST)
     public void sendMessage(@RequestBody PushMessageRequest request) throws Exception {
         messageService.pushMessage(request);
     }
-
-
 
 
     public static class PushMessageRequest {
@@ -61,8 +59,6 @@ public class MessageController {
             this.message = message;
         }
     }
-
-
 
 
 }

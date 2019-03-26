@@ -20,12 +20,12 @@ public class ClusterNatureForwardHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelReceived(ChannelContext ctx, Object message) {
         ChannelEvent event = (ChannelEvent) message;
-        if(ClusterNature.class.isAssignableFrom(event.getParam().getClass())){
-            logger.info("Cluster Nature Forward Handler ========  {}",event.getParam());
+        if (ClusterNature.class.isAssignableFrom(event.getParam().getClass())) {
+            logger.info("Cluster Nature Forward Handler ========  {}", event.getParam());
             NodeCommand command = (NodeCommand) event.getParam();
-            ChannelEvent local = new ChannelEvent(ctx.pipeline().channel(),LocalChannel.type(), ChannelEventType.NODE_READ, command);
+            ChannelEvent local = new ChannelEvent(ctx.pipeline().channel(), LocalChannel.type(), ChannelEventType.NODE_READ, command);
             ctx.eventLoop().channelEvent(local);
-        }else{
+        } else {
             ctx.fireChannelReceived(message);
         }
 
@@ -33,7 +33,7 @@ public class ClusterNatureForwardHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelClosed(ChannelContext ctx) {
-        ChannelEvent event = new ChannelEvent(ctx.pipeline().channel(),LocalChannel.type(), ChannelEventType.NODE_READ, ctx.eventLoop().localDestination(), new NodeClosed((ServerDestination) ctx.pipeline().channel().destination()));
+        ChannelEvent event = new ChannelEvent(ctx.pipeline().channel(), LocalChannel.type(), ChannelEventType.NODE_READ, ctx.eventLoop().localDestination(), new NodeClosed((ServerDestination) ctx.pipeline().channel().destination()));
         ctx.eventLoop().channelEvent(event);
         ctx.pipeline().channel().close();
     }

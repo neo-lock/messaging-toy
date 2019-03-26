@@ -87,7 +87,7 @@ public class DisruptorChannelEventLoop implements ChannelEventLoop, EventHandler
     @Override
     public void registerNodeChannel(ChannelFuture future, ServerDestination destination) {
         nodeChannelGroup.newInstance(future, destination);
-        logger.info("当前ChannelGroup {}",nodeChannelGroup.getClass());
+        logger.info("当前ChannelGroup {}", nodeChannelGroup.getClass());
         nodeChannelGroup.printNodes();
     }
 
@@ -142,17 +142,17 @@ public class DisruptorChannelEventLoop implements ChannelEventLoop, EventHandler
 
     @Override
     public void notifyWriteMessage(Enum<?> channelType, Object message, Destination... ignores) {
-        notifyWriteMessage(channelType,message,false,ignores);
+        notifyWriteMessage(channelType, message, false, ignores);
     }
 
     @Override
     public void notifyWriteMessage(Enum<?> channelType, Object message, boolean multiple, Destination... ignores) {
-        logger.info("{} EventLoop Notify Message {} to channel {}",localDestination,JSON.toJSONString(message),channelType);
+        logger.info("{} EventLoop Notify Message {} to channel {}", localDestination, JSON.toJSONString(message), channelType);
         ChannelNotifyEvent notifyEvent = new ChannelNotifyEvent(message);
-        if(null!=ignores&&ignores.length>0){
+        if (null != ignores && ignores.length > 0) {
             notifyEvent.addIgnores(ignores);
         }
-        ChannelEvent event= new ChannelEvent(channelType,ChannelEventType.CHANNEL_NOTIFY,notifyEvent);
+        ChannelEvent event = new ChannelEvent(channelType, ChannelEventType.CHANNEL_NOTIFY, notifyEvent);
         channelEvent(event);
     }
 
@@ -189,20 +189,20 @@ public class DisruptorChannelEventLoop implements ChannelEventLoop, EventHandler
 
         @Override
         public void handleEvent(ChannelEvent event) {
-            try{
+            try {
                 invokerMap.get(event.getChannelType()).handleEvent(event);
-            }catch (Throwable e){
+            } catch (Throwable e) {
                 e.printStackTrace();
-                if(null!=event.getEventSource()){
+                if (null != event.getEventSource()) {
                     ChannelEvent exception = new ChannelEvent();
                     exception.setChannelType(event.getEventSource().channelType());
                     exception.setDestination(event.getEventSource().destination());
                     exception.setEventType(ChannelEventType.EXCEPTION);
                     exception.setParam(e);
-                    logger.info(" 添加异常处理 {}",exception);
+                    logger.info(" 添加异常处理 {}", exception);
                     channelEvent(exception);
-                }else{
-                    logger.warn("当前事件 {} 发生异常! {}",event,e.getMessage());
+                } else {
+                    logger.warn("当前事件 {} 发生异常! {}", event, e.getMessage());
                 }
 
             }

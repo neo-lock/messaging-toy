@@ -9,10 +9,6 @@ public enum MessageType {
         this.clazz = clazz;
     }
 
-    public Class<?> getClazz() {
-        return clazz;
-    }
-
     public static MessageType stringValueOf(String type) {
         for (MessageType t : values()) {
             if (t.name().equals(type)) {
@@ -20,5 +16,9 @@ public enum MessageType {
             }
         }
         throw new IllegalArgumentException(" can't supported type " + type);
+    }
+
+    public Class<?> getClazz() {
+        return clazz;
     }
 }

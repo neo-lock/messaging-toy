@@ -14,10 +14,10 @@ import java.util.*;
 public abstract class AbstractServer<T extends ServerContext> implements LocalServer<T> {
 
 
+    protected Logger logger = LoggerFactory.getLogger(getClass());
     private ServerBootstrap bootstrap;
     private T serverContext;
     private List<ServerEventListener> eventListeners = new ArrayList<>();
-    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void addEventListener(ServerEventListener... listeners) {

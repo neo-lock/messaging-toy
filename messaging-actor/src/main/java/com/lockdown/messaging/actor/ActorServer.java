@@ -2,7 +2,6 @@ package com.lockdown.messaging.actor;
 
 import com.lockdown.messaging.actor.sockethandler.ActorSocketHandler;
 import com.lockdown.messaging.cluster.AbstractServer;
-import com.lockdown.messaging.cluster.LocalServer;
 import com.lockdown.messaging.cluster.exception.MessagingException;
 import com.lockdown.messaging.cluster.exception.MessagingInterruptedException;
 import com.lockdown.messaging.cluster.sockethandler.LocalNodeCommandHandler;
@@ -31,9 +30,9 @@ public final class ActorServer extends AbstractServer<ActorServerContext> {
 
     @Override
     public ActorServer initializer(ActorServerContext serverContext) {
-        ActorServer actorServer =  (ActorServer) super.initializer(serverContext);
+        ActorServer actorServer = (ActorServer) super.initializer(serverContext);
         Pattern pattern = Pattern.compile(serverContext.getProperties().getNodeWhiteList());
-        if(pattern.matcher(String.valueOf(actorPort)).matches()){
+        if (pattern.matcher(String.valueOf(actorPort)).matches()) {
             stop();
             throw new MessagingException("本地Actor端口不能与集群处于同一网段!");
         }
@@ -46,7 +45,7 @@ public final class ActorServer extends AbstractServer<ActorServerContext> {
         ServerBootstrap bootstrap = super.initServerBootstrap(serverContext);
         try {
             bootstrap.bind(actorPort).sync();
-            logger.info("绑定端口 {}!",actorPort);
+            logger.info("绑定端口 {}!", actorPort);
         } catch (InterruptedException e) {
             throw new MessagingInterruptedException(e);
         }

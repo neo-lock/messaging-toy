@@ -6,15 +6,12 @@ import com.lockdown.messaging.actor.ActorMessageCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
-
 public class SimpleBusinessMessageCodec implements ActorMessageCodec {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public byte[] encode(Object message) {
-        logger.info(" encode message {}",message);
         return JSON.toJSONBytes(message);
     }
 
@@ -25,6 +22,6 @@ public class SimpleBusinessMessageCodec implements ActorMessageCodec {
             throw new IllegalStateException(" error message !");
         }
         Class<?> clazz = MessageType.stringValueOf(object.getString("type")).getClazz();
-        return JSON.toJavaObject(object,clazz);
+        return JSON.toJavaObject(object, clazz);
     }
 }

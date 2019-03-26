@@ -8,10 +8,10 @@ public class ChannelEventUnpackHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelReceived(ChannelContext ctx, Object message) {
-        if(message instanceof ChannelEvent){
+        if (message instanceof ChannelEvent) {
             ChannelEvent event = (ChannelEvent) message;
             ctx.fireChannelReceived(event.getParam());
-        }else{
+        } else {
             ctx.fireChannelReceived(message);
         }
 

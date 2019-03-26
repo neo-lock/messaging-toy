@@ -13,5 +13,4 @@ public interface ActorProperties extends ServerProperties {
     int getActorPort();
 
 
-
 }

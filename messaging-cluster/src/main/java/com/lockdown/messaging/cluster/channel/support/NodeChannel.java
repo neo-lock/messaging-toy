@@ -5,6 +5,8 @@ import com.lockdown.messaging.cluster.channel.ChannelPipeline;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventLoop;
 import io.netty.channel.ChannelFuture;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +44,7 @@ public class NodeChannel extends AbstractChannel {
                 pipeline().fireChannelClosed();
                 break;
             }
-            case EXCEPTION:{
+            case EXCEPTION: {
                 pipeline().fireExceptionCaught((Throwable) channelEvent.getParam());
                 break;
             }

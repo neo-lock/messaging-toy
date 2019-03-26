@@ -24,7 +24,7 @@ public class LocalNodeRegisterForwardHandler extends ChannelInboundHandlerAdapte
             NodeRegisterForward registerForward = (NodeRegisterForward) event.getParam();
             if (localNode.isAttached() && !localNode.attachedCompareAndSet(registerForward.getSource(), registerForward.getTarget())) {
                 ctx.eventLoop().nodeChannelGroup().connectOnNotExists(registerForward.getTarget());
-                ChannelEvent greeting = new ChannelEvent(ctx.pipeline().channel(),NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, registerForward.getTarget(), new NodeGreeting(localNode.destination()));
+                ChannelEvent greeting = new ChannelEvent(ctx.pipeline().channel(), NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, registerForward.getTarget(), new NodeGreeting(localNode.destination()));
                 ctx.eventLoop().channelEvent(greeting);
             } else {
                 localNode.registerToCluster(registerForward.getTarget());

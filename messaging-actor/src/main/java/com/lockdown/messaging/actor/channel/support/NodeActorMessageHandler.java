@@ -5,7 +5,6 @@ import com.lockdown.messaging.actor.channel.ActorChannel;
 import com.lockdown.messaging.actor.command.NodeActorMessage;
 import com.lockdown.messaging.cluster.channel.ChannelContext;
 import com.lockdown.messaging.cluster.channel.support.ChannelInboundHandlerAdapter;
-import com.lockdown.messaging.cluster.channel.support.ClusterNatureForwardHandler;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.reactor.ChannelEvent;
 import com.lockdown.messaging.cluster.reactor.ChannelEventType;
@@ -17,7 +16,6 @@ public class NodeActorMessageHandler extends ChannelInboundHandlerAdapter {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     *
      * @param ctx
      * @param message
      */
@@ -30,7 +28,7 @@ public class NodeActorMessageHandler extends ChannelInboundHandlerAdapter {
             ActorDestination receiver = new ActorDestination(actorMessage.getChannelId(), actorMessage.getSource());
             ChannelEvent forward = new ChannelEvent(ActorChannel.type(), ChannelEventType.CHANNEL_READ, receiver, actorMessage);
             ctx.eventLoop().channelEvent(forward);
-        }else{
+        } else {
             ctx.fireChannelReceived(message);
         }
     }
@@ -40,7 +38,6 @@ public class NodeActorMessageHandler extends ChannelInboundHandlerAdapter {
     public void channelClosed(ChannelContext ctx) {
         super.channelClosed(ctx);
     }
-
 
 
 }

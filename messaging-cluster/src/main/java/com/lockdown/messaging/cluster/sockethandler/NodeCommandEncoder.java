@@ -7,10 +7,7 @@ import com.lockdown.messaging.cluster.utils.IPUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.util.regex.Pattern;
 
 public class NodeCommandEncoder extends MessageToByteEncoder<NodeCommand> {
@@ -27,7 +24,7 @@ public class NodeCommandEncoder extends MessageToByteEncoder<NodeCommand> {
 
 
     private boolean isLocalPort(ChannelHandlerContext ctx) {
-        return IPUtils.isLocalPort(ctx,nodeWhiteList);
+        return IPUtils.isLocalPort(ctx, nodeWhiteList);
     }
 
 

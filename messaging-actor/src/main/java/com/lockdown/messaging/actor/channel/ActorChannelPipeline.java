@@ -1,8 +1,6 @@
 package com.lockdown.messaging.actor.channel;
 
-import com.lockdown.messaging.actor.Actor;
 import com.lockdown.messaging.actor.ActorDestination;
-import com.lockdown.messaging.actor.ActorServerContext;
 import com.lockdown.messaging.actor.command.NodeActorMessage;
 import com.lockdown.messaging.cluster.channel.Channel;
 import com.lockdown.messaging.cluster.channel.ChannelContext;
@@ -14,7 +12,7 @@ class ActorChannelPipeline extends AbstractChannelPipeline {
 
 
     ActorChannelPipeline(Channel channel) {
-        super(channel, new HeadChannelHandler(channel), new ActorTailHandler(((ActorChannel)channel)));
+        super(channel, new HeadChannelHandler(channel), new ActorTailHandler(((ActorChannel) channel)));
     }
 
 
@@ -31,7 +29,11 @@ class ActorChannelPipeline extends AbstractChannelPipeline {
             if (message instanceof NodeActorMessage) {
                 NodeActorMessage actorMessage = (NodeActorMessage) message;
                 ActorDestination actorDestination = actorMessage.getDestination();
-                channel.actor().receivedMessage(actorDestination, channel.actorMessageCodec().decode(actorMessage.getContent()));
+                Object aMessage = channel.actorMessageCodec().decode(actorMessage.getContent());
+                channel.actor().receivedMessage(actorDestination, aMessage);
+                if(actorMessage.isAutoWrite()){
+                    channel.writeAndFlush(aMessage);
+                }
             } else {
                 channel.actor().receivedMessage(message);
             }

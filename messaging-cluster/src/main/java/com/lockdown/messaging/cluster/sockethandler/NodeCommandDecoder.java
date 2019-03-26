@@ -2,7 +2,6 @@ package com.lockdown.messaging.cluster.sockethandler;
 
 import com.lockdown.messaging.cluster.ServerContext;
 import com.lockdown.messaging.cluster.command.CommandCodecHandler;
-import com.lockdown.messaging.cluster.command.CommandType;
 import com.lockdown.messaging.cluster.command.NodeCommand;
 import com.lockdown.messaging.cluster.utils.IPUtils;
 import io.netty.buffer.ByteBuf;
@@ -12,7 +11,6 @@ import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -20,17 +18,16 @@ import java.util.regex.Pattern;
 public class NodeCommandDecoder extends ByteToMessageDecoder {
     private Pattern nodeWhiteList;
     private CommandCodecHandler commandCodecHandler;
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public NodeCommandDecoder(ServerContext serverContext) {
         super();
         this.nodeWhiteList = serverContext.nodeWhiteList();
         this.commandCodecHandler = serverContext.codecHandler();
     }
-    private Logger logger = LoggerFactory.getLogger(getClass());
-
 
     private boolean isLocalPort(ChannelHandlerContext ctx) {
-        return IPUtils.isLocalPort(ctx,nodeWhiteList);
+        return IPUtils.isLocalPort(ctx, nodeWhiteList);
     }
 
 
@@ -38,7 +35,7 @@ public class NodeCommandDecoder extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> list) throws Exception {
         if (isLocalPort(ctx)) {
             SocketAddress address = ctx.channel().remoteAddress();
-            logger.info("收到 {} 的消息 {}",address,byteBuf.readableBytes());
+            logger.info("收到 {} 的消息 {}", address, byteBuf.readableBytes());
             try {
                 int readable = byteBuf.readableBytes();
                 if (readable < NodeCommand.BASE_LENGTH) {
@@ -58,9 +55,10 @@ public class NodeCommandDecoder extends ByteToMessageDecoder {
                 if (contentLength > 0) {
                     byte[] content = new byte[contentLength];
                     byteBuf.readBytes(content);
-                    command = commandCodecHandler.decode(messageType,content);;
+                    command = commandCodecHandler.decode(messageType, content);
+                    ;
                 } else {
-                    command = commandCodecHandler.decode(messageType,null);
+                    command = commandCodecHandler.decode(messageType, null);
                 }
                 list.add(command);
             } catch (Exception ex) {

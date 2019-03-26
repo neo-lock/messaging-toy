@@ -2,7 +2,6 @@ package com.lockdown.messaging.actor;
 
 import com.lockdown.messaging.actor.channel.ActorChannel;
 import com.lockdown.messaging.actor.channel.ActorChannelEventLoop;
-import com.lockdown.messaging.actor.channel.ActorGroup;
 import com.lockdown.messaging.actor.channel.support.ActorChannelEventLoopInitializer;
 import com.lockdown.messaging.actor.channel.support.ActorDisruptorChannelEventLoop;
 import com.lockdown.messaging.actor.channel.support.ActorRemoteNodeChannelInitializer;
@@ -42,7 +41,7 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
         return new ActorDisruptorChannelEventLoop(this, new ActorChannelEventLoopInitializer());
     }
 
-    public ActorFactory actorFactory(){
+    public ActorFactory actorFactory() {
         return this.actorFactory;
     }
 
@@ -64,7 +63,7 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
 
     private void initActorFactory() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ActorProperties properties = getProperties();
-        if(Objects.isNull(properties.getActorFactoryClassName())){
+        if (Objects.isNull(properties.getActorFactoryClassName())) {
             return;
         }
         Class<?> clazz = Class.forName(properties.getActorFactoryClassName());
@@ -112,10 +111,10 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
 
     @Override
     public ActorServerContext check() {
-        if(Objects.isNull(actorFactory)){
+        if (Objects.isNull(actorFactory)) {
             throw new MessagingException(" actor factory not found !");
         }
-        if(Objects.isNull(actorMessageCodec)){
+        if (Objects.isNull(actorMessageCodec)) {
             throw new MessagingException(" actor message codec not found !");
         }
         return this;
@@ -123,32 +122,34 @@ public class ActorServerContext extends AbstractServerContext<ActorProperties> {
 
     /**
      * 全局广播
+     *
      * @param message
      */
-    public void notifyActorMessage(Object message){
-        eventLoop().notifyWriteMessage(ActorChannel.type(),message);
+    public void notifyActorMessage(Object message) {
+        eventLoop().notifyWriteMessage(ActorChannel.type(), message);
         NodeActorNotifyMessage notifyMessage = new NodeActorNotifyMessage();
         notifyMessage.setSource(localDestination());
         notifyMessage.setContent(actorMessageCodec().encode(message));
-        eventLoop().notifyWriteMessage(NodeChannel.type(),notifyMessage);
+        eventLoop().notifyWriteMessage(NodeChannel.type(), notifyMessage);
     }
 
     /**
      * 发送给指定的actor消息
+     *
      * @param destination
      * @param message
      */
-    public void pushActorMessage(ActorDestination destination, Object message){
-        ActorChannelEventLoop eventLoop = ((ActorChannelEventLoop)eventLoop());
+    public void pushActorMessage(ActorDestination destination, Object message) {
+        ActorChannelEventLoop eventLoop = ((ActorChannelEventLoop) eventLoop());
         Actor actor = eventLoop.actorGroup().getActor(destination);
-        if(null!=actor){
+        if (null != actor) {
             actor.writeMessage(message);
-        }else{
+        } else {
             NodeActorPushMessage pushMessage = new NodeActorPushMessage();
             pushMessage.setContent(eventLoop.actorMessageCodec().encode(message));
             pushMessage.setDestination(destination);
             pushMessage.setSource(localNode().destination());
-            ChannelEvent event = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_WRITE,destination.getDestination(),pushMessage);
+            ChannelEvent event = new ChannelEvent(NodeChannel.type(), ChannelEventType.CHANNEL_WRITE, destination.getDestination(), pushMessage);
             eventLoop.channelEvent(event);
         }
 

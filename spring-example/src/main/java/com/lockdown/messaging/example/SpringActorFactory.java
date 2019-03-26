@@ -3,8 +3,6 @@ package com.lockdown.messaging.example;
 import com.lockdown.messaging.actor.AbstractActor;
 import com.lockdown.messaging.actor.ActorFactory;
 import com.lockdown.messaging.actor.ActorProperties;
-import com.lockdown.messaging.actor.ActorServerContext;
-import com.lockdown.messaging.actor.channel.ActorChannel;
 import com.lockdown.messaging.cluster.exception.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,11 +26,11 @@ public class SpringActorFactory implements ActorFactory {
         }
     }
 
-    private void initInjectField(Class<?> actorClass){
+    private void initInjectField(Class<?> actorClass) {
         Field[] fields = actorClass.getDeclaredFields();
         this.fieldSet = new HashSet<>();
-        for(Field f : fields){
-            if(null==f.getAnnotation(Autowired.class)){
+        for (Field f : fields) {
+            if (null == f.getAnnotation(Autowired.class)) {
                 continue;
             }
             f.setAccessible(true);
@@ -53,13 +51,11 @@ public class SpringActorFactory implements ActorFactory {
     }
 
     private void injectField(Object actor) throws IllegalAccessException {
-        for(Field field : fieldSet){
+        for (Field field : fieldSet) {
             Class<?> clazz = field.getType();
-            field.set(actor,SpringBeanUtils.getBean(clazz));
+            field.set(actor, SpringBeanUtils.getBean(clazz));
         }
     }
-
-
 
 
 }

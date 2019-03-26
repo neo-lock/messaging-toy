@@ -86,7 +86,6 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
     }
 
 
-
     @Override
     public void shutdownContext() {
         this.eventLoop.shutdown();
@@ -108,7 +107,6 @@ public abstract class AbstractServerContext<T extends ServerProperties> implemen
         commandCodecHandler.registerCodec(new CommandRegisterForwardCodec());
         return commandCodecHandler;
     }
-
 
 
     @Override

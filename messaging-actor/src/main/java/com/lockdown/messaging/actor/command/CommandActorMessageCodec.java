@@ -3,7 +3,6 @@ package com.lockdown.messaging.actor.command;
 import com.lockdown.messaging.cluster.command.AbstractCommandCodec;
 import com.lockdown.messaging.cluster.command.CommandType;
 import com.lockdown.messaging.cluster.command.NodeCommand;
-import com.lockdown.messaging.cluster.command.NodeMonitored;
 import com.lockdown.messaging.cluster.exception.MessagingSerializeException;
 import com.lockdown.messaging.cluster.sockethandler.ProtostuffUtils;
 

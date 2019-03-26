@@ -19,12 +19,12 @@ public class NodeActorPushMessageHandler extends ChannelInboundHandlerAdapter {
     public void channelReceived(ChannelContext ctx, Object message) {
         ChannelEvent event = (ChannelEvent) message;
         NodeCommand command = (NodeCommand) event.getParam();
-        if(command instanceof NodeActorPushMessage){
+        if (command instanceof NodeActorPushMessage) {
             NodeActorPushMessage pushMessage = (NodeActorPushMessage) command;
-            Object origin = ((ActorChannelEventLoop)ctx.eventLoop()).actorMessageCodec().decode(((NodeActorPushMessage) command).getContent());
-            ChannelEvent forward = new ChannelEvent(ActorChannel.type(), ChannelEventType.CHANNEL_WRITE,pushMessage.getDestination(),origin);
+            Object origin = ((ActorChannelEventLoop) ctx.eventLoop()).actorMessageCodec().decode(((NodeActorPushMessage) command).getContent());
+            ChannelEvent forward = new ChannelEvent(ActorChannel.type(), ChannelEventType.CHANNEL_WRITE, pushMessage.getDestination(), origin);
             ctx.eventLoop().channelEvent(forward);
-        }else{
+        } else {
             ctx.fireChannelReceived(message);
         }
 

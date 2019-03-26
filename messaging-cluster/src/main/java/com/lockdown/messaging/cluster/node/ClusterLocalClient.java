@@ -46,7 +46,7 @@ public class ClusterLocalClient implements LocalClient {
     public ChannelFuture connect(ServerDestination source) {
         try {
             ChannelFuture channelFuture = bootstrap.connect(source.getAddress(), source.getPort()).sync();
-            logger.info("{} 连接成功!",source);
+            logger.info("{} 连接成功!", source);
             return channelFuture;
         } catch (InterruptedException e) {
             throw new MessagingInterruptedException(e);

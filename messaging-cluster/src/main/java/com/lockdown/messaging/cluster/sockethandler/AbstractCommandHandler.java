@@ -7,7 +7,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.util.regex.Pattern;
 
 public class AbstractCommandHandler extends ChannelInboundHandlerAdapter {
@@ -24,7 +23,7 @@ public class AbstractCommandHandler extends ChannelInboundHandlerAdapter {
     }
 
     protected boolean isLocalPort(ChannelHandlerContext ctx) {
-        return IPUtils.isLocalPort(ctx,nodeWhiteList);
+        return IPUtils.isLocalPort(ctx, nodeWhiteList);
     }
 
 

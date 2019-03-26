@@ -17,7 +17,7 @@ public class ActorDisruptorChannelEventLoop extends DisruptorChannelEventLoop im
 
     public ActorDisruptorChannelEventLoop(ActorServerContext serverContext, ChannelEventLoopInitializer<ChannelEventLoop> eventLoopInitializer) {
         super(serverContext, eventLoopInitializer);
-        this.actorGroup = new DefaultActorGroup(this,serverContext);
+        this.actorGroup = new DefaultActorGroup(this, serverContext);
     }
 
 
@@ -35,6 +35,6 @@ public class ActorDisruptorChannelEventLoop extends DisruptorChannelEventLoop im
 
     @Override
     public ActorMessageCodec actorMessageCodec() {
-        return ((ActorServerContext)serverContext()).actorMessageCodec();
+        return ((ActorServerContext) serverContext()).actorMessageCodec();
     }
 }

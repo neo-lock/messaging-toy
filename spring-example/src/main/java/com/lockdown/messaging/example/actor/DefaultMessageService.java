@@ -1,8 +1,6 @@
 package com.lockdown.messaging.example.actor;
 
-import com.lockdown.messaging.actor.Actor;
 import com.lockdown.messaging.example.ActorServerUtils;
-import com.lockdown.messaging.example.message.JsonMessage;
 import com.lockdown.messaging.example.message.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

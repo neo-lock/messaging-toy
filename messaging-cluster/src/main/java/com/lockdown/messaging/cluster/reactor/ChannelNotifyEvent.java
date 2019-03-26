@@ -8,8 +8,8 @@ import java.util.Set;
 
 public class ChannelNotifyEvent {
 
-    private boolean multiple;
     private final Object command;
+    private boolean multiple;
     private Set<Destination> ignore = new HashSet<>();
 
 
@@ -29,7 +29,7 @@ public class ChannelNotifyEvent {
         this.ignore.add(destination);
     }
 
-    public void addIgnores(Destination...destinations){
+    public void addIgnores(Destination... destinations) {
         ignore.addAll(Arrays.asList(destinations));
     }
 

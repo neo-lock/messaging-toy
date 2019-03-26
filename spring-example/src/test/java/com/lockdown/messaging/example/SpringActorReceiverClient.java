@@ -1,7 +1,10 @@
 package com.lockdown.messaging.example;
 
 import com.lockdown.messaging.cluster.utils.IPUtils;
-import com.lockdown.messaging.example.message.*;
+import com.lockdown.messaging.example.message.JsonMessageDecoder;
+import com.lockdown.messaging.example.message.JsonMessageEncoder;
+import com.lockdown.messaging.example.message.RegisterMessage;
+import com.lockdown.messaging.example.message.SpringActorHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -14,9 +17,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class SpringActorTestClient {
+public class SpringActorReceiverClient {
 
-    public static void main(java.lang.String[] args) {
+    public static void main(String[] args) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(new NioEventLoopGroup(1));
@@ -32,21 +35,11 @@ public class SpringActorTestClient {
 
         try {
 
-            ChannelFuture channelFuture = bootstrap.connect(IPUtils.getLocalIP(), 8081).sync();
+            ChannelFuture channelFuture = bootstrap.connect(IPUtils.getLocalIP(), 8083).sync();
             for (int i = 0; i < 1; i++) {
                 TimeUnit.SECONDS.sleep(1);
-                executorService.execute(() -> channelFuture.channel().writeAndFlush(new RegisterMessage("123")));
+                executorService.execute(() -> channelFuture.channel().writeAndFlush(new RegisterMessage("321")));
             }
-            executorService.submit((Runnable) () -> {
-                while (true) {
-                    channelFuture.channel().writeAndFlush(new CommunityMessage("321", "测试聊天"));
-                    try {
-                        TimeUnit.SECONDS.sleep(2);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -2,7 +2,7 @@ package com.lockdown.messaging.cluster.command;
 
 import com.lockdown.messaging.cluster.ServerDestination;
 
-public class NodeRegisterForward extends AbstractNodeCommand implements ClusterNature{
+public class NodeRegisterForward extends AbstractNodeCommand implements ClusterNature {
 
 
     private ServerDestination target;

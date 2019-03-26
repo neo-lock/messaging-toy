@@ -36,9 +36,9 @@ public interface ChannelEventLoop {
 
     ServerContext serverContext();
 
-    void notifyWriteMessage(Enum<?> channelType, Object message, Destination...ignores);
+    void notifyWriteMessage(Enum<?> channelType, Object message, Destination... ignores);
 
-    void notifyWriteMessage(Enum<?> channelType, Object message,boolean multiple, Destination...ignores);
+    void notifyWriteMessage(Enum<?> channelType, Object message, boolean multiple, Destination... ignores);
 
 
 }

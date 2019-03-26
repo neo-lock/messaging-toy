@@ -1,7 +1,5 @@
 package com.lockdown.messaging.actor.channel.support;
 
-import com.alibaba.fastjson.JSON;
-import com.lockdown.messaging.actor.ActorServerContext;
 import com.lockdown.messaging.actor.channel.ActorChannel;
 import com.lockdown.messaging.actor.channel.ActorChannelEventLoop;
 import com.lockdown.messaging.actor.command.NodeActorNotifyMessage;
@@ -22,9 +20,9 @@ public class NodeActorNotifyMessageHandler extends ChannelInboundHandlerAdapter 
         NodeCommand command = (NodeCommand) event.getParam();
         if (command instanceof NodeActorNotifyMessage) {
             NodeActorNotifyMessage notifyMessage = (NodeActorNotifyMessage) command;
-            Object originMessage = ((ActorChannelEventLoop)ctx.eventLoop()).actorMessageCodec().decode(notifyMessage.getContent());
-            ctx.eventLoop().notifyWriteMessage(ActorChannel.type(),originMessage);
-        }else{
+            Object originMessage = ((ActorChannelEventLoop) ctx.eventLoop()).actorMessageCodec().decode(notifyMessage.getContent());
+            ctx.eventLoop().notifyWriteMessage(ActorChannel.type(), originMessage);
+        } else {
             ctx.fireChannelReceived(message);
         }
     }

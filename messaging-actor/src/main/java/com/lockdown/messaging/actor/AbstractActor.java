@@ -9,10 +9,10 @@ public abstract class AbstractActor implements Actor {
     private ActorChannel actorChannel;
 
     public void setActorChannel(ActorChannel actorChannel) {
-        if(Objects.isNull(actorChannel)){
+        if (Objects.isNull(actorChannel)) {
             throw new NullPointerException(" actor channel can't be null !");
         }
-        if(Objects.nonNull(this.actorChannel)){
+        if (Objects.nonNull(this.actorChannel)) {
             throw new IllegalStateException(" actor channel set already !");
         }
         this.actorChannel = actorChannel;
@@ -25,7 +25,7 @@ public abstract class AbstractActor implements Actor {
 
     @Override
     public void writeMessage(ActorDestination destination, Object message) {
-        writeMessage(destination,message,false);
+        writeMessage(destination, message, false);
     }
 
     @Override
@@ -40,7 +40,7 @@ public abstract class AbstractActor implements Actor {
 
     @Override
     public ActorDestination destination() {
-        if(Objects.nonNull(actorChannel)){
+        if (Objects.nonNull(actorChannel)) {
             return (ActorDestination) actorChannel.destination();
         }
         return null;

@@ -11,34 +11,33 @@ public final class ChannelEvent {
     private EventSource eventSource;
 
 
-
     public ChannelEvent() {
 
     }
 
     public ChannelEvent(Enum<?> channelType, ChannelEventType eventType, Object param) {
-        this(channelType,eventType,null,param);
+        this(channelType, eventType, null, param);
     }
 
     public ChannelEvent(Enum<?> channelType, ChannelEventType eventType, Destination destination) {
-        this(channelType,eventType,destination,null);
+        this(channelType, eventType, destination, null);
     }
 
     public ChannelEvent(Enum<?> channelType, ChannelEventType eventType, Destination destination, Object param) {
-        this(null,channelType,eventType,destination,param);
+        this(null, channelType, eventType, destination, param);
     }
 
-    public ChannelEvent(EventSource source,Enum<?> channelType, ChannelEventType eventType, Object param) {
-        this(source,channelType,eventType,null,param);
+    public ChannelEvent(EventSource source, Enum<?> channelType, ChannelEventType eventType, Object param) {
+        this(source, channelType, eventType, null, param);
     }
 
-    public ChannelEvent(EventSource source,Enum<?> channelType, ChannelEventType eventType, Destination destination) {
-        this(source,channelType,eventType,destination,null);
+    public ChannelEvent(EventSource source, Enum<?> channelType, ChannelEventType eventType, Destination destination) {
+        this(source, channelType, eventType, destination, null);
     }
 
-    public ChannelEvent(EventSource source,Enum<?> channelType, ChannelEventType eventType, Destination destination, Object param) {
-        if(null!=source){
-            this.eventSource = new DefaultEventSource(source.channelType(),source.destination());
+    public ChannelEvent(EventSource source, Enum<?> channelType, ChannelEventType eventType, Destination destination, Object param) {
+        if (null != source) {
+            this.eventSource = new DefaultEventSource(source.channelType(), source.destination());
         }
         this.channelType = channelType;
         this.eventType = eventType;
@@ -46,12 +45,12 @@ public final class ChannelEvent {
         this.destination = destination;
     }
 
-    public void setEventSource(EventSource eventSource) {
-        this.eventSource = eventSource;
-    }
-
     public EventSource getEventSource() {
         return eventSource;
+    }
+
+    public void setEventSource(EventSource eventSource) {
+        this.eventSource = eventSource;
     }
 
     public Enum<?> getChannelType() {
@@ -96,7 +95,7 @@ public final class ChannelEvent {
                 '}';
     }
 
-    private class DefaultEventSource implements EventSource{
+    private class DefaultEventSource implements EventSource {
 
         private Enum<?> channelType;
         private Destination destination;

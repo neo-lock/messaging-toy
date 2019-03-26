@@ -30,8 +30,8 @@ public class ActorChannelEventInvoker implements ChannelTypeEventInvoker {
      */
     @Override
     public void handleEvent(ChannelEvent event) {
-        switch (event.getEventType()){
-            case CHANNEL_NOTIFY:{
+        switch (event.getEventType()) {
+            case CHANNEL_NOTIFY: {
                 eventLoop.actorGroup().printNodes();
                 ChannelNotifyEvent notifyEvent = (ChannelNotifyEvent) event.getParam();
                 eventLoop.actorGroup().allActors().forEach(actor -> {
@@ -39,11 +39,11 @@ public class ActorChannelEventInvoker implements ChannelTypeEventInvoker {
                 });
                 break;
             }
-            case CHANNEL_CLOSE:{
+            case CHANNEL_CLOSE: {
                 //不需要break,让default 触发pipe close event !!!
                 eventLoop.actorGroup().removeActor(event.getDestination());
             }
-            default:{
+            default: {
                 Actor actor = eventLoop.actorGroup().getActor(event.getDestination());
                 //这里应该抛出 找不到channel的 exception event，让对应的actor去进行处理,如果是消息的话，可以返回给发送方!
                 if (null == actor) {
